@@ -1,0 +1,19 @@
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-weight: 400;
+  src: url('/fonts/atkinson-hyperlegible-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-weight: 700;
+  src: url('/fonts/atkinson-hyperlegible-latin-700-normal.woff2') format('woff2');
+}
+body {
+  font-family: 'Atkinson Hyperlegible', sans-serif;
+  margin: 0;
+  padding: 1rem;
+  color: #1a1a1a;
+}
+table { border-collapse: collapse; font-size: 0.9rem; }
+th, td { border: 1px solid #767676; padding: 0.2rem 0.5rem; text-align: left; }
+img { max-width: 440px; display: block; margin: 1rem 0; }
