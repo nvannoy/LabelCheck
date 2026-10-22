@@ -40,6 +40,7 @@ export default function OcrProbe() {
 
   return (
     <main onPaste={onPaste}>
+      <p>Version {__APP_VERSION__}</p>
       <h1>OCR probe (throwaway)</h1>
       <p>{ready === null ? 'Loading OCR engine…' : `Engine ready in ${Math.round(ready)} ms.`}</p>
       <label>
