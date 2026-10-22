@@ -1,4 +1,5 @@
 import { createWorker } from 'tesseract.js'
+import { prepare } from './prepare.js'
 
 // Every path is on this app's own origin, so nothing loads from a CDN.
 // workerBlobURL false avoids wrapping the worker in a blob; cacheMethod none
@@ -23,8 +24,17 @@ export function flattenWords(data) {
   return words
 }
 
+const makeCanvas = (w, h) => new OffscreenCanvas(w, h)
+
+async function prepareBlob(image) {
+  const bitmap = await createImageBitmap(image)
+  const canvas = prepare(bitmap, bitmap.width, bitmap.height, makeCanvas)
+  bitmap.close()
+  return canvas.convertToBlob({ type: 'image/png' })
+}
+
 export async function readImage(worker, image) {
   const t0 = performance.now()
-  const { data } = await worker.recognize(image, {}, { blocks: true })
+  const { data } = await worker.recognize(await prepareBlob(image), {}, { blocks: true })
   return { words: flattenWords(data), ms: performance.now() - t0 }
 }

@@ -1,0 +1,41 @@
+// Image preparation before OCR. Small labels are upscaled because Tesseract
+// reads text under about 20 px tall poorly. makeCanvas is passed in so the
+// same code runs in the browser and in Node (evaluation script).
+
+const TARGET_WIDTH = 1800 // upscale small images to about this width
+const MAX_SCALE = 4
+
+export function pickScale(width) {
+  return Math.min(MAX_SCALE, Math.max(1, TARGET_WIDTH / width))
+}
+
+// Stretches the grayscale range so pale text on pale backgrounds gains contrast.
+export function grayscaleStretch(pixels) {
+  const gray = new Uint8ClampedArray(pixels.length / 4)
+  let lo = 255, hi = 0
+  for (let i = 0; i < gray.length; i++) {
+    const g = 0.299 * pixels[i * 4] + 0.587 * pixels[i * 4 + 1] + 0.114 * pixels[i * 4 + 2]
+    gray[i] = g
+    if (g < lo) lo = g
+    if (g > hi) hi = g
+  }
+  const span = Math.max(1, hi - lo)
+  for (let i = 0; i < gray.length; i++) {
+    const v = ((gray[i] - lo) * 255) / span
+    pixels[i * 4] = pixels[i * 4 + 1] = pixels[i * 4 + 2] = v
+  }
+  return pixels
+}
+
+export function prepare(source, width, height, makeCanvas, { scale = pickScale(width), gray = true } = {}) {
+  const canvas = makeCanvas(Math.round(width * scale), Math.round(height * scale))
+  const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingQuality = 'high'
+  ctx.drawImage(source, 0, 0, canvas.width, canvas.height)
+  if (gray) {
+    const img = ctx.getImageData(0, 0, canvas.width, canvas.height)
+    grayscaleStretch(img.data)
+    ctx.putImageData(img, 0, 0)
+  }
+  return canvas
+}
