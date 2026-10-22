@@ -3,7 +3,7 @@
 // Node uses the same prepare step as the browser, but its canvas differs a
 // little, so browser timings and accuracy can be somewhat worse.
 import { createCanvas, loadImage } from '@napi-rs/canvas'
-import { createWorker } from 'tesseract.js'
+import { createWorker, PSM } from 'tesseract.js'
 import { gunzipSync } from 'node:zlib'
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -16,6 +16,7 @@ const langDir = join(tmpdir(), 'labelcheck-lang')
 mkdirSync(langDir, { recursive: true })
 writeFileSync(join(langDir, 'eng.traineddata'), gunzipSync(readFileSync('public/ocr/eng.traineddata.gz')))
 const worker = await createWorker('eng', 1, { langPath: langDir, gzip: false, cacheMethod: 'none' })
+await worker.setParameters({ tessedit_pageseg_mode: PSM.AUTO })
 
 const norm = (s) => s.toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9%.\/ ]+/g, ' ').replace(/\s+/g, ' ').trim()
 const squash = (s) => norm(s).replace(/ /g, '')

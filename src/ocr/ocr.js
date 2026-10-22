@@ -1,17 +1,21 @@
-import { createWorker } from 'tesseract.js'
+import { createWorker, PSM } from 'tesseract.js'
 import { prepare } from './prepare.js'
 
 // Every path is on this app's own origin, so nothing loads from a CDN.
 // workerBlobURL false avoids wrapping the worker in a blob; cacheMethod none
 // keeps the browser from writing the language data to IndexedDB.
-export function startWorker() {
-  return createWorker('eng', 1, {
+export async function startWorker() {
+  const worker = await createWorker('eng', 1, {
     workerPath: '/ocr/worker.min.js',
     corePath: '/ocr',
     langPath: '/ocr',
     workerBlobURL: false,
     cacheMethod: 'none',
   })
+  // The library default (one block of text) drops large brand names and short
+  // lines such as "1 L". Automatic page segmentation finds them.
+  await worker.setParameters({ tessedit_pageseg_mode: PSM.AUTO })
+  return worker
 }
 
 export function flattenWords(data) {
