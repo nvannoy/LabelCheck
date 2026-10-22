@@ -145,4 +145,19 @@ export const samples = [
   },
 ]
 
+// Regression sample: real TTB example (malt beverage, so outside the spirits
+// scope, kept only as an OCR check). A red ellipse annotation sits over the
+// alcohol content, which is what defeats OCR there, not light-on-dark text.
+export const regression = [
+  {
+    id: 'r01-ttb-malt-and-hop',
+    kind: 'regression',
+    file: 'tests/samples/ttb-malt-and-hop-honey-huckleberry.png',
+    source: 'https://www.ttb.gov/regulated-commodities/beverage-alcohol/beer/labeling/malt-beverage-alcohol-content',
+    note: 'Malt beverage, front and back label in one image. Red ellipse drawn over "5% ALC./VOL." (white on blue).',
+    application: { brand: 'Malt & Hop Brewery', classType: 'Ale with Honey and Huckleberry Flavor', abv: '5% Alc./Vol.', netContents: '1 Pint', bottler: 'Malt & Hop Brewery, Hyattsville, MD', imported: false, country: null },
+    expected: { fields: { ...allMatch(), country: 'na' }, overall: 'ready' },
+  },
+]
+
 export const FIELD_IDS = FIELDS

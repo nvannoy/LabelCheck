@@ -1,14 +1,15 @@
 import { describe, it, expect } from 'vitest'
 import { readFileSync, existsSync } from 'node:fs'
-import { generated, samples, WARNING } from '../scripts/label-specs.js'
+import { generated, samples, regression, WARNING } from '../scripts/label-specs.js'
 
 const results = JSON.parse(readFileSync(new URL('./expected-results.json', import.meta.url), 'utf8'))
 
 describe('label test set', () => {
-  it('has 28 generated labels and 2 TTB samples', () => {
+  it('has 28 generated labels, 2 TTB samples and 1 regression sample', () => {
     expect(generated).toHaveLength(28)
     expect(samples).toHaveLength(2)
-    expect(results).toHaveLength(30)
+    expect(regression).toHaveLength(1)
+    expect(results).toHaveLength(31)
   })
 
   it('has unique ids', () => {
@@ -17,11 +18,11 @@ describe('label test set', () => {
   })
 
   it('keeps expected-results.json in sync with the specs', () => {
-    expect(results.map((r) => r.id)).toEqual([...generated, ...samples].map((s) => s.id))
+    expect(results.map((r) => r.id)).toEqual([...generated, ...samples, ...regression].map((s) => s.id))
   })
 
   it('has every sample image on disk', () => {
-    for (const s of samples) expect(existsSync(new URL(`../${s.file}`, import.meta.url))).toBe(true)
+    for (const s of [...samples, ...regression]) expect(existsSync(new URL(`../${s.file}`, import.meta.url))).toBe(true)
   })
 
   it('marks overall ready only when every field matches', () => {

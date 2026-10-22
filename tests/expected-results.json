@@ -1062,5 +1062,33 @@
       },
       "overall": "ready"
     }
+  },
+  {
+    "id": "r01-ttb-malt-and-hop",
+    "kind": "regression",
+    "image": "tests/samples/ttb-malt-and-hop-honey-huckleberry.png",
+    "defect": "Malt beverage, front and back label in one image. Red ellipse drawn over \"5% ALC./VOL.\" (white on blue).",
+    "application": {
+      "brand": "Malt & Hop Brewery",
+      "classType": "Ale with Honey and Huckleberry Flavor",
+      "abv": "5% Alc./Vol.",
+      "netContents": "1 Pint",
+      "bottler": "Malt & Hop Brewery, Hyattsville, MD",
+      "imported": false,
+      "country": null
+    },
+    "labelText": null,
+    "expected": {
+      "fields": {
+        "brand": "match",
+        "classType": "match",
+        "abv": "match",
+        "netContents": "match",
+        "bottler": "match",
+        "country": "na",
+        "warning": "match"
+      },
+      "overall": "ready"
+    }
   }
 ]

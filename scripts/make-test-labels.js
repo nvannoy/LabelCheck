@@ -3,7 +3,7 @@
 // fonts, so run it on a Mac. Fictional brands only.
 import { createCanvas, GlobalFonts } from '@napi-rs/canvas'
 import { mkdirSync, writeFileSync } from 'node:fs'
-import { generated, samples } from './label-specs.js'
+import { generated, samples, regression } from './label-specs.js'
 
 const FONT_DIR = '/System/Library/Fonts/Supplemental'
 const fontFiles = {
@@ -119,11 +119,11 @@ for (const spec of generated) {
 const entry = (s) => ({
   id: s.id,
   kind: s.kind,
-  image: s.kind === 'sample' ? s.file : `generated/labels/${s.id}.png`,
+  image: s.file ?? `generated/labels/${s.id}.png`,
   defect: s.defect ?? s.note ?? null,
   application: s.application,
   labelText: s.label ?? null,
   expected: s.expected,
 })
-writeFileSync('tests/expected-results.json', `${JSON.stringify([...generated, ...samples].map(entry), null, 2)}\n`)
-console.log(`wrote ${generated.length} labels to generated/labels/ and tests/expected-results.json (${generated.length + samples.length} entries)`)
+writeFileSync('tests/expected-results.json', `${JSON.stringify([...generated, ...samples, ...regression].map(entry), null, 2)}\n`)
+console.log(`wrote ${generated.length} labels to generated/labels/ and tests/expected-results.json (${generated.length + samples.length + regression.length} entries)`)
