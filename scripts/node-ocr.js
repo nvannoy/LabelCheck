@@ -1,0 +1,30 @@
+// Node harness around src/ocr/read.js, shared by the check scripts.
+import { createCanvas, loadImage } from '@napi-rs/canvas'
+import { createWorker, PSM } from 'tesseract.js'
+import { gunzipSync } from 'node:zlib'
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { readLabel } from '../src/ocr/read.js'
+import { flattenWords } from '../src/ocr/ocr.js'
+
+export async function startNodeWorker() {
+  const langDir = join(tmpdir(), 'labelcheck-lang')
+  mkdirSync(langDir, { recursive: true })
+  writeFileSync(join(langDir, 'eng.traineddata'), gunzipSync(readFileSync('public/ocr/eng.traineddata.gz')))
+  const worker = await createWorker('eng', 1, { langPath: langDir, gzip: false, cacheMethod: 'none' })
+  await worker.setParameters({ tessedit_pageseg_mode: PSM.AUTO })
+  return worker
+}
+
+export async function readFile(worker, path, options = {}) {
+  const img = await loadImage(path)
+  const recognize = async (canvas) => {
+    const { data } = await worker.recognize(canvas.toBuffer('image/png'), {}, { blocks: true })
+    return flattenWords(data)
+  }
+  return readLabel({
+    source: img, width: img.width, height: img.height,
+    makeCanvas: (w, h) => createCanvas(w, h), recognize, ...options,
+  })
+}

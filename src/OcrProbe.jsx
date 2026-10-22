@@ -8,6 +8,7 @@ export default function OcrProbe() {
   const [imageUrl, setImageUrl] = useState(null)
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
+  const [secondPass, setSecondPass] = useState(false)
 
   useEffect(() => {
     const t0 = performance.now()
@@ -27,7 +28,7 @@ export default function OcrProbe() {
     const url = URL.createObjectURL(blob)
     setImageUrl(url)
     try {
-      setResult(await readImage(workerRef.current, blob))
+      setResult(await readImage(workerRef.current, blob, { secondPass }))
     } catch (e) {
       setError(String(e))
     }
@@ -48,12 +49,24 @@ export default function OcrProbe() {
         <input type="file" accept="image/*" disabled={ready === null}
           onChange={(e) => e.target.files[0] && run(e.target.files[0])} />
       </label>
+      <p>
+        <label>
+          <input type="checkbox" checked={secondPass} onChange={(e) => setSecondPass(e.target.checked)} />{' '}
+          Second pass with inverted colors when alcohol content or net contents is not found (slower)
+        </label>
+      </p>
       {error && <p role="alert">Error: {error}</p>}
       {imageUrl && <img src={imageUrl} alt="Label being read" />}
       {result && (
         <>
           <p id="result-summary">
             Read {result.words.length} words in {Math.round(result.ms)} ms.
+          </p>
+          <p>
+            Panels: {result.panels.length}. Second pass:{' '}
+            {result.secondPass.ran
+              ? `ran for ${result.secondPass.missing.join(', ')} (${result.secondPass.added} words added, ${Math.round(result.secondPass.ms)} ms)`
+              : secondPass ? 'not needed' : 'off'}.
           </p>
           <table>
             <thead>

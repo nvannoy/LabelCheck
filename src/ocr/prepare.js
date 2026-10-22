@@ -10,7 +10,8 @@ export function pickScale(width) {
 }
 
 // Stretches the grayscale range so pale text on pale backgrounds gains contrast.
-export function grayscaleStretch(pixels) {
+// With invert, light text on a dark background becomes dark text on a light one.
+export function grayscaleStretch(pixels, invert = false) {
   const gray = new Uint8ClampedArray(pixels.length / 4)
   let lo = 255, hi = 0
   for (let i = 0; i < gray.length; i++) {
@@ -22,20 +23,25 @@ export function grayscaleStretch(pixels) {
   const span = Math.max(1, hi - lo)
   for (let i = 0; i < gray.length; i++) {
     const v = ((gray[i] - lo) * 255) / span
-    pixels[i * 4] = pixels[i * 4 + 1] = pixels[i * 4 + 2] = v
+    pixels[i * 4] = pixels[i * 4 + 1] = pixels[i * 4 + 2] = invert ? 255 - v : v
+    pixels[i * 4 + 3] = 255
   }
   return pixels
 }
 
-export function prepare(source, width, height, makeCanvas, { scale = pickScale(width), gray = true } = {}) {
-  const canvas = makeCanvas(Math.round(width * scale), Math.round(height * scale))
+// crop is {x, y, w, h} in source pixels. Returns the canvas and the scale used,
+// so callers can map word positions back to source pixels.
+export function prepare(source, width, height, makeCanvas, { scale, gray = true, invert = false, crop } = {}) {
+  const c = crop ?? { x: 0, y: 0, w: width, h: height }
+  const s = scale ?? pickScale(c.w)
+  const canvas = makeCanvas(Math.round(c.w * s), Math.round(c.h * s))
   const ctx = canvas.getContext('2d')
   ctx.imageSmoothingQuality = 'high'
-  ctx.drawImage(source, 0, 0, canvas.width, canvas.height)
-  if (gray) {
+  ctx.drawImage(source, c.x, c.y, c.w, c.h, 0, 0, canvas.width, canvas.height)
+  if (gray || invert) {
     const img = ctx.getImageData(0, 0, canvas.width, canvas.height)
-    grayscaleStretch(img.data)
+    grayscaleStretch(img.data, invert)
     ctx.putImageData(img, 0, 0)
   }
-  return canvas
+  return { canvas, scale: s }
 }

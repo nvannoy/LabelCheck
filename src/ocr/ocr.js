@@ -1,5 +1,5 @@
 import { createWorker, PSM } from 'tesseract.js'
-import { prepare } from './prepare.js'
+import { readLabel } from './read.js'
 
 // Every path is on this app's own origin, so nothing loads from a CDN.
 // workerBlobURL false avoids wrapping the worker in a blob; cacheMethod none
@@ -30,15 +30,18 @@ export function flattenWords(data) {
 
 const makeCanvas = (w, h) => new OffscreenCanvas(w, h)
 
-async function prepareBlob(image) {
+// application is optional. When the agent has already pasted it, brand and
+// class are also checked for the second-pass decision.
+export async function readImage(worker, image, { application, secondPass } = {}) {
   const bitmap = await createImageBitmap(image)
-  const canvas = prepare(bitmap, bitmap.width, bitmap.height, makeCanvas)
-  bitmap.close()
-  return canvas.convertToBlob({ type: 'image/png' })
-}
-
-export async function readImage(worker, image) {
-  const t0 = performance.now()
-  const { data } = await worker.recognize(await prepareBlob(image), {}, { blocks: true })
-  return { words: flattenWords(data), ms: performance.now() - t0 }
+  const recognize = async (canvas) => {
+    const blob = await canvas.convertToBlob({ type: 'image/png' })
+    const { data } = await worker.recognize(blob, {}, { blocks: true })
+    return flattenWords(data)
+  }
+  try {
+    return await readLabel({ source: bitmap, width: bitmap.width, height: bitmap.height, makeCanvas, recognize, application, secondPass })
+  } finally {
+    bitmap.close()
+  }
 }
