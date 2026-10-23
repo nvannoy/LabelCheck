@@ -266,11 +266,17 @@ button { cursor: pointer; }
 
 /* Zoomable label image */
 .imagebox .scroller { position: absolute; inset: 0; overflow: auto; }
-.zoombar { position: absolute; right: 0.5rem; bottom: 0.5rem; z-index: 6; display: grid; grid-template-columns: 4rem 4rem; gap: 0.25rem; align-items: center; padding: 0.375rem; background: rgba(255, 255, 255, 0.96); border: 2px solid var(--navy); border-radius: 8px; }
-.zoombar button { width: 4rem; height: 1.875rem; border: 2px solid var(--navy); border-radius: 6px; background: #FFFFFF; color: var(--navy); font-size: 0.9375rem; font-weight: 700; line-height: 1; padding: 0; }
-.zoombar button:disabled { opacity: 0.45; cursor: default; }
-.zoombar .lab { margin-top: 0.125rem; }
-.zoombar .level, .zoombar .lab { grid-column: 1 / -1; text-align: center; font-size: 0.875rem; font-weight: 700; color: var(--navy); white-space: nowrap; }
+.imageblock { flex-shrink: 0; }
+/* Zoom rail: a thin strip under the label, so it never covers the image. It is
+   a little faded until the mouse is over it or a button has focus. Text stays at
+   least 4.5:1 against white. */
+.zoomrail { display: flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.75rem; background: #FFFFFF; border-bottom: 1px solid var(--line); opacity: 0.7; transition: opacity 0.15s; }
+.zoomrail:hover, .zoomrail:focus-within { opacity: 1; }
+.zoomrail button { min-width: 2.25rem; height: 1.75rem; border: 2px solid var(--navy); border-radius: 6px; background: #FFFFFF; color: var(--navy); font-size: 0.9375rem; font-weight: 700; line-height: 1; padding: 0; }
+.zoomrail button.txt { min-width: 3rem; font-size: 0.8125rem; }
+.zoomrail button:disabled { opacity: 0.45; cursor: default; }
+.zoomrail .level { min-width: 3rem; text-align: center; font-size: 0.875rem; font-weight: 700; color: var(--navy); }
+.zoomrail .lab { margin-left: auto; font-size: 0.8125rem; font-weight: 700; color: var(--navy); white-space: nowrap; }
 
 /* Review layout: the label stays put and only the checks scroll, in compact and
    full mode. Intake and other screens scroll as one page. */
@@ -280,6 +286,7 @@ button { cursor: pointer; }
 .reviewpane { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .cols { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .cols .left { flex-shrink: 0; }
+.left .imageblock { display: flex; flex-direction: column; }
 .cols .right { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 .compact .imagebox, .full .imagebox { height: min(16.25rem, 38vh); }
 /* Full mode on a wide, tall window: two columns, label and read table on the left. */

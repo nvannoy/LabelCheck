@@ -82,6 +82,7 @@ export default function LabelImage({ src, width, height, words, fields, focusId,
   const onPointerUp = () => { drag.current = null }
 
   return (
+    <div className="imageblock">
     <div className="imagebox" ref={holder}>
       <div className="scroller" ref={scroller} style={{ cursor: zoom > 1 ? 'grab' : 'default' }}
         onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
@@ -114,14 +115,15 @@ export default function LabelImage({ src, width, height, words, fields, focusId,
           </div>
         )}
       </div>
-      <div className="zoombar" role="group" aria-label="Zoom the label">
-        <span className="level" role="status" aria-live="polite">{Math.round(zoom * 100)}%</span>
-        <button type="button" aria-label="Zoom out" onClick={() => step(-1)} disabled={zoom === LEVELS[0]}>&#8722;</button>
-        <button type="button" aria-label="Zoom in" onClick={() => step(1)} disabled={zoom === LEVELS.at(-1)}>+</button>
-        <span className="lab" aria-hidden="true">Zoom to:</span>
-        <button type="button" aria-label="Zoom to fit the whole label" onClick={() => setZoom(1)} disabled={zoom === 1}>Fit</button>
-        <button type="button" aria-label="Zoom to the focused field" onClick={zoomToField} disabled={!canZoomToField}>Field</button>
-      </div>
+    </div>
+    <div className="zoomrail" role="group" aria-label="Zoom the label">
+      <button type="button" aria-label="Zoom out" onClick={() => step(-1)} disabled={zoom === LEVELS[0]}>&#8722;</button>
+      <span className="level" role="status" aria-live="polite">{Math.round(zoom * 100)}%</span>
+      <button type="button" aria-label="Zoom in" onClick={() => step(1)} disabled={zoom === LEVELS.at(-1)}>+</button>
+      <span className="lab" aria-hidden="true">Zoom to:</span>
+      <button type="button" className="txt" aria-label="Zoom to fit the whole label" onClick={() => setZoom(1)} disabled={zoom === 1}>Fit</button>
+      <button type="button" className="txt" aria-label="Zoom to the focused field" onClick={zoomToField} disabled={!canZoomToField}>Field</button>
+    </div>
     </div>
   )
 }

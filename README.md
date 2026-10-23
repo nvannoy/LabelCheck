@@ -87,6 +87,7 @@ Machine: Intel Core i7-1068NG7 (4 cores, 8 threads), 32 GB RAM, macOS, in the bu
 
 ## Assumptions
 
+- The app is for desktop and laptop users with a mouse and keyboard. Touch screens are not a target.
 - One label image per application. Two labels side by side in one image work only when there is a blank vertical gap between them.
 - Distilled spirits rules (27 CFR Part 5 and Part 16). Beer and wine rules are not covered. The two TTB spirits samples and one malt beverage image are real government examples kept in `tests/samples/` as the one exception to using generated labels only.
 - The application text is pasted as labeled lines (see above), copied from the COLA record by the agent.
