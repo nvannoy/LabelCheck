@@ -117,7 +117,7 @@ export const generated = [
   }),
 
   // Image quality. Text is right, but the image is hard to read, so these must not be Ready.
-  make('q01-low-resolution', 'bourbon', 'Image shrunk to about 450 px wide', { style: { outputWidth: 450 }, expect: { warning: 'check' } }),
+  make('q01-low-resolution', 'bourbon', 'Image shrunk to about 450 px wide', { style: { outputWidth: 450 }, expect: { brand: 'check', classType: 'check', abv: 'check', netContents: 'check', bottler: 'check', warning: 'check' } }),
   make('q02-low-contrast', 'vodka', 'Pale gray text on a white background', { style: { fg: '#c9c9c9' }, expect: { brand: 'check', classType: 'check', abv: 'check', netContents: 'check', bottler: 'check', warning: 'check' } }),
   make('q03-tiny-warning', 'gin', 'Warning printed at a very small size', { style: { warningSize: 11 }, expect: { warning: 'check' } }),
 ]

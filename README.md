@@ -8,7 +8,9 @@ Claude Code wrote most of the code in this repository. The developer reviewed it
 
 ## Status
 
-Phase 0 (foundation) only. The page at `/` is a throwaway OCR probe: pick or paste a label image and it lists each word with its position and confidence, plus the time taken. There is no review screen or rules engine yet.
+Phase 1 (engine) is in place: `src/engine` holds the field config, comparators and the government warning check, and `npm run evaluate` scores the 31-label test set. The page at `/` is still a throwaway OCR probe. There is no review screen yet.
+
+How a label is read: the image is split at a blank vertical gap into panels (for example a brand label and a back label side by side), each panel is upscaled and read with Tesseract, and the words are mapped back to whole-image positions. An optional second pass with inverted colors exists but is off by default, because on the test set it never added a word and cost 1.4 to 2.6 s each time it ran.
 
 ## Running it
 
@@ -27,7 +29,10 @@ npm test
 
 ## Measured timings
 
-Phase 0, one 900 x 1200 generated test label (fictional brand), production build served with the real CSP headers, Chrome-based browser pane on an Intel Core i7-1068NG7 (4 cores, 8 threads), 32 GB RAM, macOS:
+Machine: Intel Core i7-1068NG7 (4 cores, 8 threads), 32 GB RAM, macOS. Browser numbers are from the built-in browser pane; Node numbers are from `npm run evaluate`.
 
-- OCR engine load (worker, WASM, language data): about 1.7 s, once per page load
-- Reading the label: about 1.0 s
+- Reading a label in Node (31 test images): mean about 2.1 s, slowest about 2.9 s.
+- Reading a label in the browser (TTB two-panel sample): about 2.5 to 4 s. Browser reads are slower and slightly less accurate than Node, which is not yet explained.
+- OCR engine load on the deployed site: 2 to 5 s, varying from load to load. This is the one-time cost per page load. Files under `/ocr/` and `/fonts/` are cached for 30 days (`public/_headers`), which removed the revalidation requests but left load time dominated by compiling the engine.
+
+Last results of `npm run evaluate`: 0 of 20 known-bad labels called Ready to Approve, 7 of 11 clean labels Ready to Approve, and the rest sent to review.

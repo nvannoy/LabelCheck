@@ -1,6 +1,6 @@
 # Test procedure: label set
 
-The test set has 30 labels: 28 generated fictional labels and 2 real sample images published by TTB.
+The test set has 31 labels: 28 generated fictional labels, 2 real sample images published by TTB, and 1 regression sample (a TTB malt beverage example used only as an OCR check).
 
 ## Files
 
@@ -11,6 +11,15 @@ The test set has 30 labels: 28 generated fictional labels and 2 real sample imag
 | `tests/expected-results.json` | Generated from the specs and committed. Lists all 30 labels with expected field results. |
 | `tests/samples/` | The 2 TTB sample images. Committed because they cannot be regenerated. Source: the TTB distilled spirits brand label page. |
 | `generated/labels/` | Output images. Not committed. |
+
+## Running it
+
+```
+npm test            # engine tests, plus a golden check of the expected results (no OCR)
+npm run evaluate    # reads all 31 images with OCR, runs the engine, prints accuracy and timing
+```
+
+`npm run evaluate` exits with an error if any known-bad label comes out Ready to Approve, or any bad field is called a match.
 
 ## Rebuilding the set
 
@@ -25,6 +34,7 @@ The script uses macOS system fonts (Georgia, Times New Roman, Arial, Trebuchet M
 - `c01` to `c08`: clean labels. Expected Ready to Approve. `c07` (brand in capitals) and `c08` (curly apostrophe) check that harmless differences still match.
 - `d01` to `d17`: one defect each (ABV, net contents, brand, class, bottler, country, government warning). None may be Ready to Approve.
 - `q01` to `q03`: right text but a hard-to-read image (small, pale, tiny warning). None may be Ready to Approve.
+- `r01`: the Malt & Hop regression sample. A red ellipse drawn over "5% ALC./VOL." defeats OCR there.
 - `s01`, `s02`: TTB samples. Each shows a brand label and a back label in one image, which is a stress case because the app supports one label per image. The application text is copied from what the label shows, since TTB publishes no matching application.
 
 ## Expected results

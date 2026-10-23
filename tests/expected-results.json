@@ -924,11 +924,11 @@
     },
     "expected": {
       "fields": {
-        "brand": "match",
-        "classType": "match",
-        "abv": "match",
-        "netContents": "match",
-        "bottler": "match",
+        "brand": "check",
+        "classType": "check",
+        "abv": "check",
+        "netContents": "check",
+        "bottler": "check",
         "country": "na",
         "warning": "check"
       },
