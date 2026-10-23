@@ -28,7 +28,7 @@ function useWide() {
   return wide
 }
 
-export default function Review({ image, read, application, result, fields, mode, textScale, onNext, helpOpen, onCloseHelp }) {
+export default function Review({ image, read, application, result, fields, mode, textScale, onNext, helpOpen, onCloseHelp, tourFocus }) {
   const full = mode === 'full'
   const wide = useWide()
 
@@ -36,6 +36,8 @@ export default function Review({ image, read, application, result, fields, mode,
   const firstId = (fields.find((f) => f.status === 'mismatch') ?? fields.find((f) => f.status === 'check') ?? fields[0]).id
   const [focusId, setFocusId] = useState(firstId)
   const [previewId, setPreviewId] = useState(null)
+  // The tour opens a field by name; the keyboard focus stays on the tour's buttons.
+  useEffect(() => { if (tourFocus) setFocusId(tourFocus) }, [tourFocus])
   const [seen, setSeen] = useState({})
   const [legend, setLegend] = useState(false)
   const [choice, setChoice] = useState(null) // the agent's decision; never set by the app

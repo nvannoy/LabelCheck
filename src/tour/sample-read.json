@@ -1,0 +1,697 @@
+{
+ "words": [
+  {
+   "text": "CEDAR",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 108,
+    "y0": 161,
+    "x1": 476,
+    "y1": 232
+   }
+  },
+  {
+   "text": "FORK",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 500,
+    "y0": 161,
+    "x1": 798,
+    "y1": 232
+   }
+  },
+  {
+   "text": "Straight",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 243,
+    "y0": 326,
+    "x1": 397,
+    "y1": 370
+   }
+  },
+  {
+   "text": "Rye",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 410,
+    "y0": 329,
+    "x1": 481,
+    "y1": 370
+   }
+  },
+  {
+   "text": "Whiskey",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 492,
+    "y0": 326,
+    "x1": 660,
+    "y1": 370
+   }
+  },
+  {
+   "text": "45%",
+   "confidence": 92,
+   "pass": 1,
+   "bbox": {
+    "x0": 244,
+    "y0": 453,
+    "x1": 314,
+    "y1": 487
+   }
+  },
+  {
+   "text": "Alc./Vol.",
+   "confidence": 91,
+   "pass": 1,
+   "bbox": {
+    "x0": 324,
+    "y0": 451,
+    "x1": 471,
+    "y1": 488
+   }
+  },
+  {
+   "text": "(90",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 485,
+    "y0": 451,
+    "x1": 540,
+    "y1": 487
+   }
+  },
+  {
+   "text": "Proof)",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 552,
+    "y0": 451,
+    "x1": 655,
+    "y1": 486
+   }
+  },
+  {
+   "text": "750",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 388,
+    "y0": 529,
+    "x1": 447,
+    "y1": 557
+   }
+  },
+  {
+   "text": "mL",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 459,
+    "y0": 523,
+    "x1": 514,
+    "y1": 550
+   }
+  },
+  {
+   "text": "Bottled",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 150,
+    "y0": 659,
+    "x1": 236,
+    "y1": 681
+   }
+  },
+  {
+   "text": "by",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 242,
+    "y0": 659,
+    "x1": 271,
+    "y1": 686
+   }
+  },
+  {
+   "text": "Cedar",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 278,
+    "y0": 659,
+    "x1": 348,
+    "y1": 681
+   }
+  },
+  {
+   "text": "Fork",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 355,
+    "y0": 659,
+    "x1": 411,
+    "y1": 681
+   }
+  },
+  {
+   "text": "Distilling",
+   "confidence": 93,
+   "pass": 1,
+   "bbox": {
+    "x0": 418,
+    "y0": 659,
+    "x1": 527,
+    "y1": 686
+   }
+  },
+  {
+   "text": "Co.,",
+   "confidence": 93,
+   "pass": 1,
+   "bbox": {
+    "x0": 535,
+    "y0": 661,
+    "x1": 579,
+    "y1": 685
+   }
+  },
+  {
+   "text": "Louisville,",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 588,
+    "y0": 659,
+    "x1": 708,
+    "y1": 685
+   }
+  },
+  {
+   "text": "KY",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 717,
+    "y0": 661,
+    "x1": 752,
+    "y1": 680
+   }
+  },
+  {
+   "text": "GOVERNMENT",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 81,
+    "y0": 834,
+    "x1": 257,
+    "y1": 851
+   }
+  },
+  {
+   "text": "WARNING:",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 262,
+    "y0": 834,
+    "x1": 392,
+    "y1": 851
+   }
+  },
+  {
+   "text": "(1)",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 400,
+    "y0": 834,
+    "x1": 424,
+    "y1": 853
+   }
+  },
+  {
+   "text": "According",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 430,
+    "y0": 833,
+    "x1": 529,
+    "y1": 855
+   }
+  },
+  {
+   "text": "to",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 535,
+    "y0": 836,
+    "x1": 554,
+    "y1": 850
+   }
+  },
+  {
+   "text": "the",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 560,
+    "y0": 833,
+    "x1": 590,
+    "y1": 850
+   }
+  },
+  {
+   "text": "Surgeon",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 597,
+    "y0": 834,
+    "x1": 676,
+    "y1": 855
+   }
+  },
+  {
+   "text": "General,",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 683,
+    "y0": 833,
+    "x1": 763,
+    "y1": 854
+   }
+  },
+  {
+   "text": "women",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 80,
+    "y0": 873,
+    "x1": 151,
+    "y1": 884
+   }
+  },
+  {
+   "text": "should",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 157,
+    "y0": 867,
+    "x1": 222,
+    "y1": 884
+   }
+  },
+  {
+   "text": "not",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 228,
+    "y0": 870,
+    "x1": 260,
+    "y1": 884
+   }
+  },
+  {
+   "text": "drink",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 266,
+    "y0": 867,
+    "x1": 318,
+    "y1": 884
+   }
+  },
+  {
+   "text": "alcoholic",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 324,
+    "y0": 867,
+    "x1": 410,
+    "y1": 884
+   }
+  },
+  {
+   "text": "beverages",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 416,
+    "y0": 867,
+    "x1": 511,
+    "y1": 889
+   }
+  },
+  {
+   "text": "during",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 517,
+    "y0": 867,
+    "x1": 581,
+    "y1": 889
+   }
+  },
+  {
+   "text": "pregnancy",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 587,
+    "y0": 873,
+    "x1": 688,
+    "y1": 889
+   }
+  },
+  {
+   "text": "because",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 694,
+    "y0": 867,
+    "x1": 770,
+    "y1": 885
+   }
+  },
+  {
+   "text": "of",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 776,
+    "y0": 867,
+    "x1": 796,
+    "y1": 884
+   }
+  },
+  {
+   "text": "the",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 80,
+    "y0": 901,
+    "x1": 111,
+    "y1": 918
+   }
+  },
+  {
+   "text": "risk",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 117,
+    "y0": 901,
+    "x1": 153,
+    "y1": 918
+   }
+  },
+  {
+   "text": "of",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 159,
+    "y0": 901,
+    "x1": 179,
+    "y1": 918
+   }
+  },
+  {
+   "text": "birth",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 183,
+    "y0": 901,
+    "x1": 230,
+    "y1": 918
+   }
+  },
+  {
+   "text": "defects.",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 237,
+    "y0": 901,
+    "x1": 309,
+    "y1": 918
+   }
+  },
+  {
+   "text": "(2)",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 317,
+    "y0": 902,
+    "x1": 344,
+    "y1": 922
+   }
+  },
+  {
+   "text": "Consumption",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 351,
+    "y0": 902,
+    "x1": 481,
+    "y1": 923
+   }
+  },
+  {
+   "text": "of",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 488,
+    "y0": 901,
+    "x1": 508,
+    "y1": 918
+   }
+  },
+  {
+   "text": "alcoholic",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 512,
+    "y0": 901,
+    "x1": 598,
+    "y1": 918
+   }
+  },
+  {
+   "text": "beverages",
+   "confidence": 95,
+   "pass": 1,
+   "bbox": {
+    "x0": 604,
+    "y0": 901,
+    "x1": 699,
+    "y1": 923
+   }
+  },
+  {
+   "text": "impairs",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 705,
+    "y0": 902,
+    "x1": 778,
+    "y1": 923
+   }
+  },
+  {
+   "text": "your",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 80,
+    "y0": 941,
+    "x1": 124,
+    "y1": 957
+   }
+  },
+  {
+   "text": "ability",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 131,
+    "y0": 935,
+    "x1": 191,
+    "y1": 957
+   }
+  },
+  {
+   "text": "to",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 196,
+    "y0": 938,
+    "x1": 215,
+    "y1": 952
+   }
+  },
+  {
+   "text": "drive",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 222,
+    "y0": 935,
+    "x1": 270,
+    "y1": 952
+   }
+  },
+  {
+   "text": "a",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 277,
+    "y0": 941,
+    "x1": 287,
+    "y1": 952
+   }
+  },
+  {
+   "text": "car",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 293,
+    "y0": 941,
+    "x1": 322,
+    "y1": 952
+   }
+  },
+  {
+   "text": "or",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 328,
+    "y0": 941,
+    "x1": 348,
+    "y1": 952
+   }
+  },
+  {
+   "text": "operate",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 355,
+    "y0": 938,
+    "x1": 427,
+    "y1": 957
+   }
+  },
+  {
+   "text": "machinery,",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 433,
+    "y0": 935,
+    "x1": 540,
+    "y1": 957
+   }
+  },
+  {
+   "text": "and",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 548,
+    "y0": 935,
+    "x1": 583,
+    "y1": 952
+   }
+  },
+  {
+   "text": "may",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 590,
+    "y0": 941,
+    "x1": 630,
+    "y1": 957
+   }
+  },
+  {
+   "text": "cause",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 636,
+    "y0": 941,
+    "x1": 689,
+    "y1": 952
+   }
+  },
+  {
+   "text": "health",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 695,
+    "y0": 935,
+    "x1": 755,
+    "y1": 952
+   }
+  },
+  {
+   "text": "problems.",
+   "confidence": 96,
+   "pass": 1,
+   "bbox": {
+    "x0": 81,
+    "y0": 969,
+    "x1": 176,
+    "y1": 991
+   }
+  }
+ ],
+ "panels": [
+  {
+   "x0": 0,
+   "x1": 900
+  }
+ ],
+ "quality": {
+  "width": 900,
+  "height": 1200,
+  "contrastSpan": 196
+ }
+}

@@ -17,7 +17,8 @@ function ImageStep({ intake }) {
 
   let badge = null
   if (read.status === 'reading') badge = <span className="pill check" role="status"><span aria-hidden="true">?</span>Reading…</span>
-  if (read.status === 'done' && read.closer) badge = <span className="pill check" role="status"><span aria-hidden="true">?</span>First read {seconds(read.ms)}, taking a closer look…</span>
+  if (read.status === 'done' && read.sample) badge = <span className="pill match"><span aria-hidden="true">&#10003;</span>Sample label</span>
+  else if (read.status === 'done' && read.closer) badge = <span className="pill check" role="status"><span aria-hidden="true">?</span>First read {seconds(read.ms)}, taking a closer look…</span>
   else if (read.status === 'done') badge = <span className="pill match"><span aria-hidden="true">&#10003;</span>Read in {seconds(read.ms)}</span>
   if (read.status === 'error') badge = <span className="pill mismatch"><span aria-hidden="true">&#10005;</span>Not read</span>
 
@@ -36,8 +37,12 @@ function ImageStep({ intake }) {
           <div className="meta">
             <b>{image.name}</b>
             <span>
-              {image.source === 'pasted' ? 'Pasted from the clipboard. ' : image.source === 'dropped' ? 'Dropped here. ' : 'Chosen from your files. '}
-              Reading started the moment it arrived.
+              {image.source === 'sample' ? 'A made-up sample label, already read for the tour.' : (
+                <>
+                  {image.source === 'pasted' ? 'Pasted from the clipboard. ' : image.source === 'dropped' ? 'Dropped here. ' : 'Chosen from your files. '}
+                  Reading started the moment it arrived.
+                </>
+              )}
             </span>
           </div>
           <button type="button" className="btn" onClick={pick}>Replace</button>

@@ -331,3 +331,15 @@ button { cursor: pointer; }
 .confirm p { margin: 0 0 0.5rem; font-size: 0.9375rem; }
 .confirm .actions { display: flex; gap: 0.75rem; }
 .full .confirm { padding-left: 1.5rem; padding-right: 1.5rem; }
+
+/* Tour */
+.tour { position: fixed; inset: 0; z-index: 100; }
+.tour-block { position: absolute; inset: 0; }
+.tour-dim { position: absolute; inset: 0; background: rgba(15, 25, 40, 0.6); }
+.tour-spot { position: absolute; border: 3px solid #FFFFFF; border-radius: 10px; box-shadow: 0 0 0 9999px rgba(15, 25, 40, 0.6); pointer-events: none; transition: all 0.2s; }
+.tour-card { position: absolute; width: min(24rem, calc(100vw - 1rem)); padding: 1rem 1.25rem; background: #FFFFFF; color: var(--ink); border: 3px solid var(--navy); border-radius: 12px; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35); }
+.tour-count { font-size: 0.8125rem; font-weight: 700; color: var(--muted); }
+.tour-card h2 { margin: 0.25rem 0 0.375rem; font-size: 1.25rem; color: var(--navy); }
+.tour-card p { margin: 0 0 0.875rem; font-size: 1rem; line-height: 1.4; }
+.tour-actions { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.tour-actions .spacer { flex-grow: 1; }

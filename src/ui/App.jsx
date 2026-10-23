@@ -9,6 +9,9 @@ import { parseApplication, importedFromCountry, APPLICATION_FIELDS } from '../en
 import { checkLabel, qualityProblems } from '../engine/check.js'
 import { classifyPaste, classifyDrop, isEditable } from './paste.js'
 import { rowStatus, TIERS, tierSummary } from './status.js'
+import Tour from '../tour/Tour.jsx'
+import { TOUR_STEPS } from '../tour/steps.js'
+import { SAMPLE_READ, SAMPLE_TEXT, sampleFile } from '../tour/sample.js'
 
 const NOT_AN_IMAGE = 'That file is not an image. Choose a PNG, JPG or similar picture of the label.'
 const NOTHING_READ = 'Nothing could be read from this image. Try a clearer or larger picture of the label.'
@@ -32,6 +35,10 @@ export default function App() {
   const [typography, setTypography] = useState(null)
   const [helpOpen, setHelpOpen] = useState(false) // full mode: keyboard hints and the symbol legend
   const [mode, setMode] = useState('compact') // compact column, or full (fullscreen, two columns)
+  const [tour, setTour] = useState({ step: 0 }) // the tour opens every time the app opens; nothing is stored
+  const tourRef = useRef(tour)
+  tourRef.current = tour
+  const demoRef = useRef(false) // true while the sample label is loaded for the tour
 
   // The engine starts loading as the page opens, so it is ready when the image arrives.
   useEffect(() => {
@@ -67,8 +74,45 @@ export default function App() {
     setEdits({})
     setImportedChoice(null)
     setTypography(null)
+    demoRef.current = false
     setScreen('intake')
   }, [leaveFull])
+
+  // The tour works on a made-up sample label, loaded as if it had been pasted and read.
+  const showSample = useCallback(async () => {
+    const file = await sampleFile()
+    current.current++
+    demoRef.current = true
+    setImage((old) => { if (old) URL.revokeObjectURL(old.url); return { name: file.name, url: URL.createObjectURL(file), source: 'sample', file } })
+    setRead({
+      status: 'done', ms: 0, sample: true, closer: null, problems: qualityProblems(SAMPLE_READ.quality),
+      result: { ...SAMPLE_READ, ms: 0, secondPass: { ran: false, missing: [], added: 0, ms: 0 } },
+    })
+    setAppText(SAMPLE_TEXT)
+    setEdits({})
+    setImportedChoice(null)
+  }, [])
+
+  // Closing the tour removes the sample and leaves the app empty and ready for a real label.
+  const closeTour = useCallback(() => {
+    setTour(null)
+    if (demoRef.current) reset()
+  }, [reset])
+  const nextStep = useCallback(() => setTour((t) => (t ? { step: Math.min(t.step + 1, TOUR_STEPS.length - 1) } : t)), [])
+  const backStep = useCallback(() => setTour((t) => (t ? { step: Math.max(t.step - 1, 0) } : t)), [])
+
+  // Each step brings the screen it talks about.
+  const tourStep = tour?.step
+  useEffect(() => {
+    if (tourStep === undefined) return undefined
+    const s = TOUR_STEPS[tourStep]
+    let alive = true
+    ;(async () => {
+      if (s.sample && !demoRef.current) await showSample()
+      if (alive) setScreen(s.sample ? s.screen : 'intake')
+    })()
+    return () => { alive = false }
+  }, [tourStep, showSample])
 
   const onFile = useCallback(async (file, source) => {
     const id = ++current.current
@@ -119,9 +163,10 @@ export default function App() {
 
   const take = useCallback((item) => {
     if (!item) return
+    if (tourRef.current) closeTour() // pasting a real label ends the tour
     if (item.kind === 'image') { onFile(item.file, 'pasted'); say('Pasted the label image. Reading started.') }
     else takeText(item.text)
-  }, [onFile, say, takeText])
+  }, [onFile, say, takeText, closeTour])
 
   // Paste or drop anywhere on the intake screen: the app tells an image from
   // text, so nothing needs a click first. A paste into a box being typed in
@@ -196,22 +241,28 @@ export default function App() {
     onStart: () => setScreen('review'),
   }
 
+  const tourFocus = tour ? TOUR_STEPS[tour.step].focus ?? null : null
+
   return (
-    <div className={`app${review ? ' fixed' : ''}${mode === 'full' && review ? ' fullmode' : ''}`}>
+    <>
+    <div className={`app${review ? ' fixed' : ''}${mode === 'full' && review ? ' fullmode' : ''}`} inert={tour ? true : undefined}>
       <div className={`frame ${mode === 'full' && review ? 'full' : 'compact'}`}>
         <Header textSize={textSize} middle={mode === 'full' && review && <TierChip result={review.result} />}>
           {review && mode === 'full' && <button type="button" className="btn-onblue" aria-expanded={helpOpen} aria-controls="help-pop" onClick={() => setHelpOpen((v) => !v)}>Help</button>}
           {review && (mode === 'full'
             ? <button type="button" className="btn-onblue solid" onClick={leaveFull}>Compact view</button>
             : <button type="button" className="btn-onblue solid" onClick={enterFull}><span aria-hidden="true">&#x26F6;</span> Full screen</button>)}
+          {screen === 'intake' && !image && !appText && !tour && <button type="button" className="btn-onblue" onClick={() => setTour({ step: 0 })}>Tour</button>}
           <button type="button" className="btn-onblue" onClick={reset}>Next label</button>
         </Header>
         {screen === 'intake' && notice && <div className="notice" role="status">{notice}</div>}
         {screen === 'intake' && <Intake intake={intake} />}
-        {review && <Review image={image} read={read} application={application} result={review.result} fields={review.fields} mode={mode} textScale={textSize.scale} onNext={reset} helpOpen={helpOpen} onCloseHelp={() => setHelpOpen(false)} />}
+        {review && <Review image={image} read={read} application={application} result={review.result} fields={review.fields} mode={mode} textScale={textSize.scale} onNext={reset} helpOpen={helpOpen} onCloseHelp={() => setHelpOpen(false)} tourFocus={tourFocus} />}
       </div>
       <Footer wide={mode === 'full' && Boolean(review)} />
     </div>
+    {tour && <Tour steps={TOUR_STEPS} step={tour.step} onNext={nextStep} onBack={backStep} onClose={closeTour} />}
+    </>
   )
 }
 
