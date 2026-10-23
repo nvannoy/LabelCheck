@@ -132,6 +132,9 @@ describe('split names and repeated names', () => {
   it('matches a bottler whose name and city are printed apart', () => {
     const s = status('Brewed and bottled by MALT & HOP BREWERY Honey Ale 5% Alc./Vol. 1 Pint HYATTSVILLE, MD', MALT)
     expect(s.bottler).toBe('match')
+    const r = checkLabel({ words: wordsFrom('Brewed and bottled by MALT & HOP BREWERY Honey Ale 5% Alc./Vol. 1 Pint HYATTSVILLE, MD'), application: MALT }).fields.find((f) => f.id === 'bottler')
+    expect(r.apart).toBe(true)
+    expect(r.found).not.toMatch(/elsewhere/)
   })
   it('does not match when the name part is wrong, even if the city is right', () => {
     expect(status('Bottled by Hop & Malt Cellars HYATTSVILLE, MD 5% 1 Pint', MALT).bottler).toBe('check')

@@ -2,6 +2,8 @@ import { WARNING_TEXT } from '../engine/warning.js'
 
 const APPLICATION_KEY = { brand: 'brand', classType: 'classType', abv: 'abv', netContents: 'netContents', bottler: 'bottler', country: 'country' }
 
+const valClass = (t) => `val${String(t).length > 24 ? ' long' : ''}`
+
 function applicationSays(field, application) {
   if (field.id === 'warning') return `${WARNING_TEXT.slice(0, 70)}...`
   return application[APPLICATION_KEY[field.id]] || 'Not given'
@@ -71,14 +73,15 @@ export default function FieldRow({ field, number, focused, preview, seen, applic
             <div className="compare">
               <div>
                 <div className="cap">{field.id === 'warning' ? 'Statute requires' : 'Application says'}</div>
-                <div className="val">{applicationSays(field, application)}</div>
+                <div className={valClass(applicationSays(field, application))}>{applicationSays(field, application)}</div>
               </div>
               <div className={differs ? 'differs' : ''}>
                 <div className="cap">Label says</div>
-                <div className="val">{field.found ? (field.found.length > 90 ? `${field.found.slice(0, 90)}...` : field.found) : 'Nothing found'}</div>
+                <div className={valClass(field.found)}>{field.found ? `${field.found.length > 90 ? `${field.found.slice(0, 90)}...` : field.found}${field.apart ? ' *' : ''}` : 'Nothing found'}</div>
               </div>
             </div>
           )}
+          {field.apart && <p className="footnote">* The name and the address are printed in different places on the label. That is fine as long as both are there.</p>}
           <div className="note"><span className="i" aria-hidden="true">i</span>
             <span><strong>{field.reason}</strong><br />{field.rule}</span>
           </div>

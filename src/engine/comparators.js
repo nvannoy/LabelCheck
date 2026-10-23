@@ -119,9 +119,11 @@ export function bottler(index, application) {
   const together = whole.score >= 0.95
   if (together || apart) {
     const place = together ? locate(index, whole.from, whole.to) : locate(index, nameW.from, nameW.to)
-    const found = together ? textOf(index, whole.from, whole.to) : `${textOf(index, nameW.from, nameW.to)}; elsewhere: ${textOf(index, addrW.from, addrW.to)}`
+    const found = together ? textOf(index, whole.from, whole.to) : `${textOf(index, nameW.from, nameW.to)} ${textOf(index, addrW.from, addrW.to)}`
     const where = together ? '' : ' The name and the address are printed apart on the label.'
-    return lowConfidence({ status: 'match', found, ...place, reason: `The bottler name and address match.${where}` }, 'The bottler name and address')
+    // apart: the name and the address were found in different places. The label is not wrong for
+    // that, so it only adds a footnote to what is shown.
+    return { ...lowConfidence({ status: 'match', found, ...place, reason: `The bottler name and address match.${where}` }, 'The bottler name and address'), apart: !together }
   }
   const score = Math.max(whole.score, addrW ? (nameW.score + addrW.score) / 2 : nameW.score)
   if (score >= 0.6) {

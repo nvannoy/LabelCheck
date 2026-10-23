@@ -6,7 +6,7 @@ function readAs(f) {
     if (f.status === 'match') return 'Text found, wording matches'
     return f.found ? 'Text found, wording differs or is unclear' : 'Not found'
   }
-  return f.found || 'Not found'
+  return f.found ? `${f.found}${f.apart ? ' *' : ''}` : 'Not found'
 }
 
 export default function ReadTable({ fields }) {
