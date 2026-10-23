@@ -49,3 +49,16 @@ export function findPanels(gray, width, height) {
   const mid = Math.round((best.start + best.end) / 2)
   return [{ x0: 0, x1: mid }, { x0: mid, x1: width }]
 }
+
+// Gray levels between the darkest 1% and the lightest 1% of pixels. A pale-on-pale
+// label has a small span, which the engine reports as low contrast.
+export function contrastSpan(gray) {
+  const hist = new Array(256).fill(0)
+  for (let i = 0; i < gray.length; i++) hist[gray[i] | 0]++
+  const tail = gray.length * 0.01
+  let lo = 0, hi = 255, acc = 0
+  while (lo < 255 && (acc += hist[lo]) < tail) lo++
+  acc = 0
+  while (hi > 0 && (acc += hist[hi]) < tail) hi--
+  return hi - lo
+}

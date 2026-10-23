@@ -5,7 +5,7 @@
 // cost 1.4 to 2.6 s each time it ran (see README).
 // Browser-specific parts (canvas, OCR worker) are passed in.
 import { prepare, pickScale } from './prepare.js'
-import { toGray, findPanels } from './panels.js'
+import { toGray, findPanels, contrastSpan } from './panels.js'
 import { missingRequired } from '../engine/candidates.js'
 
 const joinText = (words) => words.map((w) => w.text).join(' ')
@@ -42,6 +42,7 @@ export async function readLabel({ source, width, height, makeCanvas, recognize, 
   const fullCtx = full.getContext('2d')
   fullCtx.drawImage(source, 0, 0)
   const gray = toGray(fullCtx.getImageData(0, 0, width, height).data, width, height)
+  const quality = { width, height, contrastSpan: contrastSpan(gray) }
   // One scale for every panel, chosen from the whole image, so splitting does
   // not make the pixel count (and the read time) bigger than reading it whole.
   const wholeScale = pickScale(width)
@@ -76,5 +77,5 @@ export async function readLabel({ source, width, height, makeCanvas, recognize, 
     Object.assign(second, { ran: true, added: fresh.length, ms: performance.now() - t1, panel: target })
   }
 
-  return { words, panels, secondPass: second, firstPassMs, ms: performance.now() - t0 }
+  return { words, panels, quality, secondPass: second, firstPassMs, ms: performance.now() - t0 }
 }

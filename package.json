@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "copy-ocr": "node scripts/copy-ocr.js",
+    "evaluate": "node scripts/evaluate.js",
     "postinstall": "node scripts/copy-ocr.js"
   },
   "dependencies": {
