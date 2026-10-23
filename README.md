@@ -4,6 +4,10 @@ A browser-only prototype that helps a TTB compliance agent check an alcohol labe
 
 Live: https://labelcheck-grtwrx.netlify.app/
 
+Quick links: [Setup and running](#setup-and-running), [Approach](#approach), [Tools](#tools), [Assumptions](#assumptions), [Limitations](#limitations).
+
+This is a proof of concept. It runs on Netlify's default subdomain, and a custom domain is not needed to evaluate it. A production deployment would run in Treasury's Azure tenant (see [Moving to Azure Static Web Apps](#moving-to-azure-static-web-apps)).
+
 ## How this was built
 
 Claude Code wrote most of the code in this repository. The developer reviewed it and is expected to be able to explain every part. Simple code is preferred over clever code.
@@ -59,7 +63,16 @@ npm run verify  # version check, tests, evaluate, production build, browser chec
 
 ## Tools
 
-Vite, React (JSX, no TypeScript), tesseract.js 7, Vitest, Atkinson Hyperlegible (self-hosted). `@napi-rs/canvas` is a dev dependency used only by the test-label generator and the evaluation script. The edit-distance code for fuzzy matching is written in the repo (`src/engine/text.js`) instead of a library, because it is 15 lines and easy to audit.
+| Tool | Role | Why |
+| --- | --- | --- |
+| Vite and React (JSX, no TypeScript) | App shell and UI | Small, common and fast to build. Output is plain static files. |
+| tesseract.js 7 | OCR in the browser | Runs on the agent's machine, so label images never leave it. The worker, WASM core and language data are served from this app's own origin. |
+| Own edit-distance code (`src/engine/text.js`) | Fuzzy matching | It is 15 lines and easy to audit, so no library is needed. |
+| Vitest | Engine tests | Runs the same pure engine code that the evaluation script uses in Node. |
+| Atkinson Hyperlegible (self-hosted) | Font | Built for legibility, and self-hosted so nothing loads from a CDN. |
+| `@napi-rs/canvas` | Test-label generator and evaluation script (dev dependency only) | Draws fictional test labels with bundled fonts, so they look the same on every OS. |
+| Netlify | Static hosting | Static files only. `netlify.toml` and `public/_headers` are the only hosting files. |
+| Claude Code | Wrote most of the code | See "How this was built". |
 
 ## Security
 
@@ -126,7 +139,10 @@ Machine for timings: Intel Core i7-1068NG7 (4 cores, 8 threads), 32 GB RAM, macO
 - The app is for desktop and laptop users with a mouse and keyboard. Touch screens are not a target.
 - One label image per application. Two labels side by side in one image work only when there is a blank vertical gap between them.
 - Distilled spirits rules (27 CFR Part 5 and Part 16). Beer and wine rules are not covered. The two TTB spirits samples and one malt beverage image are real government examples kept in `tests/samples/` as the one exception to using generated labels only.
-- The application text is pasted as labeled lines (see above), copied from the COLA record by the agent.
+- The app is standalone, with no COLA integration. The agent copies the label image and the application text from the COLA record.
+- The application text is pasted as labeled lines (see above).
+- The seven fields come from the brief.
+- An ordinary office PC is the speed benchmark (about 5 seconds to read and check).
 - Bottler name and address and country of origin are best-effort fields.
 
 ## Limitations
