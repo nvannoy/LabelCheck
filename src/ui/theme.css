@@ -267,3 +267,23 @@ button { cursor: pointer; }
 .row-body .verdict + .byeye, .row-body .compare + .byeye { margin-top: 0.5rem; }
 
 .closer { padding: 0.5rem 1.25rem; background: var(--amber-bg); border-bottom: 2px dashed var(--amber); color: var(--amber); font-size: 0.9375rem; font-weight: 700; }
+
+/* Zoomable label image */
+.imagebox .scroller { position: absolute; inset: 0; overflow: auto; }
+.zoombar { position: absolute; right: 0.5rem; bottom: 0.5rem; z-index: 6; display: flex; align-items: center; gap: 0.25rem; padding: 0.25rem; background: rgba(255, 255, 255, 0.96); border: 2px solid var(--navy); border-radius: 8px; }
+.zoombar button { min-width: 2rem; height: 2rem; border: 2px solid var(--navy); border-radius: 6px; background: #FFFFFF; color: var(--navy); font-size: 1.125rem; font-weight: 700; line-height: 1; padding: 0; }
+.zoombar button.wide { padding: 0 0.5rem; font-size: 0.8125rem; }
+.zoombar button:disabled { opacity: 0.45; cursor: default; }
+.zoombar .level { min-width: 2.75rem; text-align: center; font-size: 0.8125rem; font-weight: 700; color: var(--navy); }
+
+/* Full mode on a wide, tall window: the label and the read table stay put and
+   only the check panel scrolls. Narrower windows scroll as one page. */
+@media (min-width: 1000px) and (min-height: 560px) {
+  .app.fullmode { height: 100vh; overflow: hidden; }
+  .fullmode .frame.full { min-height: 0; overflow: hidden; }
+  .full .review { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .full .cols { flex: 1; min-height: 0; overflow: hidden; padding-bottom: 0.75rem; align-items: stretch; grid-template-rows: minmax(0, 1fr); }
+  .full .left, .full .right { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+  .full .left .imagebox { height: min(34rem, 52vh); flex-shrink: 0; }
+  .fullmode .footer { padding: 0.25rem 1rem; font-size: 0.75rem; }
+}

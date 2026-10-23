@@ -129,7 +129,7 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <div className={`app${mode === 'full' && review ? ' fullmode' : ''}`}>
       <div className={`frame ${mode === 'full' && review ? 'full' : 'compact'}`}>
         <Header textSize={textSize} middle={mode === 'full' && review && <TierChip result={review.result} />}>
           {review && (mode === 'full'

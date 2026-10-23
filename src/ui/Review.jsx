@@ -47,9 +47,15 @@ export default function Review({ image, read, application, result, fields, mode,
   useLayoutEffect(() => {
     const draw = () => {
       const root = frame.current?.getBoundingClientRect()
-      const row = rowRefs.current[shownId]?.getBoundingClientRect()
+      const rowEl = rowRefs.current[shownId]
+      const row = rowEl?.getBoundingClientRect()
       const box = boxRefs.current[shownId]?.getBoundingClientRect()
       if (!root || !row || !box) { setPath(null); return }
+      // No line when either end has been scrolled or zoomed out of view.
+      const inside = (r, area) => !area || (r.left + r.width / 2 >= area.left && r.left + r.width / 2 <= area.right && r.top + r.height / 2 >= area.top && r.top + r.height / 2 <= area.bottom)
+      const view = boxRefs.current[shownId].closest('.scroller')?.getBoundingClientRect()
+      const panel = rowEl.closest('.right')?.getBoundingClientRect()
+      if (!inside(box, view) || !inside(row, panel)) { setPath(null); return }
       const twoColumns = row.left > box.right + 40
       const y = row.top + row.height / 2
       const by = box.top + box.height / 2
@@ -61,7 +67,11 @@ export default function Review({ image, read, application, result, fields, mode,
     const ro = new ResizeObserver(draw)
     ro.observe(frame.current)
     window.addEventListener('resize', draw)
-    return () => { ro.disconnect(); window.removeEventListener('resize', draw) }
+    // Scroll events do not bubble, so listen in the capture phase to hear the
+    // image scroller and the check panel.
+    const root = frame.current
+    root.addEventListener('scroll', draw, true)
+    return () => { ro.disconnect(); window.removeEventListener('resize', draw); root.removeEventListener('scroll', draw, true) }
   }, [shownId, textScale, fields, full])
 
   // Keep the focused row in view when the keyboard moves it.
@@ -71,7 +81,7 @@ export default function Review({ image, read, application, result, fields, mode,
   const color = { reject: 'var(--red)', review: 'var(--amber)', ready: 'var(--green)' }[result.tier]
 
   return (
-    <div ref={frame} style={{ position: 'relative' }}>
+    <div ref={frame} className="review" style={{ position: 'relative' }}>
       {!full && (
         <div className={`tier ${result.tier}`} role="status">
           <span className="icon" aria-hidden="true">{tier.symbol}</span>
@@ -90,7 +100,7 @@ export default function Review({ image, read, application, result, fields, mode,
             focusId={focusId} previewId={previewId} onFocus={setFocusId} onPreview={setPreviewId} boxRefs={boxRefs} />
           {full && <ReadTable fields={fields} />}
         </div>
-        <div>
+        <div className="right">
           <div className="rows" role="list" aria-label="Fields">
             {fields.map((f, i) => (
               <div role="listitem" key={f.id}>
