@@ -20,6 +20,8 @@ const CLAUSE_1 = [EXPECTED.indexOf('(1)'), EXPECTED.indexOf('(2)')]
 const CLAUSE_2 = [EXPECTED.indexOf('(2)'), EXPECTED.length]
 const SURE = 85 // OCR confidence at or above this means a wrong word is a real difference
 
+const sameLetters = (a, b) => a.toLowerCase() === b.toLowerCase()
+
 // Edit script between the statute and the label words. Each op is
 // {kind: 'sub' | 'ins' | 'del', want, got, conf}.
 function align(want, got) {
@@ -29,11 +31,14 @@ function align(want, got) {
   for (let j = 0; j <= m; j++) d[0][j] = j
   for (let i = 1; i <= n; i++)
     for (let j = 1; j <= m; j++)
-      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (want[i - 1] === got[j - 1].text ? 0 : 1))
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (sameLetters(want[i - 1], got[j - 1].text) ? 0 : 1))
   const ops = []
   let i = n, j = m
   while (i > 0 || j > 0) {
-    if (i > 0 && j > 0 && want[i - 1] === got[j - 1].text && d[i][j] === d[i - 1][j - 1]) { i--; j--; continue }
+    if (i > 0 && j > 0 && sameLetters(want[i - 1], got[j - 1].text) && d[i][j] === d[i - 1][j - 1]) {
+      if (want[i - 1] !== got[j - 1].text) ops.push({ kind: 'sub', want: want[i - 1], got: got[j - 1].text, conf: got[j - 1].confidence, at: i - 1 })
+      i--; j--; continue
+    }
     if (i > 0 && j > 0 && d[i][j] === d[i - 1][j - 1] + 1) { ops.push({ kind: 'sub', want: want[i - 1], got: got[j - 1].text, conf: got[j - 1].confidence, at: i - 1 }); i--; j--; continue }
     if (j > 0 && d[i][j] === d[i][j - 1] + 1) { ops.push({ kind: 'ins', want: '', got: got[j - 1].text, conf: got[j - 1].confidence, at: i }); j--; continue }
     ops.push({ kind: 'del', want: want[i - 1], got: '', conf: 100, at: i - 1 }); i--
@@ -46,6 +51,10 @@ const caseOnly = (op) => op.kind === 'sub' && op.want.toLowerCase() === op.got.t
 // punctuation alone is sent to the agent instead of being called a mismatch.
 const plain = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
 const softOnly = (op) => op.kind === 'sub' && plain(op.want) !== '' && plain(op.want) === plain(op.got)
+
+// OCR reads the digit 1 in "(1)" as I, l or |. A real "(I)" would be a defect, so this is
+// a Check for the agent, never a Match.
+const markerMisread = (op) => op.kind === 'sub' && op.want === '(1)' && /^\([Il|]\)$/.test(op.got)
 
 const SMALL_PRINT_PX = 12 // body letters shorter than this (in image pixels) are read unreliably
 
@@ -105,6 +114,9 @@ function compareWarning(words) {
   if (ops.every(softOnly)) {
     return { ...base, ...place, status: 'check', reason: 'The words match the statute but some capital letters or punctuation marks differ. Confirm by eye.' }
   }
+  if (ops.every((o) => softOnly(o) || markerMisread(o))) {
+    return { ...base, ...place, status: 'check', reason: 'Clause marker looks like (I) or (l). Confirm it reads (1) by eye.' }
+  }
   // Both clauses present but in the wrong order is one clear problem, not twenty extra words.
   const at1 = got.findIndex((w) => w.text === '(1)')
   const at2 = got.findIndex((w) => w.text === '(2)')
@@ -121,7 +133,7 @@ function compareWarning(words) {
       }
     }
   }
-  const sure = ops.filter((o) => (o.kind === 'sub' || o.kind === 'ins') && !softOnly(o) && o.conf >= SURE)
+  const sure = ops.filter((o) => (o.kind === 'sub' || o.kind === 'ins') && !softOnly(o) && !markerMisread(o) && o.conf >= SURE)
   if (sure.length) {
     const first = sure[0]
     const what = first.kind === 'ins' ? `extra word "${first.got}"` : `"${first.got}" where the statute has "${first.want}"`
