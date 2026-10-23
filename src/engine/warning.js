@@ -16,6 +16,8 @@ export const LEGIBLE_BY_EYE = 'The statement is separate and apart from other in
 export const WARNING_BY_EYE = [BOLD_BY_EYE, LEGIBLE_BY_EYE]
 
 const EXPECTED = WARNING_TEXT.split(/\s+/)
+const CLAUSE_1 = [EXPECTED.indexOf('(1)'), EXPECTED.indexOf('(2)')]
+const CLAUSE_2 = [EXPECTED.indexOf('(2)'), EXPECTED.length]
 const SURE = 85 // OCR confidence at or above this means a wrong word is a real difference
 
 // Edit script between the statute and the label words. Each op is
@@ -45,7 +47,20 @@ const caseOnly = (op) => op.kind === 'sub' && op.want.toLowerCase() === op.got.t
 const plain = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
 const softOnly = (op) => op.kind === 'sub' && plain(op.want) !== '' && plain(op.want) === plain(op.got)
 
+const SMALL_PRINT_PX = 12 // body letters shorter than this (in image pixels) are read unreliably
+
+// Reading very small print is unreliable even when OCR reports high confidence, so a
+// difference found in it is sent to a person instead of being called a mismatch.
 export function checkWarning(words) {
+  const r = compareWarning(words)
+  if (r.status !== 'mismatch' || !r.statementWords) return r
+  const heights = r.statementWords.map((w) => w.bbox.y1 - w.bbox.y0).sort((a, b) => a - b)
+  const median = heights[Math.floor(heights.length / 2)]
+  if (median >= SMALL_PRINT_PX) return r
+  return { ...r, status: 'check', reason: `The print is very small, so the read may be wrong. ${r.reason}` }
+}
+
+function compareWarning(words) {
   const base = { byEye: WARNING_BY_EYE, expected: WARNING_TEXT }
   const index = indexWords(words)
   const anchor = bestWindow(index, 'government warning')
@@ -87,6 +102,16 @@ export function checkWarning(words) {
   }
   if (ops.every(softOnly)) {
     return { ...base, ...place, status: 'check', reason: 'The words match the statute but some capital letters or punctuation marks differ. Confirm by eye.' }
+  }
+  // A whole clause missing, with everything around it read clearly, is a real omission:
+  // OCR that fails to read text loses lines in the middle of a clause, not exactly one clause.
+  if (ops.every((o) => o.kind === 'del') && place.confidence >= SURE) {
+    const at = ops.map((o) => o.at)
+    for (const [from, to, name] of [[...CLAUSE_1, '(1)'], [...CLAUSE_2, '(2)']]) {
+      if (at.length === to - from && at[0] === from && at.at(-1) === to - 1) {
+        return { ...base, ...place, status: 'mismatch', reason: `Clause ${name} of the warning is missing. The statute requires both clauses.` }
+      }
+    }
   }
   const sure = ops.filter((o) => (o.kind === 'sub' || o.kind === 'ins') && !softOnly(o) && o.conf >= SURE)
   if (sure.length) {

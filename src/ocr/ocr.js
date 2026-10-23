@@ -11,6 +11,10 @@ export async function startWorker() {
     langPath: '/ocr',
     workerBlobURL: false,
     cacheMethod: 'none',
+  }, {
+    // Tesseract prints notes such as "Estimating resolution as 437" to stderr, which the
+    // browser shows as console errors. They are not errors, so send them nowhere.
+    debug_file: '/dev/null',
   })
   // The library default (one block of text) drops large brand names and short
   // lines such as "1 L". Automatic page segmentation finds them.
@@ -28,7 +32,13 @@ export function flattenWords(data) {
   return words
 }
 
-const makeCanvas = (w, h) => new OffscreenCanvas(w, h)
+// The image is read back from the canvas several times, so say so up front. That also keeps
+// the browser from printing a console warning about it.
+export function makeCanvas(w, h) {
+  const canvas = new OffscreenCanvas(w, h)
+  canvas.getContext('2d', { willReadFrequently: true })
+  return canvas
+}
 
 // application is optional. When the agent has already pasted it, brand and
 // class are also checked for the second-pass decision.

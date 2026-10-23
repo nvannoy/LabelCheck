@@ -49,8 +49,23 @@ describe('government warning', () => {
     const swapped = 'GOVERNMENT WARNING: (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems. (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects.'
     expect(check(swapped).status).toBe('mismatch')
   })
-  it('sends a missing clause to review, never a pass', () => {
-    expect(check(WARNING_TEXT.split(' (2)')[0]).status).toBe('check')
+  it('calls a whole missing clause a mismatch when the rest was read clearly', () => {
+    const r = check(WARNING_TEXT.split(' (2)')[0])
+    expect(r.status).toBe('mismatch')
+    expect(r.reason).toMatch(/Clause \(2\)/)
+    expect(check(WARNING_TEXT.replace(/\(1\).*? \(2\)/, '(2)')).status).toBe('mismatch')
+  })
+  it('sends a missing clause to review when the read was unsure', () => {
+    expect(check(WARNING_TEXT.split(' (2)')[0], 60).status).toBe('check')
+  })
+  it('sends a difference in very small print to review, not a mismatch', () => {
+    const tiny = wordsFrom(WARNING_TEXT.replace('car', 'truck')).map((w) => ({ ...w, bbox: { ...w.bbox, y1: w.bbox.y0 + 8 } }))
+    const r = checkWarning(tiny)
+    expect(r.status).toBe('check')
+    expect(r.reason).toMatch(/very small/)
+  })
+  it('sends a few missing words to review, not a mismatch', () => {
+    expect(check(WARNING_TEXT.replace(' health', '')).status).toBe('check')
   })
   it('sends low-confidence differences to review instead of calling them wrong', () => {
     expect(check(WARNING_TEXT.replace('women', 'wonjen'), 60).status).toBe('check')

@@ -3,7 +3,7 @@ import { useTextSize } from './useTextSize.js'
 import Header, { Footer } from './Header.jsx'
 import Intake from './Intake.jsx'
 import Review from './Review.jsx'
-import { startWorker, readImage } from '../ocr/ocr.js'
+import { startWorker, readImage, makeCanvas } from '../ocr/ocr.js'
 import { measureWarning } from '../ocr/measure.js'
 import { parseApplication, importedFromCountry, APPLICATION_FIELDS } from '../engine/parse.js'
 import { checkLabel, qualityProblems } from '../engine/check.js'
@@ -174,7 +174,7 @@ export default function App() {
       const bitmap = await createImageBitmap(image.file)
       try {
         const t = measureWarning({
-          source: bitmap, width: bitmap.width, height: bitmap.height, makeCanvas: (w, h) => new OffscreenCanvas(w, h),
+          source: bitmap, width: bitmap.width, height: bitmap.height, makeCanvas,
           statementWords, quality: read.result.quality,
         })
         if (alive) setTypography(t)

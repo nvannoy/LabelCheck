@@ -326,3 +326,8 @@ button { cursor: pointer; }
 
 .compare .val.long, .full .compare .val.long { font-size: 1.125rem; }
 .footnote { margin: 0.375rem 0 0; font-size: 0.8125rem; color: var(--ink-2); }
+
+.confirm { padding: 0.75rem 1.25rem; background: var(--red-bg); border-top: 3px solid var(--red); border-bottom: 1px solid var(--line); color: var(--red-ink); }
+.confirm p { margin: 0 0 0.5rem; font-size: 0.9375rem; }
+.confirm .actions { display: flex; gap: 0.75rem; }
+.full .confirm { padding-left: 1.5rem; padding-right: 1.5rem; }

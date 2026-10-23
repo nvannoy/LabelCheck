@@ -39,6 +39,13 @@ export default function Review({ image, read, application, result, fields, mode,
   const [seen, setSeen] = useState({})
   const [legend, setLegend] = useState(false)
   const [choice, setChoice] = useState(null) // the agent's decision; never set by the app
+  const [confirming, setConfirming] = useState(false)
+  // Verifying a label the app marked Likely reject asks first, so a stray click cannot do it.
+  const choose = (c) => {
+    if (c === 'verified' && result.tier === 'reject') { setConfirming(true); return }
+    setConfirming(false)
+    setChoice(c)
+  }
 
   const frame = useRef(null)
   const rowRefs = useRef({})
@@ -145,7 +152,8 @@ export default function Review({ image, read, application, result, fields, mode,
           {legend && <Legend />}
           {full && !wide && <ReadTable fields={fields} />}
           <ByEyePanel labelByEye={result.labelByEye} />
-          <DecisionBar choice={choice} onChoose={setChoice} />
+          <DecisionBar choice={choice} onChoose={choose} confirming={confirming} flagged={result.counts.mismatch}
+            onConfirm={() => { setConfirming(false); setChoice('verified') }} onCancel={() => setConfirming(false)} />
           {choice && (
             <NotesPanel choice={choice} fileName={image.name} fields={fields} labelByEye={result.labelByEye}
               imageProblems={result.imageProblems} reviewed={seen} onNext={onNext} />

@@ -1,12 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
 import { draftNotes } from './notes.js'
 
-export function DecisionBar({ choice, onChoose }) {
+export function DecisionBar({ choice, onChoose, confirming, flagged, onConfirm, onCancel }) {
   return (
-    <div className="decision">
-      <button type="button" className="btn-decide ok" aria-pressed={choice === 'verified'} onClick={() => onChoose('verified')}>Label verified</button>
-      <button type="button" className="btn-decide bad" aria-pressed={choice === 'issues'} onClick={() => onChoose('issues')}>Issues found</button>
-    </div>
+    <>
+      <div className="decision">
+        <button type="button" className="btn-decide ok" aria-pressed={choice === 'verified'} onClick={() => onChoose('verified')}>Label verified</button>
+        <button type="button" className="btn-decide bad" aria-pressed={choice === 'issues'} onClick={() => onChoose('issues')}>Issues found</button>
+      </div>
+      {confirming && (
+        <div className="confirm" role="alertdialog" aria-labelledby="confirm-h">
+          <p id="confirm-h"><strong>The app found {flagged} {flagged === 1 ? 'mismatch' : 'mismatches'} on this label.</strong> Mark it verified anyway?</p>
+          <div className="actions">
+            <button type="button" className="btn" autoFocus onClick={onCancel}>No, go back</button>
+            <button type="button" className="btn" onClick={onConfirm}>Yes, mark verified</button>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 

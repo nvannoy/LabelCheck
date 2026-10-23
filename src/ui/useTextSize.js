@@ -27,8 +27,9 @@ export function useTextSize() {
   const at = STEPS.indexOf(scale)
   return {
     scale,
-    smaller: () => setScale(STEPS[Math.max(0, at - 1)]),
-    larger: () => setScale(STEPS[Math.min(STEPS.length - 1, at + 1)]),
+    // Functional updates, so two quick clicks move two steps.
+    smaller: () => setScale((s) => STEPS[Math.max(0, STEPS.indexOf(s) - 1)]),
+    larger: () => setScale((s) => STEPS[Math.min(STEPS.length - 1, STEPS.indexOf(s) + 1)]),
     canShrink: at > 0,
     canGrow: at < STEPS.length - 1,
   }

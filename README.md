@@ -64,9 +64,33 @@ Vite, React (JSX, no TypeScript), tesseract.js 7, Vitest, Atkinson Hyperlegible 
 
 `public/_headers` sets a strict Content Security Policy: `default-src 'self'`, `connect-src 'self'`, `worker-src 'self' blob:`, and `'wasm-unsafe-eval'` for OCR's WebAssembly. No backend, no analytics, no cookies. Label images and application text stay in memory and disappear on Next label or reload.
 
+## Moving to Azure Static Web Apps
+
+The app is static files only, with no functions, so moving hosts means porting two files. Nothing in `src/` changes.
+
+1. Build: `npm ci && npm run build`. The output is the `dist/` folder.
+2. In the Static Web Apps setup use app location `/`, API location empty and output location `dist`.
+3. Replace `netlify.toml` and `public/_headers` with a `staticwebapp.config.json` in `public/` that carries the same headers:
+
+```json
+{
+  "globalHeaders": {
+    "Content-Security-Policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer"
+  },
+  "routes": [
+    { "route": "/ocr/*", "headers": { "Cache-Control": "public, max-age=2592000" } },
+    { "route": "/fonts/*", "headers": { "Cache-Control": "public, max-age=2592000" } }
+  ]
+}
+```
+
+4. Check the deployed site: the page response carries the Content-Security-Policy, and the browser Network tab shows no request to any other host.
+
 ## Testing
 
-The test set has 33 labels: 30 generated fictional labels (one defect each, plus clean ones), 2 TTB spirits sample images, and 1 TTB malt beverage image used as an OCR regression check. Every label has paste-ready application text. The procedure, scoring rules and files are in `tests/TEST-PROCEDURE.md`.
+The test set has 33 labels: 30 generated fictional labels (one defect each, plus clean ones), 2 TTB spirits sample images, and 1 TTB malt beverage image used as an OCR regression check. Every label has paste-ready application text. The procedure, scoring rules and files are in `tests/TEST-PROCEDURE.md`. The stakeholder QA plan (`tests/qa/`) maps every requirement in the brief to a test case; its automated cases run with `npm run verify` and the manual ones are recorded in `tests/qa/RESULTS.md`.
 
 The key measure is that no known-bad label may come out Ready to approve. Extra Needs review results are acceptable.
 
@@ -95,6 +119,10 @@ Machine: Intel Core i7-1068NG7 (4 cores, 8 threads), 32 GB RAM, macOS, in the bu
 
 ## Limitations
 
+- **Batch upload is not built.** It was a stretch goal in the brief. It needs a queue, per-label results and a summary screen, and the prototype keeps to one label at a time so that every result stays a human decision.
+- **One image per application.** Several images per application are not supported. Two labels side by side in one image work only when there is a blank vertical gap between them.
+- **Distilled spirits only.** Beer and wine rules are not covered.
+- **Skew and glare are not corrected.** Images should be straight and evenly lit.
 - **The app errs toward review.** 4 of 11 clean labels went to Needs review. Each had a reason: a brand printed in a decorative or all-capitals font that OCR reads with low confidence, a bottler printed in a decorative font, or capital letters and punctuation differing in the warning. The result is safe, but an agent will see extra reviews.
 - The browser reads slightly slower and less accurately than Node. For example, the TTB ABC sample is read with the brand matching in the browser but flagged in Node. The cause is not yet explained.
 - Where a field is genuinely missing, the second pass adds 1 to 2 s. The slowest browser case measured was 4.4 s and the slowest Node case reached 6.0 s once under load, so the 5 s target is met on this machine only some of the time, with no margin for a slower PC. The first result is shown before the second pass finishes.

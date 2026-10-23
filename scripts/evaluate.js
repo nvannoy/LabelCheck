@@ -2,12 +2,30 @@
 // scores the result against tests/expected-results.json.
 // Scoring rules are in tests/TEST-PROCEDURE.md. The key measure is zero
 // known-bad labels coming out Ready to Approve.
-import { readFileSync } from 'node:fs'
+import { readFileSync, existsSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { startNodeWorker, readFile, measureFile } from './node-ocr.js'
 import { checkLabel } from '../src/engine/check.js'
 import { applicationFromText } from '../src/engine/parse.js'
+import { QA_LABEL_CASES, judge } from '../tests/qa/label-cases.js'
 
-const results = JSON.parse(readFileSync('tests/expected-results.json', 'utf8'))
+let results = JSON.parse(readFileSync('tests/expected-results.json', 'utf8'))
+
+// The generated labels are not committed. On a fresh clone, draw them first (the drawing
+// script uses macOS system fonts). Where that is not possible, run on the committed
+// sample images only and say so.
+if (results.some((r) => !existsSync(r.image))) {
+  try {
+    execFileSync('node', ['scripts/make-test-labels.js'], { stdio: 'inherit' })
+  } catch {
+    // handled below
+  }
+}
+const missing = results.filter((r) => !existsSync(r.image))
+if (missing.length) {
+  console.log(`Skipping ${missing.length} generated labels: their images could not be drawn here. Run node scripts/make-test-labels.js on a Mac to evaluate the full set.`)
+  results = results.filter((r) => existsSync(r.image))
+}
 const worker = await startNodeWorker()
 
 const rank = { match: 0, na: 0, check: 1, mismatch: 2 }
@@ -55,4 +73,17 @@ console.log('Field failures (bad field called match):', rows.reduce((a, r) => a 
 console.log('Clean labels:', clean.length, '| Ready to Approve:', clean.filter((r) => r.out.overall === 'ready').length, '| sent to review:', clean.filter((r) => r.out.overall !== 'ready').length)
 console.log(`Field results exactly as expected: ${exact} of ${rows.length * 7} (${Math.round((100 * exact) / (rows.length * 7))}%), counting ${fieldCount} required fields`)
 console.log(`Time per label: mean ${Math.round(times.reduce((a, b) => a + b, 0) / times.length)} ms, median ${times[Math.floor(times.length / 2)]} ms, max ${times.at(-1)} ms`)
-process.exit(rows.some((r) => r.badReady || r.failures.length) ? 1 : 0)
+
+// The stakeholder QA plan's label cases (tests/qa/QA-PLAN.md).
+console.log('\nQA plan label cases')
+let qaFail = 0
+for (const c of QA_LABEL_CASES) {
+  const row = rows.find((r) => r.id === c.id)
+  if (!row) { console.log(pad(c.qa, 8), pad(c.id, 34), 'SKIPPED'); continue }
+  const verdict = judge(c, row.out)
+  if (verdict === 'fail') qaFail++
+  console.log(pad(c.qa, 8), pad(c.id, 34), pad(verdict.toUpperCase(), 9), pad(row.out.tier, 7), c.need)
+}
+const counts = (v) => QA_LABEL_CASES.filter((c) => rows.find((r) => r.id === c.id) && judge(c, rows.find((r) => r.id === c.id).out) === v).length
+console.log(`QA label cases: ${counts('pass')} pass, ${counts('recorded')} recorded as extra review, ${qaFail} fail`)
+process.exit(rows.some((r) => r.badReady || r.failures.length) || qaFail ? 1 : 0)
