@@ -107,11 +107,15 @@ export default function LabelImage({ src, width, height, fields, focusId, previe
         )}
       </div>
       <div className="zoombar" role="group" aria-label="Zoom the label">
-        <button type="button" aria-label="Zoom out" onClick={() => step(-1)} disabled={zoom === LEVELS[0]}>&#8722;</button>
-        <span className="level" role="status" aria-live="polite">{Math.round(zoom * 100)}%</span>
-        <button type="button" aria-label="Zoom in" onClick={() => step(1)} disabled={zoom === LEVELS.at(-1)}>+</button>
-        <button type="button" className="wide" onClick={() => setZoom(1)} disabled={zoom === 1}>Fit</button>
-        <button type="button" className="wide" onClick={zoomToField} disabled={!canZoomToField}>Zoom to field</button>
+        <div className="zrow">
+          <button type="button" aria-label="Zoom out" onClick={() => step(-1)} disabled={zoom === LEVELS[0]}>&#8722;</button>
+          <span className="level" role="status" aria-live="polite">{Math.round(zoom * 100)}%</span>
+          <button type="button" aria-label="Zoom in" onClick={() => step(1)} disabled={zoom === LEVELS.at(-1)}>+</button>
+        </div>
+        <div className="zrow">
+          <button type="button" className="wide" aria-label="Fit the whole label" onClick={() => setZoom(1)} disabled={zoom === 1}>Fit</button>
+          <button type="button" className="wide" aria-label="Zoom to the focused field" onClick={zoomToField} disabled={!canZoomToField}>Field</button>
+        </div>
       </div>
     </div>
   )

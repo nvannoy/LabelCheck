@@ -270,11 +270,13 @@ button { cursor: pointer; }
 
 /* Zoomable label image */
 .imagebox .scroller { position: absolute; inset: 0; overflow: auto; }
-.zoombar { position: absolute; right: 0.5rem; bottom: 0.5rem; z-index: 6; display: flex; align-items: center; gap: 0.25rem; padding: 0.25rem; background: rgba(255, 255, 255, 0.96); border: 2px solid var(--navy); border-radius: 8px; }
-.zoombar button { min-width: 2rem; height: 2rem; border: 2px solid var(--navy); border-radius: 6px; background: #FFFFFF; color: var(--navy); font-size: 1.125rem; font-weight: 700; line-height: 1; padding: 0; }
+.zoombar { position: absolute; right: 0.5rem; bottom: 0.5rem; z-index: 6; display: flex; flex-direction: column; gap: 0.25rem; padding: 0.25rem; background: rgba(255, 255, 255, 0.96); border: 2px solid var(--navy); border-radius: 8px; }
+.zoombar .zrow { display: flex; align-items: center; gap: 0.25rem; }
+.zoombar .zrow .wide { flex: 1; }
+.zoombar button { min-width: 2rem; height: 1.75rem; border: 2px solid var(--navy); border-radius: 6px; background: #FFFFFF; color: var(--navy); font-size: 1.125rem; font-weight: 700; line-height: 1; padding: 0; }
 .zoombar button.wide { padding: 0 0.5rem; font-size: 0.8125rem; }
 .zoombar button:disabled { opacity: 0.45; cursor: default; }
-.zoombar .level { min-width: 2.75rem; text-align: center; font-size: 0.8125rem; font-weight: 700; color: var(--navy); }
+.zoombar .level { min-width: 2.5rem; text-align: center; font-size: 0.8125rem; font-weight: 700; color: var(--navy); }
 
 /* Full mode on a wide, tall window: the label and the read table stay put and
    only the check panel scrolls. Narrower windows scroll as one page. */
