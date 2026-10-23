@@ -4,7 +4,7 @@ import Header, { Footer } from './Header.jsx'
 import Intake from './Intake.jsx'
 import Review from './Review.jsx'
 import { startWorker, readImage } from '../ocr/ocr.js'
-import { parseApplication, APPLICATION_FIELDS } from '../engine/parse.js'
+import { parseApplication, importedFromCountry, APPLICATION_FIELDS } from '../engine/parse.js'
 import { checkLabel, qualityProblems } from '../engine/check.js'
 import { rowStatus, TIERS, tierSummary } from './status.js'
 
@@ -101,9 +101,13 @@ export default function App() {
 
   const parsed = useMemo(() => parseApplication(appText), [appText])
   const values = useMemo(() => ({ ...parsed.fields, ...edits }), [parsed, edits])
-  const imported = importedChoice ?? Boolean(values.country)
+  const imported = importedChoice ?? importedFromCountry(values.country)
   const count = APPLICATION_FIELDS.filter((id) => values[id]).length
-  const application = useMemo(() => ({ ...values, imported }), [values, imported])
+  const application = useMemo(() => {
+    const a = { ...values, imported }
+    if (!imported) delete a.country
+    return a
+  }, [values, imported])
 
   const review = useMemo(() => {
     if (screen !== 'review' || read.status !== 'done') return null

@@ -60,3 +60,19 @@ export function parseApplication(text) {
   }
   return { fields, found: Object.keys(fields).length, extra }
 }
+
+// "Origin: Domestic" or "Country of Origin: United States" means a domestic
+// product, not an import from a country called Domestic.
+const DOMESTIC = /^(?:domestic|u\.?\s?s\.?(?:\s?a\.?)?|united\s+states(?:\s+of\s+america)?|america)$/i
+
+export const isDomesticOrigin = (text) => DOMESTIC.test((text ?? '').trim())
+export const importedFromCountry = (country) => Boolean(country) && !isDomesticOrigin(country)
+
+// Application text to the application the engine checks against.
+export function applicationFromText(text) {
+  const { fields, found, extra } = parseApplication(text)
+  const imported = importedFromCountry(fields.country)
+  const application = { ...fields, imported }
+  if (!imported) delete application.country
+  return { application, found, extra }
+}
