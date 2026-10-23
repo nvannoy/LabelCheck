@@ -1,8 +1,9 @@
 // Reads one label image: splits side-by-side panels, reads each panel on its
 // own, and returns words with positions in whole-image pixels. Runs a second
-// pass with inverted colors only when a required field has no candidate.
-// The second pass is off by default: on the test set it never added a word and
-// cost 1.4 to 2.6 s each time it ran (see README).
+// pass only when a required field has no candidate: the front panel is read
+// again in sparse-text mode, which finds small boxed text (such as white
+// "5% ALC./VOL." on a blue box) that the normal page layout pass skips.
+// Inverting the colors was tried first and never added a word (see README).
 // Browser-specific parts (canvas, OCR worker) are passed in.
 import { prepare, pickScale } from './prepare.js'
 import { toGray, findPanels, contrastSpan } from './panels.js'
@@ -35,7 +36,7 @@ function overlaps(a, b) {
   return inter / smaller > 0.3
 }
 
-export async function readLabel({ source, width, height, makeCanvas, recognize, application, secondPass = false, split = true }) {
+export async function readLabel({ source, width, height, makeCanvas, recognize, application, secondPass = true, split = true }) {
   const t0 = performance.now()
 
   const full = makeCanvas(width, height)
@@ -50,8 +51,8 @@ export async function readLabel({ source, width, height, makeCanvas, recognize, 
 
   const readPanel = async (panel, opts) => {
     const crop = { x: panel.x0, y: 0, w: panel.x1 - panel.x0, h: height }
-    const { canvas, scale } = prepare(source, width, height, makeCanvas, { crop, scale: wholeScale, ...opts })
-    return toSourceCoords(await recognize(canvas), scale, crop, opts.invert ? 2 : 1)
+    const { canvas, scale } = prepare(source, width, height, makeCanvas, { crop, scale: wholeScale, ...opts, sparse: undefined })
+    return toSourceCoords(await recognize(canvas, { sparse: Boolean(opts.sparse) }), scale, crop, opts.sparse ? 2 : 1)
   }
 
   let words = []
@@ -71,7 +72,9 @@ export async function readLabel({ source, width, height, makeCanvas, recognize, 
     // has it, or there is only one panel, the first panel is re-read.
     let target = panels.findIndex((_, i) => !squash(joinText(panelWords[i])).includes('governmentwarning'))
     if (target < 0) target = 0
-    const extra = await readPanel(panels[target], { invert: true })
+    // A larger scale than the first pass: small boxed text needs the extra pixels.
+    const panelWidth = panels[target].x1 - panels[target].x0
+    const extra = await readPanel(panels[target], { sparse: true, scale: Math.max(wholeScale, Math.min(3.5, 1200 / panelWidth)) })
     const fresh = extra.filter((w) => w.text.trim() && !words.some((o) => overlaps(o.bbox, w.bbox)))
     words = words.concat(fresh)
     Object.assign(second, { ran: true, added: fresh.length, ms: performance.now() - t1, panel: target })

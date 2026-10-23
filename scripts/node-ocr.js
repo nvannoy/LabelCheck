@@ -19,9 +19,14 @@ export async function startNodeWorker() {
 
 export async function readFile(worker, path, options = {}) {
   const img = await loadImage(path)
-  const recognize = async (canvas) => {
-    const { data } = await worker.recognize(canvas.toBuffer('image/png'), {}, { blocks: true })
-    return flattenWords(data)
+  const recognize = async (canvas, { sparse } = {}) => {
+    if (sparse) await worker.setParameters({ tessedit_pageseg_mode: PSM.SPARSE_TEXT })
+    try {
+      const { data } = await worker.recognize(canvas.toBuffer('image/png'), {}, { blocks: true })
+      return flattenWords(data)
+    } finally {
+      if (sparse) await worker.setParameters({ tessedit_pageseg_mode: PSM.AUTO })
+    }
   }
   return readLabel({
     source: img, width: img.width, height: img.height,

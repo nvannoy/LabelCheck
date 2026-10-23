@@ -19,9 +19,4 @@ describe('grayscaleStretch', () => {
     grayscaleStretch(px)
     expect([px[0], px[4]]).toEqual([0, 255])
   })
-  it('inverts when asked, so light text becomes dark', () => {
-    const px = new Uint8ClampedArray([40, 40, 40, 255, 240, 240, 240, 255])
-    grayscaleStretch(px, true)
-    expect([px[0], px[4]]).toEqual([255, 0])
-  })
 })

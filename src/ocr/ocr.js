@@ -34,10 +34,17 @@ const makeCanvas = (w, h) => new OffscreenCanvas(w, h)
 // class are also checked for the second-pass decision.
 export async function readImage(worker, image, { application, secondPass } = {}) {
   const bitmap = await createImageBitmap(image)
-  const recognize = async (canvas) => {
+  // The worker is shared between images, so sparse mode is switched on for one
+  // read and always switched back.
+  const recognize = async (canvas, { sparse } = {}) => {
     const blob = await canvas.convertToBlob({ type: 'image/png' })
-    const { data } = await worker.recognize(blob, {}, { blocks: true })
-    return flattenWords(data)
+    if (sparse) await worker.setParameters({ tessedit_pageseg_mode: PSM.SPARSE_TEXT })
+    try {
+      const { data } = await worker.recognize(blob, {}, { blocks: true })
+      return flattenWords(data)
+    } finally {
+      if (sparse) await worker.setParameters({ tessedit_pageseg_mode: PSM.AUTO })
+    }
   }
   try {
     return await readLabel({ source: bitmap, width: bitmap.width, height: bitmap.height, makeCanvas, recognize, application, secondPass })

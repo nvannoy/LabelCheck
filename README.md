@@ -19,7 +19,7 @@ The app is usable end to end in the browser.
 
 Screens follow the mockups in `docs/mockup/`.
 
-How a label is read: the image is split at a blank vertical gap into panels (for example a brand label and a back label side by side), each panel is upscaled and read with Tesseract, and the words are mapped back to whole-image positions. An optional second pass with inverted colors exists but is off by default, because on the test set it never added a word and cost 1.4 to 2.6 s each time it ran.
+How a label is read: the image is split at a blank vertical gap into panels (for example a brand label and a back label side by side), each panel is upscaled and read with Tesseract, and the words are mapped back to whole-image positions. A second pass runs only when alcohol content or net contents has no candidate: the front panel is read again in sparse-text mode, which finds small boxed text (white text on a blue box) that the normal pass skips. Inverting the colors was tried first and never added a word.
 
 ## Running it
 
