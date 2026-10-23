@@ -128,7 +128,7 @@ button { cursor: pointer; }
 .row.focused.na { background: var(--gray-bg); }
 .row.focused .row-head { padding-left: calc(1.25rem - 6px); }
 .row.preview:not(.focused) { background: var(--hint-bg); }
-.row-body { padding: 0 1.25rem 0.75rem calc(1.25rem - 6px); }
+.row-body { padding: 0.25rem 1.25rem 0.75rem calc(1.25rem - 6px); }
 .compare { display: flex; gap: 0.75rem; }
 .compare > div { flex: 1; padding: 0.5rem 0.75rem; background: #FFFFFF; border: 1px solid var(--line); border-radius: 6px; min-width: 0; }
 .compare > div.differs { border: 3px solid var(--red); }
@@ -220,7 +220,7 @@ button { cursor: pointer; }
   .full .row-head { min-height: 3.75rem; padding: 0 1.5rem; gap: 0.875rem; }
   .full .row-head .name { font-size: 1.3125rem; }
   .full .compare .val { font-size: 1.875rem; }
-  .full .row-body { padding: 0 1.5rem 1rem calc(1.5rem - 6px); }
+  .full .row-body { padding: 0.25rem 1.5rem 1rem calc(1.5rem - 6px); }
   .full .decision { padding: 1rem 0 0; background: transparent; }
   .full .btn-decide { min-height: 4rem; border-width: 3px; border-radius: 10px; font-size: 1.3125rem; }
   .full .hint { padding: 0 1.5rem; min-height: 3.75rem; font-size: 1.125rem; }
@@ -248,19 +248,7 @@ button { cursor: pointer; }
 .full .left { display: flex; flex-direction: column; gap: 1.25rem; }
 .full .hint.bottom { margin-top: 0; }
 
-.verdict { display: flex; gap: 0.5rem; align-items: flex-start; padding: 0.5rem 0.75rem; border-radius: 6px; background: #FFFFFF; font-size: 0.9375rem; }
-.verdict .mark { flex-shrink: 0; width: 1.5rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 700; }
-.verdict.match { border: 2px solid var(--green); }
-.verdict.match .mark { border: 2px solid var(--green); color: var(--green); }
-.verdict.check { border: 2px dashed var(--amber); }
-.verdict.check .mark { border: 2px dashed var(--amber); color: var(--amber); }
-.verdict.mismatch { border: 3px solid var(--red); }
-.verdict.mismatch .mark { border: 3px solid var(--red); color: var(--red); }
-.compare .val.eyelist { list-style: none; padding-left: 0 !important; }
-.eyelist li { display: flex; gap: 0.5rem; margin: 0.25rem 0; }
-.eyelist li span { flex-shrink: 0; width: 1.125rem; height: 1.125rem; display: flex; align-items: center; justify-content: center; border: 2px dashed var(--amber); border-radius: 50%; font-size: 0.6875rem; font-weight: 700; color: var(--amber); margin-top: 0.125rem; }
-.row-body .verdict + .byeye, .row-body .compare + .byeye { margin-top: 0.5rem; }
-
+.compare .val.row-body 
 .closer { padding: 0.5rem 1.25rem; background: var(--amber-bg); border-bottom: 2px dashed var(--amber); color: var(--amber); font-size: 0.9375rem; font-weight: 700; }
 
 /* Zoomable label image */
@@ -310,19 +298,11 @@ button { cursor: pointer; }
 
 .notice { padding: 0.5rem 1.25rem; background: var(--hint-bg); border-bottom: 1px solid var(--line); color: var(--navy); font-size: 0.9375rem; font-weight: 700; }
 
-.measured { margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: #FFFFFF; border: 1px solid var(--line); border-radius: 6px; font-size: 0.875rem; color: var(--ink-2); }
-.measured ul { list-style: none; margin: 0.25rem 0 0.375rem; padding: 0; }
-.measured li { display: flex; gap: 0.5rem; margin: 0.25rem 0; }
-.measured .mk { flex-shrink: 0; width: 1.25rem; height: 1.25rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.75rem; font-weight: 700; background: #FFFFFF; }
-.measured .mk.match { border: 2px solid var(--green); color: var(--green); }
-.measured .mk.check { border: 2px dashed var(--amber); color: var(--amber); }
-.measured .mk.mismatch { border: 3px solid var(--red); color: var(--red); }
 
 .helppop { position: absolute; top: 0.5rem; right: 1.5rem; z-index: 30; width: min(30rem, 90vw); padding: 0.75rem 0; background: #FFFFFF; border: 2px solid var(--navy); border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); }
 .helppop p { margin: 0 1.25rem 0.5rem; font-size: 0.9375rem; color: var(--navy); }
 .helppop .legend { border-bottom: 0; padding-bottom: 0; }
 
-.compare .val.small, .full .compare .val.small { font-size: 0.9375rem; font-weight: 400; }
 
 .compare .val.long, .full .compare .val.long { font-size: 1.125rem; }
 .footnote { margin: 0.375rem 0 0; font-size: 0.8125rem; color: var(--ink-2); }
@@ -343,3 +323,13 @@ button { cursor: pointer; }
 .tour-card p { margin: 0 0 0.875rem; font-size: 1rem; line-height: 1.4; }
 .tour-actions { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
 .tour-actions .spacer { flex-grow: 1; }
+
+.wlines { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.375rem; }
+.wline { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.9375rem; color: var(--ink-2); }
+.wline .mk { flex-shrink: 0; width: 1.375rem; height: 1.375rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.75rem; font-weight: 700; background: #FFFFFF; margin-top: 0.0625rem; }
+.wline .mk.match { border: 2px solid var(--green); color: var(--green); }
+.wline .mk.check { border: 2px dashed var(--amber); color: var(--amber); }
+.wline .mk.mismatch { border: 3px solid var(--red); color: var(--red); }
+details.required { margin-top: 0.5rem; font-size: 0.875rem; color: var(--ink-2); }
+details.required summary { cursor: pointer; font-weight: 700; color: var(--navy); }
+details.required p { margin: 0.25rem 0 0; }

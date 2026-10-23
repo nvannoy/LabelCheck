@@ -54,11 +54,17 @@ export default function Review({ image, read, application, result, fields, mode,
   const boxRefs = useRef({})
   const [path, setPath] = useState(null)
 
+  // Arrow keys stop at the first and last check instead of wrapping round, so a long check
+  // is never skipped by accident. Down from the last check shows the decision buttons.
   const move = (from, step) => {
     const i = fields.findIndex((f) => f.id === from)
-    const next = fields[(i + step + fields.length) % fields.length].id
-    setFocusId(next)
-    rowRefs.current[next]?.focus()
+    const j = Math.min(fields.length - 1, Math.max(0, i + step))
+    if (j === i) {
+      if (step > 0) frame.current?.querySelector('.decision')?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+      return
+    }
+    setFocusId(fields[j].id)
+    rowRefs.current[fields[j].id]?.focus({ preventScroll: true })
   }
   // The arrow keys and Enter work anywhere on the page, with nothing clicked first.
   // They are left alone while typing in a box (the notes) and when a modifier is held.
@@ -115,8 +121,9 @@ export default function Review({ image, read, application, result, fields, mode,
     return () => { ro.disconnect(); window.removeEventListener('resize', draw); root.removeEventListener('scroll', draw, true) }
   }, [shownId, textScale, fields, full])
 
-  // Keep the focused row in view when the keyboard moves it.
-  useEffect(() => { rowRefs.current[focusId]?.scrollIntoView?.({ block: 'nearest' }) }, [focusId])
+  // The check being looked at goes to the top of the scrolling area, so its details are in
+  // view and none of them are missed.
+  useEffect(() => { rowRefs.current[focusId]?.closest('.row')?.scrollIntoView?.({ block: 'start' }) }, [focusId])
 
   const tier = TIERS[result.tier]
   const color = { reject: 'var(--red)', review: 'var(--amber)', ready: 'var(--green)' }[result.tier]

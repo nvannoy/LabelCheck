@@ -9,43 +9,45 @@ function applicationSays(field, application) {
   return application[APPLICATION_KEY[field.id]] || 'Not given'
 }
 
-// The warning row says what the app could settle (the wording) and what only a
-// person can (bold type, size, legibility), instead of showing the long statute.
-const BOLD_MARK = { bold: '\u2713', unclear: '?', 'not-bold': '\u2715' }
-const KIND = { '\u2713': 'match', '?': 'check', '\u2715': 'mismatch' }
+// The government warning row: three short lines, one for each thing to know, and the
+// required wording only when the wording is not an exact match.
+const MARK = { match: '\u2713', check: '?', mismatch: '\u2715' }
 
-// What the app measured from the image about the warning title.
-function Measured({ typography }) {
-  if (!typography) return null
-  const mark = BOLD_MARK[typography.bold.status]
+function Line({ kind, label, children }) {
   return (
-    <div className="measured">
-      <strong>Measured from the image (an estimate):</strong>
-      <ul><li><span className={`mk ${KIND[mark]}`} aria-hidden="true">{mark}</span><span><b>Bold:</b> {typography.bold.text}</span></li></ul>
-    </div>
+    <li className="wline">
+      <span className={`mk ${kind}`} aria-hidden="true">{MARK[kind]}</span>
+      <span><b>{label}:</b> {children}</span>
+    </li>
   )
 }
 
 function WarningBody({ field }) {
-  const mark = { match: '\u2713', check: '?', mismatch: '\u2715' }[field.status]
-  const lead = field.status === 'match'
-    ? 'Wording matches the statute word for word, and the title is in capital letters.'
-    : field.reason
+  const bold = field.typography?.bold.status
+  const boldLine = {
+    bold: ['match', 'The title looks bold and the rest does not.'],
+    'not-bold': ['mismatch', 'The title does not look bolder than the rest.'],
+    unclear: ['check', 'The app cannot tell from this image. Check by eye.'],
+  }[bold] ?? ['check', 'Check by eye.']
   return (
     <>
-      <div className={`verdict ${field.status}`}>
-        <span className="mark" aria-hidden="true">{mark}</span>
-        <span><strong>Wording:</strong> {lead}</span>
-      </div>
+      <ul className="wlines">
+        <Line kind={field.status} label="Wording">
+          {field.status === 'match' ? 'Matches the statute word for word, and the title is in capital letters.' : field.reason}
+        </Line>
+        <Line kind={boldLine[0]} label="Title bold">{boldLine[1]}</Line>
+        <Line kind="check" label="Legibility">Check by eye: readable, on a contrasting background, and separate from other text.</Line>
+      </ul>
       {field.status !== 'match' && (
-        <div className="compare"><div><div className="cap">Required wording (27 CFR 16.21)</div><div className="val small">{WARNING_TEXT}</div></div></div>
+        <details className="required" open>
+          <summary>Required wording (27 CFR 16.21)</summary>
+          <p>{WARNING_TEXT}</p>
+        </details>
       )}
-      <Measured typography={field.typography} />
-      <div className="byeye">
-        <strong>Still to confirm by eye:</strong>
-        <ul className="eyelist">{field.byEye.map((t) => <li key={t}><span aria-hidden="true">?</span>{t}</li>)}</ul>
-      </div>
-      <div className="note"><span className="i" aria-hidden="true">i</span><span>{field.rule}</span></div>
+      <details className="required">
+        <summary>Rule</summary>
+        <p>{field.rule}</p>
+      </details>
     </>
   )
 }
