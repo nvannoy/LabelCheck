@@ -23,6 +23,10 @@ export function checkLabel({ words, application, quality }) {
     if (f.required === 'imports' && !application.imported) {
       return { ...base, status: 'na', reason: 'Not required for a domestic product.', byEye: [] }
     }
+    // A field the application text does not give cannot be compared. Needs Review.
+    if (f.id !== 'warning' && !application[f.id]) {
+      return { ...base, status: 'check', found: null, bbox: null, byEye: f.byEye, reason: 'The application text has no value for this field, so it cannot be compared. Add it, or check the label by eye.' }
+    }
     const r = f.compare(index, application)
     const byEye = [...f.byEye, ...(r.byEye ?? [])]
     if (r.status === 'match' && problems.length) {

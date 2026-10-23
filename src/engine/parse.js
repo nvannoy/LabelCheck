@@ -30,3 +30,33 @@ const COUNTRY = /(?:product|produced|made|imported|distilled|bottled)\s+(?:of|in
 export function parseCountryPhrases(text) {
   return [...text.matchAll(COUNTRY)].map((m) => m[1])
 }
+
+// Application text: lines like "Brand Name: Old Tom Distillery". Each label is
+// matched against a few plain spellings. Lines that match none are counted as
+// extra and ignored (permit numbers, dates and the like).
+const APPLICATION_KEYS = [
+  ['brand', /^brand(?:\s+name)?$/i],
+  ['classType', /^(?:class\s*(?:\/|and|&)?\s*type|class|type|type\s+of\s+product)$/i],
+  ['abv', /^(?:alcohol(?:\s+content)?|abv|alcohol\s+by\s+volume)$/i],
+  ['netContents', /^(?:net\s+contents?|contents?|net\s+volume)$/i],
+  ['bottler', /^(?:applicant|bottler|bottler\s+name(?:\s+and\s+address)?|name\s+and\s+address|producer|distiller|importer)$/i],
+  ['country', /^(?:country(?:\s+of\s+origin)?|origin)$/i],
+]
+
+export const APPLICATION_FIELDS = APPLICATION_KEYS.map(([id]) => id)
+
+export function parseApplication(text) {
+  const fields = {}
+  let extra = 0
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim()
+    if (!line) continue
+    const at = line.indexOf(':')
+    const label = at > 0 ? line.slice(0, at).trim() : ''
+    const value = at > 0 ? line.slice(at + 1).trim() : ''
+    const key = value && APPLICATION_KEYS.find(([, re]) => re.test(label))
+    if (key && !fields[key[0]]) fields[key[0]] = value
+    else extra++
+  }
+  return { fields, found: Object.keys(fields).length, extra }
+}
