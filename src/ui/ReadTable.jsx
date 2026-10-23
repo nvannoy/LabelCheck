@@ -22,7 +22,7 @@ export default function ReadTable({ fields }) {
             <tr key={f.id} className={f.status === 'mismatch' ? 'bad' : ''}>
               <td>{i + 1}</td>
               <td>{f.label}</td>
-              <td>{readAs(f)}</td>
+              <td title={readAs(f)}>{readAs(f)}</td>
               <td className="num">{f.status === 'na' || !f.found ? '–' : `${f.confidence}%`}</td>
             </tr>
           ))}
