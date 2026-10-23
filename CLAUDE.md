@@ -2,7 +2,7 @@
 
 A browser-only prototype that helps a TTB compliance agent check an alcohol label image against its COLA application text. Built as a take-home assessment for the Treasury IT Specialist (AI) role.
 
-The full requirements, decisions and the reasoning behind them live in the design doc: "Label Verification App: Requirements and Decisions". Read it before changing any decision below. If a rule here conflicts with a request, stop and ask.
+The full requirements, decisions and the reasoning behind them live in the design doc: "LabelCheck: Requirements and Decisions". Read it before changing any decision below. If a rule here conflicts with a request, stop and ask.
 
 ## Core idea
 
