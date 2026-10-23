@@ -1,13 +1,15 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { placePin } from './pins.js'
 
 const PAD = 5 // px of the original image around each box, so it does not clip the letters
 const LEVELS = [1, 1.5, 2, 3, 4, 6]
+const PIN = 22 // badge size in screen pixels
 
 // Shows the label and a numbered box for each field that was located.
 // The image can be zoomed (buttons, or "Zoom to field") and dragged to pan, so
 // small print such as the government warning can be read.
 // Boxes are drawn on a layer that exactly covers the fitted, zoomed image.
-export default function LabelImage({ src, width, height, fields, focusId, previewId, onFocus, onPreview, boxRefs }) {
+export default function LabelImage({ src, width, height, words, fields, focusId, previewId, onFocus, onPreview, boxRefs }) {
   const holder = useRef(null)
   const scroller = useRef(null)
   const [size, setSize] = useState({ w: 0, h: 0 })
@@ -92,14 +94,20 @@ export default function LabelImage({ src, width, height, fields, focusId, previe
                 const x0 = Math.max(0, f.bbox.x0 - PAD), y0 = Math.max(0, f.bbox.y0 - PAD)
                 const x1 = Math.min(width, f.bbox.x1 + PAD), y1 = Math.min(height, f.bbox.y1 + PAD)
                 const kind = f.display.kind === 'na' ? 'check' : f.display.kind
+                const on = focusId === f.id || previewId === f.id
+                // The number sits just outside the box, where it covers no text.
+                const pin = placePin({ x0, y0, x1, y1 }, PIN / (base * zoom), words, { width, height })
                 return (
-                  <button type="button" key={f.id} tabIndex={-1} ref={(el) => { boxRefs.current[f.id] = el }}
-                    aria-label={`Box ${i + 1}: ${f.label}, ${f.display.text}`}
-                    className={`box ${kind}${focusId === f.id || previewId === f.id ? ' focused' : ''}`}
-                    style={{ left: `${(x0 / width) * 100}%`, top: `${(y0 / height) * 100}%`, width: `${((x1 - x0) / width) * 100}%`, height: `${((y1 - y0) / height) * 100}%` }}
-                    onClick={() => onFocus(f.id)} onMouseEnter={() => onPreview(f.id)} onMouseLeave={() => onPreview(null)}>
-                    <span className="num" aria-hidden="true">{i + 1}</span>
-                  </button>
+                  <div key={f.id}>
+                    <button type="button" tabIndex={-1} ref={(el) => { boxRefs.current[f.id] = el }}
+                      aria-label={`Box ${i + 1}: ${f.label}, ${f.display.text}`}
+                      className={`box ${kind}${on ? ' focused' : ''}`}
+                      style={{ left: `${(x0 / width) * 100}%`, top: `${(y0 / height) * 100}%`, width: `${((x1 - x0) / width) * 100}%`, height: `${((y1 - y0) / height) * 100}%` }}
+                      onClick={() => onFocus(f.id)} onMouseEnter={() => onPreview(f.id)} onMouseLeave={() => onPreview(null)} />
+                    <button type="button" tabIndex={-1} aria-hidden="true" className={`pin ${kind}${on ? ' focused' : ''}`}
+                      style={{ left: `${(pin.x / width) * 100}%`, top: `${(pin.y / height) * 100}%` }}
+                      onClick={() => onFocus(f.id)} onMouseEnter={() => onPreview(f.id)} onMouseLeave={() => onPreview(null)}>{i + 1}</button>
+                  </div>
                 )
               })}
             </div>
@@ -107,16 +115,12 @@ export default function LabelImage({ src, width, height, fields, focusId, previe
         )}
       </div>
       <div className="zoombar" role="group" aria-label="Zoom the label">
-        <div className="zrow">
-          <span className="level" role="status" aria-live="polite">{Math.round(zoom * 100)}%</span>
-          <button type="button" aria-label="Zoom out" onClick={() => step(-1)} disabled={zoom === LEVELS[0]}>&#8722;</button>
-          <button type="button" aria-label="Zoom in" onClick={() => step(1)} disabled={zoom === LEVELS.at(-1)}>+</button>
-        </div>
-        <div className="zrow">
-          <span className="lab" aria-hidden="true">Zoom to:</span>
-          <button type="button" className="wide" aria-label="Zoom to fit the whole label" onClick={() => setZoom(1)} disabled={zoom === 1}>Fit</button>
-          <button type="button" className="wide" aria-label="Zoom to the focused field" onClick={zoomToField} disabled={!canZoomToField}>Field</button>
-        </div>
+        <span className="level" role="status" aria-live="polite">{Math.round(zoom * 100)}%</span>
+        <button type="button" aria-label="Zoom out" onClick={() => step(-1)} disabled={zoom === LEVELS[0]}>&#8722;</button>
+        <button type="button" aria-label="Zoom in" onClick={() => step(1)} disabled={zoom === LEVELS.at(-1)}>+</button>
+        <span className="lab" aria-hidden="true">Zoom to:</span>
+        <button type="button" aria-label="Zoom to fit the whole label" onClick={() => setZoom(1)} disabled={zoom === 1}>Fit</button>
+        <button type="button" aria-label="Zoom to the focused field" onClick={zoomToField} disabled={!canZoomToField}>Field</button>
       </div>
     </div>
   )

@@ -95,7 +95,7 @@ export default function Review({ image, read, application, result, fields, mode,
   const color = { reject: 'var(--red)', review: 'var(--amber)', ready: 'var(--green)' }[result.tier]
 
   return (
-    <div ref={frame} className="review" style={{ position: 'relative' }}>
+    <div ref={frame} className="reviewpane" style={{ position: 'relative' }}>
       {!full && (
         <div className={`tier ${result.tier}`} role="status">
           <span className="icon" aria-hidden="true">{tier.symbol}</span>
@@ -110,7 +110,7 @@ export default function Review({ image, read, application, result, fields, mode,
       )}
       <div className="cols">
         <div className="left">
-          <LabelImage src={image.url} width={read.result.quality.width} height={read.result.quality.height} fields={fields}
+          <LabelImage src={image.url} width={read.result.quality.width} height={read.result.quality.height} words={read.result.words} fields={fields}
             focusId={focusId} previewId={previewId} onFocus={setFocusId} onPreview={setPreviewId} boxRefs={boxRefs} />
           {full && wide && <ReadTable fields={fields} />}
         </div>
