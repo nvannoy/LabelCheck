@@ -73,3 +73,7 @@ Real brand artwork is never used. TTB sample images are the one exception, agree
 ## Versions
 
 Every push needs a new version in `package.json`: 0.2.x for small changes, a new minor number for bigger ones. `npm run verify` fails if there are unpushed commits and the version matches `origin/main`.
+
+## Stakeholder QA plan
+
+`tests/qa/QA-PLAN.md` turns the brief's stakeholder requirements into 41 test cases (S, M, D, J and B series). Its label cases run inside `npm run evaluate` (`tests/qa/label-cases.js`), its static checks inside `npm test` (`tests/qa.test.js`), and the rest are run by hand or in a browser and recorded in `tests/qa/RESULTS.md`. Run all of it before each release: `npm run verify`, then the browser cases for anything that changed on screen. A known-bad label that shows Ready to approve is a release blocker.

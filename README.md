@@ -96,12 +96,13 @@ The key measure is that no known-bad label may come out Ready to approve. Extra 
 
 ## Results
 
-Last run (`npm run verify`, version 0.2.8):
+Last run (`npm run verify`, version 0.2.12):
 
-- 144 tests across 12 files pass.
+- 203 tests across 13 files pass.
 - **0 of 22 known-bad labels called Ready to approve.** No bad field was called a match.
-- 219 of 231 field results (95%) were exactly as expected. All 12 misses went to review, the safe direction.
+- 221 of 231 field results (96%) were exactly as expected. All 10 misses went to review, the safe direction.
 - 7 of 11 clean labels came out Ready to approve. The other 4 went to review.
+- The stakeholder QA plan's 24 label cases: 20 pass, 4 recorded as accepted extra reviews, 0 fail (`tests/qa/RESULTS.md` has every case).
 - Reading time in Node over four runs: mean 2.2 to 2.6 s, median 1.9 to 2.4 s, slowest 4.5 to 6.0 s. The 6.0 s run overlapped with other work on the machine; the other three were under 5 s.
 - Reading time in the browser (7 cases including the slowest): first result in 1.4 to 2.4 s, finished in 1.6 to 4.4 s.
 - OCR engine load on the deployed site: 2 to 5 s once per page load. Files under `/ocr/` and `/fonts/` are cached for 30 days.
