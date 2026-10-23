@@ -20,6 +20,7 @@ Every case quotes the requirement, lists the steps and says what a pass looks li
 | --- | --- | --- |
 | **Auto: evaluate** | Real OCR on the label image, then the engine | `npm run evaluate` (`tests/qa/label-cases.js`) |
 | **Auto: test** | Engine, source and repository checks that need no browser | `npm test` (`tests/qa.test.js` and the other test files) |
+| **Auto: e2e** | Scripted Chrome or Edge against the built site: larger text at 440 and 360 px, banner never shows "Ready to approve" before the bold check ends, no failed requests or console errors | `npm run e2e` (`tests/e2e/run.js`) |
 | **Browser** | Run by hand, or scripted against a built copy, in a real browser | `tests/qa/RESULTS.md` |
 | **Human** | Needs a person or a specific machine | `tests/qa/RESULTS.md` |
 

@@ -99,3 +99,24 @@ The tour opens at launch, so earlier S4 ("two steps and one Start review button 
 - `npm run verify` now works on a fresh clone (B6).
 - The README now lists batch and the other limits, and the Azure migration steps (S10, B8, M6).
 - Two quick clicks on A- or A+ now move two steps (S5).
+
+## Findings for 0.2.15, fixed in 0.2.16
+
+| Finding | Result | Evidence |
+| --- | --- | --- |
+| F1 larger text pushes Imported off screen | Fixed | `npm run e2e`: no sideways scroll at 440 and 360 px, text size 1.5, intake and review |
+| F2 banner flashes "Ready to approve" | Fixed | `npm run e2e`: banner states for d18 and d19 never include it; the decision buttons stay disabled until the bold check ends |
+| F3 tiny readable warning | Fixed | Unit test with synthetic boxes; q03 is Check |
+| F4 same labels on every system | Partly done | Fonts bundled (five families), bold thresholds recalibrated, Windows-safe paths, CI matrix added. macOS verified. Windows and Linux can only be verified by the CI run, which has not happened yet |
+| F5 per-platform results | Table in README | macOS filled in; Windows and Linux marked not yet run |
+| F6 swapped clauses wording | Fixed | d17 reason says the clauses are in the wrong order |
+| F7 favicon 404 | Fixed | `npm run e2e`: no failed responses |
+| F8 docs | Done | README title, CLAUDE.md rule 5, Stack, hosting URL and Testing updated |
+
+Per platform (filled from the `verify` workflow):
+
+| Platform | verify | Notes |
+| --- | --- | --- |
+| macOS | Pass (local) | 219 tests, evaluation 215 of 231 fields as expected, 0 of 22 known-bad Ready, e2e pass |
+| Windows | Not yet run | |
+| Linux | Not yet run | |
