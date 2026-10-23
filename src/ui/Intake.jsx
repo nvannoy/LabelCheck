@@ -21,7 +21,8 @@ function ImageStep({ intake }) {
 
   let badge = null
   if (read.status === 'reading') badge = <span className="pill check" role="status"><span aria-hidden="true">?</span>Reading…</span>
-  if (read.status === 'done') badge = <span className="pill match"><span aria-hidden="true">&#10003;</span>Read in {seconds(read.ms)}</span>
+  if (read.status === 'done' && read.closer) badge = <span className="pill check" role="status"><span aria-hidden="true">?</span>First read {seconds(read.ms)}, taking a closer look…</span>
+  else if (read.status === 'done') badge = <span className="pill match"><span aria-hidden="true">&#10003;</span>Read in {seconds(read.ms)}</span>
   if (read.status === 'error') badge = <span className="pill mismatch"><span aria-hidden="true">&#10005;</span>Not read</span>
 
   return (

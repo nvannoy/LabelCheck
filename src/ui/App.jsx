@@ -76,13 +76,19 @@ export default function App() {
     setRead({ status: 'reading' })
     try {
       const w = await ready.current
-      const result = await readImage(w, file)
+      const readable = (r) => r.words.filter((x) => x.text.trim().length > 1).length >= 3
+      // First pass result arrives early when a slower second look is needed.
+      const early = (r) => {
+        if (id !== current.current || !readable(r)) return
+        setRead({ status: 'done', ms: r.ms, result: r, problems: qualityProblems(r.quality), closer: r.secondPass.missing })
+      }
+      const result = await readImage(w, file, { onFirstPass: early })
       if (id !== current.current) return
-      if (result.words.filter((x) => x.text.trim().length > 1).length < 3) {
+      if (!readable(result)) {
         setRead({ status: 'error', error: NOTHING_READ })
         return
       }
-      setRead({ status: 'done', ms: result.ms, result, problems: qualityProblems(result.quality) })
+      setRead({ status: 'done', ms: result.ms, result, problems: qualityProblems(result.quality), closer: null })
     } catch {
       if (id === current.current) setRead({ status: 'error', error: READ_FAILED })
     }

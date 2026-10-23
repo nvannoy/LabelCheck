@@ -32,7 +32,7 @@ const makeCanvas = (w, h) => new OffscreenCanvas(w, h)
 
 // application is optional. When the agent has already pasted it, brand and
 // class are also checked for the second-pass decision.
-export async function readImage(worker, image, { application, secondPass } = {}) {
+export async function readImage(worker, image, { application, secondPass, onFirstPass } = {}) {
   const bitmap = await createImageBitmap(image)
   // The worker is shared between images, so sparse mode is switched on for one
   // read and always switched back.
@@ -47,7 +47,7 @@ export async function readImage(worker, image, { application, secondPass } = {})
     }
   }
   try {
-    return await readLabel({ source: bitmap, width: bitmap.width, height: bitmap.height, makeCanvas, recognize, application, secondPass })
+    return await readLabel({ source: bitmap, width: bitmap.width, height: bitmap.height, makeCanvas, recognize, application, secondPass, onFirstPass })
   } finally {
     bitmap.close()
   }

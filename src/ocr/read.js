@@ -36,7 +36,7 @@ function overlaps(a, b) {
   return inter / smaller > 0.3
 }
 
-export async function readLabel({ source, width, height, makeCanvas, recognize, application, secondPass = true, split = true }) {
+export async function readLabel({ source, width, height, makeCanvas, recognize, application, secondPass = true, split = true, onFirstPass }) {
   const t0 = performance.now()
 
   const full = makeCanvas(width, height)
@@ -67,6 +67,8 @@ export async function readLabel({ source, width, height, makeCanvas, recognize, 
   const missing = missingRequired(joinText(words), application)
   const second = { ran: false, missing, added: 0, ms: 0 }
   if (secondPass && missing.length) {
+    // Hand over what we have now, so the agent is not left waiting on the slower read.
+    onFirstPass?.({ words, panels, quality, secondPass: { ...second, pending: true }, firstPassMs, ms: firstPassMs })
     const t1 = performance.now()
     // The front panel is the one without the government warning. If every panel
     // has it, or there is only one panel, the first panel is re-read.

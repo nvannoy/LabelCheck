@@ -5,6 +5,8 @@ import FieldRow from './FieldRow.jsx'
 import { DecisionBar, NotesPanel, ByEyePanel } from './Decision.jsx'
 import ReadTable from './ReadTable.jsx'
 
+const FIELD_NAMES = { abv: 'alcohol content', netContents: 'net contents', brand: 'brand name', classType: 'class and type' }
+
 const LEGEND = [
   ['match', 'Match', 'Solid green border and a check mark. The label agrees with the application.'],
   ['check', 'Check', 'Dashed amber border and a question mark. The app is not sure. Look at the label.'],
@@ -75,6 +77,11 @@ export default function Review({ image, read, application, result, fields, mode,
           <span className="icon" aria-hidden="true">{tier.symbol}</span>
           <span className="name">{tier.name}</span>
           <span className="sub">{tierSummary(result)}</span>
+        </div>
+      )}
+      {read.closer && (
+        <div className="closer" role="status">
+          <span aria-hidden="true">? </span>Taking a closer look at the label. Results for {read.closer.map((id) => FIELD_NAMES[id] ?? id).join(', ')} may change in a moment.
         </div>
       )}
       <div className="cols">
