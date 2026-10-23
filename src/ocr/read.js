@@ -13,11 +13,12 @@ const joinText = (words) => words.map((w) => w.text).join(' ')
 const squash = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '')
 
 // Word boxes come back in prepared-canvas pixels. Map them to source pixels.
-function toSourceCoords(words, scale, crop, pass) {
+function toSourceCoords(words, scale, crop, pass, panel) {
   return words.map((w) => ({
     text: w.text,
     confidence: w.confidence,
     pass,
+    panel,
     bbox: {
       x0: Math.round(w.bbox.x0 / scale + crop.x),
       y0: Math.round(w.bbox.y0 / scale + crop.y),
@@ -49,16 +50,16 @@ export async function readLabel({ source, width, height, makeCanvas, recognize, 
   const wholeScale = pickScale(width)
   const panels = split ? findPanels(gray, width, height) : [{ x0: 0, x1: width }]
 
-  const readPanel = async (panel, opts) => {
+  const readPanel = async (panel, opts, panelIndex = 0) => {
     const crop = { x: panel.x0, y: 0, w: panel.x1 - panel.x0, h: height }
     const { canvas, scale } = prepare(source, width, height, makeCanvas, { crop, scale: wholeScale, ...opts, sparse: undefined })
-    return toSourceCoords(await recognize(canvas, { sparse: Boolean(opts.sparse) }), scale, crop, opts.sparse ? 2 : 1)
+    return toSourceCoords(await recognize(canvas, { sparse: Boolean(opts.sparse) }), scale, crop, opts.sparse ? 2 : 1, panelIndex)
   }
 
   let words = []
   const panelWords = []
   for (const panel of panels) {
-    const pw = await readPanel(panel, {})
+    const pw = await readPanel(panel, {}, panels.indexOf(panel))
     panelWords.push(pw)
     words = words.concat(pw)
   }
@@ -76,7 +77,7 @@ export async function readLabel({ source, width, height, makeCanvas, recognize, 
     if (target < 0) target = 0
     // A larger scale than the first pass: small boxed text needs the extra pixels.
     const panelWidth = panels[target].x1 - panels[target].x0
-    const extra = await readPanel(panels[target], { sparse: true, scale: Math.max(wholeScale, Math.min(3.5, 1200 / panelWidth)) })
+    const extra = await readPanel(panels[target], { sparse: true, scale: Math.max(wholeScale, Math.min(3.5, 1200 / panelWidth)) }, target)
     const fresh = extra.filter((w) => w.text.trim() && !words.some((o) => overlaps(o.bbox, w.bbox)))
     words = words.concat(fresh)
     Object.assign(second, { ran: true, added: fresh.length, ms: performance.now() - t1, panel: target })

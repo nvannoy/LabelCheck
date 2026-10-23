@@ -258,3 +258,50 @@ describe('net contents printed in two places', () => {
     expect(run(far).status).toBe('check')
   })
 })
+
+describe('what the label says when the application names something else', () => {
+  // A label drawn as lines: each line has a height (the big brand line is tallest).
+  function label(lines) {
+    const words = []
+    let y = 0
+    for (const { text, h } of lines) {
+      let x = 0
+      for (const t of text.split(' ')) { words.push({ text: t, confidence: 95, bbox: { x0: x, y0: y, x1: x + t.length * h * 0.5, y1: y + h } }); x += t.length * h * 0.5 + h * 0.3 }
+      y += h * 1.6
+    }
+    return words
+  }
+  const ABC = label([
+    { text: 'DISTILLED AND BOTTLED BY:', h: 14 }, { text: 'ABC DISTILLERY', h: 24 }, { text: 'FREDERICK, MD', h: 24 },
+    { text: 'ABC', h: 90 }, { text: 'SINGLE BARREL', h: 30 }, { text: 'STRAIGHT RYE WHISKY', h: 34 },
+    { text: '750 mL', h: 28 }, { text: '45% ALC/VOL', h: 28 },
+  ])
+  const other = { brand: 'Malt & Hop', classType: 'Ale with Honey and Huckleberry Flavor', abv: '45% Alc./Vol.', netContents: '750 mL', bottler: 'Malt & Hop Brewery, Hyattsville, MD', imported: false }
+  const field = (id) => checkLabel({ words: ABC, application: other }).fields.find((f) => f.id === id)
+
+  it('shows the largest text when the brand is not on the label', () => {
+    const f = field('brand')
+    expect(f.status).toBe('check')
+    expect(f.found).toBe('ABC')
+    expect(f.reason).toMatch(/largest text the app could read on the label is "ABC"/)
+  })
+  it('shows the line with the class when the class is not on the label', () => {
+    const f = field('classType')
+    expect(f.status).toBe('check')
+    expect(f.found).toBe('STRAIGHT RYE WHISKY')
+    expect(f.reason).toMatch(/not "Ale with Honey/)
+  })
+  it('shows the bottled-by lines when the bottler is not on the label', () => {
+    const f = field('bottler')
+    expect(f.status).toBe('check')
+    expect(f.found).toBe('DISTILLED AND BOTTLED BY: ABC DISTILLERY FREDERICK, MD')
+  })
+  it('still says not found when the label has nothing to show', () => {
+    const f = checkLabel({ words: label([{ text: '750 mL', h: 20 }]), application: other }).fields.find((x) => x.id === 'bottler')
+    expect(f.found).toBeNull()
+    expect(f.reason).toMatch(/was not found/)
+  })
+  it('never turns a missing match into Match', () => {
+    for (const id of ['brand', 'classType', 'bottler']) expect(field(id).status).not.toBe('match')
+  })
+})

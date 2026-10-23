@@ -34,6 +34,9 @@ export function locateChars(index, start, end) {
   return boxOf(index, wis)
 }
 
+// Box and average confidence for a list of word numbers.
+export const boxOfWords = (index, wis) => boxOf(index, wis)
+
 function boxOf(index, wis) {
   const ws = wis.map((i) => index.words[i])
   if (!ws.length) return { bbox: null, confidence: 0 }
@@ -66,4 +69,27 @@ export function bestWindow(index, phrase, skip = () => false) {
     }
   }
   return best
+}
+
+// The label's words grouped into lines of text (words side by side, the same panel), top to
+// bottom, each with the tallest word's height. Used to say what the label does show when
+// what the application names is not on it.
+export function textLines(index) {
+  const items = index.words
+    .map((w, i) => ({ i, w, cy: (w.bbox.y0 + w.bbox.y1) / 2, h: w.bbox.y1 - w.bbox.y0, panel: w.panel ?? 0 }))
+    .filter((x) => /[A-Za-z0-9]/.test(x.w.text))
+    .sort((a, b) => a.panel - b.panel || a.cy - b.cy)
+  const lines = []
+  for (const it of items) {
+    const line = lines.find((l) => l.panel === it.panel && Math.abs(l.cy - it.cy) < Math.max(l.h, it.h) * 0.6)
+    if (line) { line.items.push(it); line.cy = (line.cy * (line.items.length - 1) + it.cy) / line.items.length; line.h = Math.max(line.h, it.h) }
+    else lines.push({ panel: it.panel, cy: it.cy, h: it.h, items: [it] })
+  }
+  return lines.map((l) => {
+    const sorted = l.items.sort((a, b) => a.w.bbox.x0 - b.w.bbox.x0)
+    return {
+      text: sorted.map((x) => x.w.text).join(' '), wis: sorted.map((x) => x.i), height: l.h, y: l.cy, panel: l.panel,
+      confidence: mean(sorted.map((x) => x.w.confidence)),
+    }
+  })
 }

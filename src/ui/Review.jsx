@@ -32,8 +32,8 @@ export default function Review({ image, read, application, result, fields, mode,
   const full = mode === 'full'
   const wide = useWide()
 
-  // First field to look at: the worst one.
-  const firstId = (fields.find((f) => f.status === 'mismatch') ?? fields.find((f) => f.status === 'check') ?? fields[0]).id
+  // The review starts on check 1 and goes down the list in order.
+  const firstId = fields[0].id
   const [focusId, setFocusId] = useState(firstId)
   const [previewId, setPreviewId] = useState(null)
   // The tour opens a field by name; the keyboard focus stays on the tour's buttons.

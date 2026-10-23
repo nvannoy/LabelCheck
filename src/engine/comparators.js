@@ -4,10 +4,55 @@
 // Uncertain never passes (CLAUDE.md rule 7). Fuzzy matching is used only for
 // the brand, class and bottler; never for the warning, ABV or net contents.
 import { tokens } from './text.js'
-import { bestWindow, locate, locateChars, textOf } from './words.js'
+import { bestWindow, locate, locateChars, textOf, textLines, boxOfWords } from './words.js'
 import { parseAbv, parseNetContents, sameAmount, parseCountryPhrases } from './parse.js'
 
 const LOW_CONFIDENCE = 70
+
+// When the application names something the label does not show, say what the label does
+// show in its place, so the agent is not left with "nothing found". These are guesses at
+// where to look (the largest text, a line with a class word, a "bottled by" line), so the
+// result stays Check.
+const CLASS_WORDS = /\b(whisk(?:e)?y|bourbon|rye|scotch|vodka|gin|rum|tequila|mezcal|brandy|cognac|liqueur|cordial|ale|lager|stout|ipa|beer|wine)\b/i
+const BOTTLER_LINE = /\b(bottled|distilled|produced|imported|packed|blended|made|brewed|canned)\b.*\bby\b/i
+
+function pack(index, lines) {
+  const wis = lines.flatMap((l) => l.wis)
+  return { text: lines.map((l) => l.text).join(' '), ...boxOfWords(index, wis) }
+}
+
+// The tallest line of readable text, with the lines directly above or below it that are
+// nearly as tall (a brand set on two lines).
+function largestText(index) {
+  const lines = textLines(index).filter((l) => l.confidence >= 50)
+  if (!lines.length) return null
+  const at = lines.reduce((best, l, i) => (l.height > lines[best].height ? i : best), 0)
+  const big = (l) => l.height >= lines[at].height * 0.75
+  const near = (a, b) => a.panel === b.panel && Math.abs(a.y - b.y) <= Math.max(a.height, b.height) * 1.6
+  let from = at, to = at
+  while (from > 0 && big(lines[from - 1]) && near(lines[from - 1], lines[from])) from--
+  while (to < lines.length - 1 && big(lines[to + 1]) && near(lines[to], lines[to + 1])) to++
+  return pack(index, lines.slice(from, to + 1))
+}
+
+function classLine(index) {
+  const hits = textLines(index).filter((l) => l.text.length <= 60 && CLASS_WORDS.test(l.text))
+  if (!hits.length) return null
+  return pack(index, [hits.reduce((a, b) => (b.height > a.height ? b : a))])
+}
+
+function bottlerLine(index) {
+  const lines = textLines(index)
+  const at = lines.findIndex((l) => BOTTLER_LINE.test(l.text))
+  if (at < 0) return null
+  const take = [lines[at]]
+  for (let k = at + 1; k < lines.length && take.length < 3; k++) {
+    const prev = take[take.length - 1]
+    if (lines[k].panel !== prev.panel || lines[k].y - prev.y > Math.max(prev.height, lines[k].height) * 2.2) break
+    take.push(lines[k])
+  }
+  return pack(index, take)
+}
 
 const notFound = (what) => ({ status: 'check', found: null, confidence: 0, bbox: null, reason: `${what} was not found on the label. It may be missing or misread.` })
 
@@ -27,6 +72,8 @@ export function brand(index, application) {
   const found = textOf(index, w.from, w.to)
   if (w.score === 1) return lowConfidence({ status: 'match', found, ...place, reason: 'The brand name matches.' }, 'The brand name')
   if (w.score >= 0.8) return { status: 'check', found, ...place, reason: `The label has "${found}", which is close to "${application.brand}" but not the same.` }
+  const other = largestText(index)
+  if (other) return { status: 'check', found: other.text, bbox: other.bbox, confidence: Math.round(other.confidence), reason: `The largest text the app could read on the label is "${other.text}", which is not "${application.brand}". Confirm the brand by eye.` }
   return notFound('The brand name')
 }
 
@@ -37,6 +84,8 @@ export function classType(index, application) {
   const found = textOf(index, w.from, w.to)
   if (w.score === 1) return lowConfidence({ status: 'match', found, ...place, reason: 'The class and type match.' }, 'The class and type')
   if (w.score >= 0.8) return { status: 'check', found, ...place, reason: `The label has "${found}", which is close to "${application.classType}" but not the same.` }
+  const other = classLine(index)
+  if (other) return { status: 'check', found: other.text, bbox: other.bbox, confidence: Math.round(other.confidence), reason: `The label shows "${other.text}", not "${application.classType}". Confirm the class and type by eye.` }
   return notFound('The class and type')
 }
 
@@ -131,6 +180,8 @@ export function bottler(index, application) {
     const found = textOf(index, nameW.from, nameW.to)
     return { status: 'check', found, ...place, reason: `The label has "${found}", which is similar to the application but not the same. Compare the name and address.` }
   }
+  const other = bottlerLine(index)
+  if (other) return { status: 'check', found: other.text, bbox: other.bbox, confidence: Math.round(other.confidence), reason: `The label shows "${other.text}", which does not match "${application.bottler}". Compare the name and address.` }
   return notFound('The bottler name and address')
 }
 
