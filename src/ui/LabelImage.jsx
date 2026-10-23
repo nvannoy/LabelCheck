@@ -35,13 +35,35 @@ export default function LabelImage({ src, width, height, words, fields, focusId,
   const focused = fields.find((f) => f.id === focusId)
   const canZoomToField = Boolean(focused?.bbox) && focused.status !== 'na'
 
+  // Where the window is looking, as a fraction of the image, so the same spot stays in
+  // view when the window changes size (compact to full mode) or the zoom changes.
+  const view = useRef({ fx: 0.5, fy: 0.5 })
+  const restoring = useRef(false)
+  const geom = useRef(null)
+  geom.current = { fit, fw, fh }
+  const clamp01 = (v) => Math.min(1, Math.max(0, v))
+
+  const onScroll = () => {
+    if (restoring.current || !geom.current.fw) return
+    const sc = scroller.current
+    const { fit: f, fw: w, fh: h } = geom.current
+    view.current = { fx: clamp01((sc.scrollLeft + sc.clientWidth / 2 - f.left) / w), fy: clamp01((sc.scrollTop + sc.clientHeight / 2 - f.top) / h) }
+  }
+
+  const scrollToView = () => {
+    const sc = scroller.current
+    if (!sc) return
+    const { fit: f, fw: w, fh: h } = geom.current
+    restoring.current = true // the scroll event this causes is not the agent moving the image
+    sc.scrollTo({ left: view.current.fx * w + f.left - sc.clientWidth / 2, top: view.current.fy * h + f.top - sc.clientHeight / 2 })
+    requestAnimationFrame(() => { restoring.current = false })
+  }
+
   const centerOn = (id) => {
     const f = fields.find((x) => x.id === id)
-    const sc = scroller.current
-    if (!f?.bbox || !sc) return
-    const cx = ((f.bbox.x0 + f.bbox.x1) / 2 / width) * fw + fit.left
-    const cy = ((f.bbox.y0 + f.bbox.y1) / 2 / height) * fh + fit.top
-    sc.scrollTo({ left: cx - sc.clientWidth / 2, top: cy - sc.clientHeight / 2 })
+    if (!f?.bbox) return
+    view.current = { fx: clamp01((f.bbox.x0 + f.bbox.x1) / 2 / width), fy: clamp01((f.bbox.y0 + f.bbox.y1) / 2 / height) }
+    scrollToView()
   }
 
   const step = (dir) => {
@@ -57,10 +79,13 @@ export default function LabelImage({ src, width, height, words, fields, focusId,
     setZoom(want)
   }
 
-  // After the new zoom is laid out, bring the field to the middle.
+  // After the window or the zoom changes, put the same spot (or the field just asked for)
+  // back in the middle. At 100% the whole label fits, so there is nothing to keep.
   useLayoutEffect(() => {
     if (pendingCenter.current) { centerOn(pendingCenter.current); pendingCenter.current = null }
-  })
+    else if (zoom > 1) scrollToView()
+    else view.current = { fx: 0.5, fy: 0.5 }
+  }, [size.w, size.h, zoom]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Keep the focused field in view when the keyboard or a click moves focus while zoomed.
   useEffect(() => {
@@ -84,7 +109,7 @@ export default function LabelImage({ src, width, height, words, fields, focusId,
   return (
     <div className="imageblock">
     <div className="imagebox" ref={holder}>
-      <div className="scroller" ref={scroller} style={{ cursor: zoom > 1 ? 'grab' : 'default' }}
+      <div className="scroller" ref={scroller} onScroll={onScroll} style={{ cursor: zoom > 1 ? 'grab' : 'default' }}
         onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
         {base > 0 && (
           <div style={{ position: 'relative', width: canvasW, height: canvasH }}>

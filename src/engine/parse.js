@@ -12,15 +12,40 @@ const UNITS_IN_ML = {
   oz: 29.5735, 'fl oz': 29.5735, 'fl. oz': 29.5735, 'fl. oz.': 29.5735,
   pint: 473.176, pints: 473.176, pt: 473.176, quart: 946.353, qt: 946.353, gal: 3785.41, gallon: 3785.41,
 }
-const NET = /(\d+(?:\.\d+)?)\s*(fl\.?\s*oz\.?|ml|cl|liters?|litres?|l|oz|pints?|pt|quarts?|qt|gal(?:lon)?)\b/gi
+const NET = /(\d+(?:\.\d+)?)\s*(fl\.?\s*oz\.?|ml|cl|liters?|litres?|l|oz|pints?|pt|quarts?|qt|gal(?:lon)?)\b\.?/gi
+
+const US_UNITS = /^(?:fl\.? ?oz\.?|oz|pints?|pt|quarts?|qt|gal(?:lon)?)$/
 
 // Net contents, converted to millilitres and rounded to 0.1 so "75 cl" equals "750 mL".
-export function parseNetContents(text) {
-  return [...text.matchAll(NET)].map((m) => {
+// "1 PINT, 0.9 FL. OZ." is one amount (the two parts are added: 500 mL). Each item
+// also says which system its unit belongs to, because converting between systems
+// is only approximate (see sameAmount).
+export function parseNetContents(text, { merge = true } = {}) {
+  const items = [...text.matchAll(NET)].map((m) => {
     const unit = m[2].toLowerCase().replace(/\s+/g, ' ')
     const factor = UNITS_IN_ML[unit] ?? UNITS_IN_ML[unit.replace(/s$/, '')] ?? UNITS_IN_ML[unit.replace(/\.$/, '')]
-    return { ml: Math.round(Number(m[1]) * factor * 10) / 10, raw: m[0], start: m.index }
+    return { exactMl: Number(m[1]) * factor, raw: m[0], start: m.index, end: m.index + m[0].length, system: US_UNITS.test(unit) ? 'us' : 'metric' }
   })
+  const merged = []
+  for (const item of items) {
+    const prev = merged[merged.length - 1]
+    const gap = prev ? text.slice(prev.end, item.start) : ''
+    if (merge && prev && prev.system === 'us' && item.system === 'us' && /^\s*(?:,|and|&)?\s*$/.test(gap)) {
+      prev.exactMl += item.exactMl
+      prev.raw = text.slice(prev.start, item.end)
+      prev.end = item.end
+    } else merged.push({ ...item })
+  }
+  return merged.map((x) => ({ ml: Math.round(x.exactMl * 10) / 10, raw: x.raw, start: x.start, system: x.system }))
+}
+
+// Two amounts are the same when they are equal after unit conversion. Within one
+// system that is exact. Between systems the conversion is only approximate (750 mL
+// is 25.36 fl oz, which a label prints as 25.4), so a rounding allowance of 0.5%
+// applies there and nowhere else. 700 mL against 750 mL is still a mismatch.
+export function sameAmount(a, b) {
+  if (a.system === b.system) return a.ml === b.ml
+  return Math.abs(a.ml - b.ml) / Math.max(a.ml, b.ml) <= 0.005
 }
 
 const COUNTRY = /(?:product|produced|made|imported|distilled|bottled)\s+(?:of|in|from)\s+([A-Za-z]+(?:\s+[A-Za-z]+)?)/gi

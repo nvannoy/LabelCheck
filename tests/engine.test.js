@@ -185,3 +185,58 @@ describe('bold measurement in the warning result', () => {
     expect(run(t('unclear')).byEye.join(' ')).toMatch(/Bold type/)
   })
 })
+
+describe('net contents with two parts and two unit systems', () => {
+  const net = (label, application) => {
+    const app = { ...APP, netContents: application }
+    const text = `Harlan Ridge ${APP.classType} 45% Alc./Vol. ${label} Bottled by ${APP.bottler} ${WARNING_TEXT}`
+    return status(text, app).netContents
+  }
+  it('adds the parts of "1 PINT, 0.9 FL. OZ." (500 mL)', () => {
+    expect(parseNetContents('1 PINT, 0.9 FL. OZ.')).toMatchObject([{ ml: 499.8, system: 'us' }])
+    expect(net('1 PINT, 0.9 FL. OZ.', '1 Pint, 0.9 Fl. Oz.')).toBe('match')
+  })
+  it('does not match when the label leaves out the second part (sent to review)', () => {
+    expect(net('1 PINT', '1 Pint, 0.9 Fl. Oz.')).toBe('check')
+  })
+  it('matches 500 mL against 1 pint 0.9 fl oz', () => {
+    expect(net('1 PINT, 0.9 FL. OZ.', '500 mL')).toBe('match')
+  })
+  it('allows only rounding between systems: 25.4 fl oz is 750 mL', () => {
+    expect(net('25.4 FL OZ', '750 mL')).toBe('match')
+    expect(net('750 mL', '25.4 fl oz')).toBe('match')
+    expect(net('24 FL OZ', '750 mL')).toBe('mismatch')
+  })
+  it('stays exact inside one system', () => {
+    expect(net('700 mL', '750 mL')).toBe('mismatch')
+    expect(net('751 mL', '750 mL')).toBe('mismatch')
+  })
+  it('does not add a metric amount to a US amount', () => {
+    expect(parseNetContents('750 mL 25.4 FL OZ')).toHaveLength(2)
+  })
+})
+
+describe('net contents printed in two places', () => {
+  const w = (text, x0, y0, x1, y1) => ({ text, confidence: 95, bbox: { x0, y0, x1, y1 } })
+  const MALT = { ...APP, brand: 'Malt', netContents: '1 Pint, 0.9 Fl. Oz.' }
+  const run = (words) => checkLabel({ words, application: MALT }).fields.find((f) => f.id === 'netContents')
+  // Side by side boxes: "5% ALC./VOL." on the left, "1 PINT, 0.9 FL. OZ." on the right, in reading order by line.
+  const sideBySide = [
+    w('5%', 0, 100, 40, 130), w('1', 120, 100, 135, 130), w('PINT,', 140, 100, 200, 130),
+    w('ALC./VOL.', 0, 135, 100, 165), w('0.9', 120, 135, 160, 165), w('FL.', 165, 135, 195, 165), w('OZ.', 200, 135, 240, 165),
+  ]
+  it('joins the second line to the first when it sits right under it', () => {
+    const r = run(sideBySide)
+    expect(r.status).toBe('match')
+    expect(r.found).toBe('1 PINT, 0.9 FL. OZ.')
+  })
+  it('sends a label showing only the first part to review, not to mismatch', () => {
+    const r = run(sideBySide.slice(0, 3))
+    expect(r.status).toBe('check')
+    expect(r.reason).toMatch(/only part/)
+  })
+  it('does not join amounts that are far apart', () => {
+    const far = [w('1', 0, 0, 15, 30), w('PINT,', 20, 0, 80, 30), w('Distilled', 0, 200, 90, 230), w('0.9', 0, 400, 40, 430), w('FL.', 45, 400, 75, 430), w('OZ.', 80, 400, 120, 430)]
+    expect(run(far).status).toBe('check')
+  })
+})

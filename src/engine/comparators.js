@@ -5,7 +5,7 @@
 // the brand, class and bottler; never for the warning, ABV or net contents.
 import { tokens } from './text.js'
 import { bestWindow, locate, locateChars, textOf } from './words.js'
-import { parseAbv, parseNetContents, parseCountryPhrases } from './parse.js'
+import { parseAbv, parseNetContents, sameAmount, parseCountryPhrases } from './parse.js'
 
 const LOW_CONFIDENCE = 70
 
@@ -52,16 +52,56 @@ export function abv(index, application) {
   return { status: 'mismatch', found: got[0].raw, ...place, reason: `The label states ${got[0].value}% but the application says ${want}%.` }
 }
 
-// Net contents: compared exactly after converting units to millilitres.
+// Two parts of one amount ("1 PINT," and "0.9 FL. OZ.") are often printed on separate
+// lines, so they are not next to each other in the text. They are joined when the
+// second sits right under or right beside the first.
+function near(a, b) {
+  const h = Math.max(a.y1 - a.y0, b.y1 - b.y0)
+  const gapX = Math.max(0, Math.max(a.x0, b.x0) - Math.min(a.x1, b.x1))
+  const gapY = Math.max(0, Math.max(a.y0, b.y0) - Math.min(a.y1, b.y1))
+  const sameLine = Math.abs((a.y0 + a.y1) / 2 - (b.y0 + b.y1) / 2) < h * 0.6 && gapX <= h * 2
+  const overlapX = Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)
+  const stacked = gapY <= h * 1.2 && overlapX >= 0.4 * Math.min(a.x1 - a.x0, b.x1 - b.x0)
+  return sameLine || stacked
+}
+
+function joinParts(items) {
+  const used = new Set()
+  const out = []
+  items.forEach((a, i) => {
+    if (used.has(i)) return
+    const j = a.system === 'us' ? items.findIndex((b, k) => k !== i && !used.has(k) && b.system === 'us' && b.ml < a.ml && near(a.bbox, b.bbox)) : -1
+    if (j < 0) { out.push(a); return }
+    const b = items[j]
+    used.add(j)
+    out.push({
+      ...a, ml: Math.round((a.ml + b.ml) * 10) / 10, raw: `${a.raw}, ${b.raw}`,
+      confidence: Math.round((a.confidence + b.confidence) / 2),
+      bbox: { x0: Math.min(a.bbox.x0, b.bbox.x0), y0: Math.min(a.bbox.y0, b.bbox.y0), x1: Math.max(a.bbox.x1, b.bbox.x1), y1: Math.max(a.bbox.y1, b.bbox.y1) },
+    })
+  })
+  return out
+}
+
+// Net contents: compared as an amount after converting units to millilitres, with no
+// fuzzy matching. See sameAmount for the one rounding allowance between unit systems.
+// An amount with two parts is added up. If the label shows only one part of the
+// application's amount, that is a Check (the rest may be printed apart or unread),
+// not a mismatch.
 export function netContents(index, application) {
-  const want = parseNetContents(application.netContents)[0]?.ml
-  const got = parseNetContents(index.text)
+  const want = parseNetContents(application.netContents)[0]
+  const parts = parseNetContents(application.netContents, { merge: false })
+  const found = parseNetContents(index.text).map((g) => ({ ...g, ...locateChars(index, g.start, g.start + g.raw.length) }))
+  const got = joinParts(found)
   if (!got.length) return notFound('Net contents')
-  const hit = got.find((g) => g.ml === want)
-  const shown = hit ?? got[0]
-  const place = locateChars(index, shown.start, shown.start + shown.raw.length)
-  if (hit) return lowConfidence({ status: 'match', found: hit.raw, ...place, reason: `The label states ${hit.raw}.` }, 'The net contents')
-  return { status: 'mismatch', found: got[0].raw, ...place, reason: `The label states ${got[0].raw} but the application says ${application.netContents}.` }
+  const place = (g) => ({ bbox: g.bbox, confidence: g.confidence })
+  const hit = want && got.find((g) => sameAmount(g, want))
+  if (hit) return lowConfidence({ status: 'match', found: hit.raw, ...place(hit), reason: `The label states ${hit.raw}${hit.raw.endsWith('.') ? '' : '.'}` }, 'The net contents')
+  const partial = parts.length > 1 && got.find((g) => parts.some((p) => sameAmount(g, p)))
+  if (partial) {
+    return { status: 'check', found: partial.raw, ...place(partial), reason: `The label shows ${partial.raw}, which is only part of the application's ${application.netContents}. The rest may be printed apart or not read.` }
+  }
+  return { status: 'mismatch', found: got[0].raw, ...place(got[0]), reason: `The label states ${got[0].raw} but the application says ${application.netContents}.` }
 }
 
 // Bottler name and address: looser match, and never worse than Needs Review.
@@ -79,7 +119,7 @@ export function bottler(index, application) {
   const together = whole.score >= 0.95
   if (together || apart) {
     const place = together ? locate(index, whole.from, whole.to) : locate(index, nameW.from, nameW.to)
-    const found = together ? textOf(index, whole.from, whole.to) : `${textOf(index, nameW.from, nameW.to)} ... ${textOf(index, addrW.from, addrW.to)}`
+    const found = together ? textOf(index, whole.from, whole.to) : `${textOf(index, nameW.from, nameW.to)}; elsewhere: ${textOf(index, addrW.from, addrW.to)}`
     const where = together ? '' : ' The name and the address are printed apart on the label.'
     return lowConfidence({ status: 'match', found, ...place, reason: `The bottler name and address match.${where}` }, 'The bottler name and address')
   }
