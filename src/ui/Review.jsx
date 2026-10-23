@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { TIERS, tierSummary } from './status.js'
+import { TIERS, CHECKING, tierSummary } from './status.js'
 import LabelImage from './LabelImage.jsx'
 import FieldRow from './FieldRow.jsx'
 import { DecisionBar, NotesPanel } from './Decision.jsx'
@@ -28,7 +28,7 @@ function useWide() {
   return wide
 }
 
-export default function Review({ image, read, application, result, fields, mode, textScale, onNext, helpOpen, onCloseHelp, tourFocus }) {
+export default function Review({ image, read, application, result, fields, mode, textScale, onNext, helpOpen, onCloseHelp, tourFocus, checking }) {
   const full = mode === 'full'
   const wide = useWide()
 
@@ -125,16 +125,16 @@ export default function Review({ image, read, application, result, fields, mode,
   // view and none of them are missed.
   useEffect(() => { rowRefs.current[focusId]?.closest('.row')?.scrollIntoView?.({ block: 'start' }) }, [focusId])
 
-  const tier = TIERS[result.tier]
+  const tier = checking ? CHECKING : TIERS[result.tier]
   const color = { reject: 'var(--red)', review: 'var(--amber)', ready: 'var(--green)' }[result.tier]
 
   return (
     <div ref={frame} className="reviewpane" style={{ position: 'relative' }}>
       {!full && (
-        <div className={`tier ${result.tier}`} role="status">
+        <div className={`tier ${checking ? 'checking' : result.tier}`} role="status">
           <span className="icon" aria-hidden="true">{tier.symbol}</span>
           <span className="name">{tier.name}</span>
-          <span className="sub">{tierSummary(result)}</span>
+          <span className="sub">{checking ? 'One moment.' : tierSummary(result)}</span>
         </div>
       )}
       {read.closer && (
@@ -160,7 +160,7 @@ export default function Review({ image, read, application, result, fields, mode,
           </div>
           {legend && <Legend labelByEye={result.labelByEye} />}
           {full && !wide && <ReadTable fields={fields} />}
-          <DecisionBar choice={choice} onChoose={choose} confirming={confirming} flagged={result.counts.mismatch}
+          <DecisionBar disabled={checking} choice={choice} onChoose={choose} confirming={confirming} flagged={result.counts.mismatch}
             onConfirm={() => { setConfirming(false); setChoice('verified') }} onCancel={() => setConfirming(false)} />
           {choice && (
             <NotesPanel choice={choice} fileName={image.name} fields={fields} labelByEye={result.labelByEye}

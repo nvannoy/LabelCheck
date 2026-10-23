@@ -49,15 +49,17 @@ const softOnly = (op) => op.kind === 'sub' && plain(op.want) !== '' && plain(op.
 
 const SMALL_PRINT_PX = 12 // body letters shorter than this (in image pixels) are read unreliably
 
-// Reading very small print is unreliable even when OCR reports high confidence, so a
-// difference found in it is sent to a person instead of being called a mismatch.
+// Very small print is not trusted either way. A difference found in it is sent to a person
+// instead of being called a mismatch, and wording that matches is still only a Check: at
+// that size OCR can be right by luck, and bold and size cannot be judged.
 export function checkWarning(words) {
   const r = compareWarning(words)
-  if (r.status !== 'mismatch' || !r.statementWords) return r
+  if (!r.statementWords || (r.status !== 'mismatch' && r.status !== 'match')) return r
   const heights = r.statementWords.map((w) => w.bbox.y1 - w.bbox.y0).sort((a, b) => a - b)
   const median = heights[Math.floor(heights.length / 2)]
   if (median >= SMALL_PRINT_PX) return r
-  return { ...r, status: 'check', reason: `The print is very small, so the read may be wrong. ${r.reason}` }
+  if (r.status === 'mismatch') return { ...r, status: 'check', reason: `The print is very small, so the read may be wrong. ${r.reason}` }
+  return { ...r, status: 'check', reason: `The wording matches, but the print is very small (about ${Math.round(median)} px tall in this image). Confirm by eye that it is readable and that the title is bold.` }
 }
 
 function compareWarning(words) {
@@ -102,6 +104,12 @@ function compareWarning(words) {
   }
   if (ops.every(softOnly)) {
     return { ...base, ...place, status: 'check', reason: 'The words match the statute but some capital letters or punctuation marks differ. Confirm by eye.' }
+  }
+  // Both clauses present but in the wrong order is one clear problem, not twenty extra words.
+  const at1 = got.findIndex((w) => w.text === '(1)')
+  const at2 = got.findIndex((w) => w.text === '(2)')
+  if (at1 >= 0 && at2 >= 0 && at2 < at1 && place.confidence >= SURE) {
+    return { ...base, ...place, status: 'mismatch', reason: 'Clauses (1) and (2) of the warning are in the wrong order. The statute puts (1) first.' }
   }
   // A whole clause missing, with everything around it read clearly, is a real omission:
   // OCR that fails to read text loses lines in the middle of a clause, not exactly one clause.

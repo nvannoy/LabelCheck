@@ -7,8 +7,9 @@ import { startWorker, readImage, makeCanvas } from '../ocr/ocr.js'
 import { measureWarning } from '../ocr/measure.js'
 import { parseApplication, importedFromCountry, APPLICATION_FIELDS } from '../engine/parse.js'
 import { checkLabel, qualityProblems } from '../engine/check.js'
+import { checkWarning } from '../engine/warning.js'
 import { classifyPaste, classifyDrop, isEditable } from './paste.js'
-import { rowStatus, TIERS, tierSummary } from './status.js'
+import { rowStatus, TIERS, CHECKING, tierSummary } from './status.js'
 import Tour from '../tour/Tour.jsx'
 import { TOUR_STEPS } from '../tour/steps.js'
 import { SAMPLE_READ, SAMPLE_TEXT, sampleFile } from '../tour/sample.js'
@@ -32,7 +33,6 @@ export default function App() {
   const [edits, setEdits] = useState({})
   const [importedChoice, setImportedChoice] = useState(null)
   const [screen, setScreen] = useState('intake')
-  const [typography, setTypography] = useState(null)
   const [helpOpen, setHelpOpen] = useState(false) // full mode: keyboard hints and the symbol legend
   const [mode, setMode] = useState('compact') // compact column, or full (fullscreen, two columns)
   const [tour, setTour] = useState({ step: 0 }) // the tour opens every time the app opens; nothing is stored
@@ -73,7 +73,7 @@ export default function App() {
     setAppText('')
     setEdits({})
     setImportedChoice(null)
-    setTypography(null)
+    setMeasured(null)
     demoRef.current = false
     setScreen('intake')
   }, [leaveFull])
@@ -203,36 +203,39 @@ export default function App() {
     return a
   }, [values, imported])
 
-  // First check without type measurements, to find the warning's words.
-  const base = useMemo(() => {
-    if (screen !== 'review' || read.status !== 'done') return null
-    return checkLabel({ words: read.result.words, application, quality: read.result.quality })
-  }, [screen, read, application])
-  const statementWords = base?.fields.find((f) => f.id === 'warning')?.statementWords
+  // The warning's words, found as soon as the label is read (they do not depend on the
+  // application), so the title can be checked for bold before the review opens.
+  const warningWords = useMemo(
+    () => (read.status === 'done' && !read.closer ? checkWarning(read.result.words).statementWords ?? null : null),
+    [read],
+  )
 
-  // Then check from the image whether the warning title is bold. It can only make
-  // the result worse, so the first screen of results never changes for the better.
+  // Then check from the image whether the warning title is bold. It can only make the result
+  // worse. The result for that moment is "Checking", never "Ready to approve", so a label with
+  // a bad title is not shown as approvable while this runs.
+  const [measured, setMeasured] = useState(null) // { for: the words measured, value: the measurement or null }
   useEffect(() => {
-    if (!statementWords || !image?.file || read.closer) { setTypography(null); return undefined }
+    if (!warningWords || !image?.file) { setMeasured(null); return undefined }
     let alive = true
     ;(async () => {
-      const bitmap = await createImageBitmap(image.file)
+      let value = null
       try {
-        const t = measureWarning({
-          source: bitmap, width: bitmap.width, height: bitmap.height, makeCanvas,
-          statementWords, quality: read.result.quality,
-        })
-        if (alive) setTypography(t)
-      } catch { if (alive) setTypography(null) } finally { bitmap.close() }
+        const bitmap = await createImageBitmap(image.file)
+        try {
+          value = measureWarning({ source: bitmap, width: bitmap.width, height: bitmap.height, makeCanvas, statementWords: warningWords, quality: read.result.quality })
+        } finally { bitmap.close() }
+      } catch { /* no measurement: the agent checks the title by eye */ }
+      if (alive) setMeasured({ for: warningWords, value })
     })()
     return () => { alive = false }
-  }, [statementWords, image, read])
+  }, [warningWords, image, read])
+  const checking = Boolean(warningWords) && measured?.for !== warningWords
 
   const review = useMemo(() => {
-    if (!base) return null
-    const result = checkLabel({ words: read.result.words, application, quality: read.result.quality, typography })
+    if (screen !== 'review' || read.status !== 'done') return null
+    const result = checkLabel({ words: read.result.words, application, quality: read.result.quality, typography: measured?.value ?? null })
     return { result, fields: result.fields.map((f) => ({ ...f, display: rowStatus(f) })) }
-  }, [base, read, application, typography])
+  }, [screen, read, application, measured])
 
   const intake = {
     engine, image, read, onFile, appText, setAppText, parsed, values, count, imported,
@@ -247,7 +250,7 @@ export default function App() {
     <>
     <div className={`app${review ? ' fixed' : ''}${mode === 'full' && review ? ' fullmode' : ''}`} inert={tour ? true : undefined}>
       <div className={`frame ${mode === 'full' && review ? 'full' : 'compact'}`}>
-        <Header textSize={textSize} middle={mode === 'full' && review && <TierChip result={review.result} />}>
+        <Header textSize={textSize} middle={mode === 'full' && review && <TierChip result={review.result} checking={checking} />}>
           {review && mode === 'full' && <button type="button" className="btn-onblue" aria-expanded={helpOpen} aria-controls="help-pop" onClick={() => setHelpOpen((v) => !v)}>Help</button>}
           {review && (mode === 'full'
             ? <button type="button" className="btn-onblue solid" onClick={leaveFull}>Compact view</button>
@@ -257,7 +260,7 @@ export default function App() {
         </Header>
         {screen === 'intake' && notice && <div className="notice" role="status">{notice}</div>}
         {screen === 'intake' && <Intake intake={intake} />}
-        {review && <Review image={image} read={read} application={application} result={review.result} fields={review.fields} mode={mode} textScale={textSize.scale} onNext={reset} helpOpen={helpOpen} onCloseHelp={() => setHelpOpen(false)} tourFocus={tourFocus} />}
+        {review && <Review image={image} read={read} application={application} result={review.result} fields={review.fields} mode={mode} textScale={textSize.scale} onNext={reset} helpOpen={helpOpen} onCloseHelp={() => setHelpOpen(false)} tourFocus={tourFocus} checking={checking} />}
       </div>
       <Footer wide={mode === 'full' && Boolean(review)} />
     </div>
@@ -266,11 +269,11 @@ export default function App() {
   )
 }
 
-function TierChip({ result }) {
-  const tier = TIERS[result.tier]
+function TierChip({ result, checking }) {
+  const tier = checking ? CHECKING : TIERS[result.tier]
   return (
-    <div className={`chip ${result.tier}`} role="status">
-      <span aria-hidden="true">{tier.symbol}</span>{tier.name}<span className="sub">{tierSummary(result)}</span>
+    <div className={`chip ${checking ? 'checking' : result.tier}`} role="status">
+      <span aria-hidden="true">{tier.symbol}</span>{tier.name}<span className="sub">{checking ? 'One moment.' : tierSummary(result)}</span>
     </div>
   )
 }

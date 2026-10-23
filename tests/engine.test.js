@@ -45,6 +45,10 @@ describe('government warning', () => {
   it('flags a title that is not all capitals', () => {
     expect(check(WARNING_TEXT.replace('GOVERNMENT WARNING:', 'Government Warning:')).status).toBe('mismatch')
   })
+  it('says clauses in the wrong order are in the wrong order', () => {
+    const swapped = 'GOVERNMENT WARNING: (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems. (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects.'
+    expect(check(swapped).reason).toBe('Clauses (1) and (2) of the warning are in the wrong order. The statute puts (1) first.')
+  })
   it('flags swapped clauses', () => {
     const swapped = 'GOVERNMENT WARNING: (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems. (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects.'
     expect(check(swapped).status).toBe('mismatch')
@@ -63,6 +67,16 @@ describe('government warning', () => {
     const r = checkWarning(tiny)
     expect(r.status).toBe('check')
     expect(r.reason).toMatch(/very small/)
+  })
+  it('sends matching wording in very small print to review, never a match', () => {
+    const tiny = wordsFrom(WARNING_TEXT).map((w) => ({ ...w, bbox: { ...w.bbox, y1: w.bbox.y0 + 8 } }))
+    const r = checkWarning(tiny)
+    expect(r.status).toBe('check')
+    expect(r.reason).toMatch(/very small/)
+    expect(checkLabel({ words: tiny, application: APP }).tier).not.toBe('ready')
+  })
+  it('keeps normal-size matching wording a match', () => {
+    expect(checkWarning(wordsFrom(WARNING_TEXT)).status).toBe('match')
   })
   it('sends a few missing words to review, not a mismatch', () => {
     expect(check(WARNING_TEXT.replace(' health', '')).status).toBe('check')

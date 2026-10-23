@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { draftNotes } from './notes.js'
 
-export function DecisionBar({ choice, onChoose, confirming, flagged, onConfirm, onCancel }) {
+export function DecisionBar({ choice, onChoose, confirming, flagged, onConfirm, onCancel, disabled }) {
   return (
     <>
       <div className="decision">
-        <button type="button" className="btn-decide ok" aria-pressed={choice === 'verified'} onClick={() => onChoose('verified')}>Label verified</button>
-        <button type="button" className="btn-decide bad" aria-pressed={choice === 'issues'} onClick={() => onChoose('issues')}>Issues found</button>
+        <button type="button" className="btn-decide ok" disabled={disabled} aria-pressed={choice === 'verified'} onClick={() => onChoose('verified')}>Label verified</button>
+        <button type="button" className="btn-decide bad" disabled={disabled} aria-pressed={choice === 'issues'} onClick={() => onChoose('issues')}>Issues found</button>
       </div>
       {confirming && (
         <div className="confirm" role="alertdialog" aria-labelledby="confirm-h">

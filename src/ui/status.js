@@ -17,6 +17,9 @@ export const TIERS = {
   ready: { name: 'Ready to approve', symbol: '✓' },
 }
 
+// Shown instead of a tier while the warning title is still being checked for bold.
+export const CHECKING = { name: 'Checking the warning title', symbol: '\u2026' }
+
 export function tierSummary(result) {
   const { mismatch, check } = result.counts
   if (result.tier === 'ready') return 'All fields match. Warning bold type and size still need your eye.'
