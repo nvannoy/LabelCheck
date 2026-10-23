@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTextSize } from './useTextSize.js'
 import Header, { Footer } from './Header.jsx'
 import Intake from './Intake.jsx'
+import Review from './Review.jsx'
 import { startWorker, readImage } from '../ocr/ocr.js'
 import { parseApplication, APPLICATION_FIELDS } from '../engine/parse.js'
 import { qualityProblems } from '../engine/check.js'
@@ -97,11 +98,7 @@ export default function App() {
           <button type="button" className="btn-onblue" onClick={reset}>Next label</button>
         </Header>
         {screen === 'intake' && <Intake intake={intake} />}
-        {screen === 'review' && (
-          <main className="step plain">
-            <p>Review of {image?.name} with {Object.keys(application).length} application values. Review screen goes here.</p>
-          </main>
-        )}
+        {screen === 'review' && <Review image={image} read={read} application={application} textScale={textSize.scale} />}
       </div>
       <Footer />
     </div>

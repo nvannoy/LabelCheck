@@ -235,3 +235,5 @@ button { cursor: pointer; }
 .probe table { border-collapse: collapse; font-size: 0.9rem; }
 .probe th, .probe td { border: 1px solid var(--muted); padding: 0.2rem 0.5rem; text-align: left; }
 .probe img { max-width: 440px; display: block; margin: 1rem 0; }
+
+.row-head .seen { font-size: 0.8125rem; color: var(--muted); }

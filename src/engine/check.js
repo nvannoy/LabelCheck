@@ -37,8 +37,11 @@ export function checkLabel({ words, application, quality }) {
 
   const ready = fields.every((f) => f.status === 'match' || f.status === 'na')
   const count = (s) => fields.filter((f) => f.status === s).length
+  // Likely reject: a clear mismatch. Needs review: anything uncertain. Ready: every check passed.
+  const tier = count('mismatch') ? 'reject' : count('check') ? 'review' : 'ready'
   return {
     fields,
+    tier,
     overall: ready ? 'ready' : 'not-ready',
     counts: { match: count('match'), check: count('check'), mismatch: count('mismatch'), na: count('na') },
     labelByEye: LABEL_BY_EYE,

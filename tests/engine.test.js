@@ -113,6 +113,13 @@ describe('field checks', () => {
     const r = checkLabel({ words: wordsFrom(LABEL.replace('45%', '40%')), application: APP })
     expect(r.overall).toBe('not-ready')
     expect(r.counts.mismatch).toBe(1)
+    expect(r.tier).toBe('reject')
+  })
+  it('names the tier from the worst result', () => {
+    const tier = (text) => checkLabel({ words: wordsFrom(text), application: APP }).tier
+    expect(tier(LABEL)).toBe('ready')
+    expect(tier(LABEL.replace('750 mL', ''))).toBe('review')
+    expect(tier(LABEL.replace('45%', '40%').replace('750 mL', ''))).toBe('reject')
   })
   it('has one config entry per field with a rule sentence', () => {
     expect(FIELDS.map((f) => f.id)).toEqual(['brand', 'classType', 'abv', 'netContents', 'bottler', 'country', 'warning'])
