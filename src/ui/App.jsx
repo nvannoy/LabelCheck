@@ -250,13 +250,13 @@ export default function App() {
     <>
     <div className={`app${review ? ' fixed' : ''}${mode === 'full' && review ? ' fullmode' : ''}`} inert={tour ? true : undefined}>
       <div className={`frame ${mode === 'full' && review ? 'full' : 'compact'}`}>
-        <Header textSize={textSize} middle={mode === 'full' && review && <TierChip result={review.result} checking={checking} />}>
+        <Header textSize={textSize} stacked={Boolean(review) && mode !== 'full'} middle={mode === 'full' && review && <TierChip result={review.result} checking={checking} />}>
           {review && mode === 'full' && <button type="button" className="btn-onblue" aria-expanded={helpOpen} aria-controls="help-pop" onClick={() => setHelpOpen((v) => !v)}>Help</button>}
           {review && (mode === 'full'
             ? <button type="button" className="btn-onblue solid" onClick={leaveFull}>Compact view</button>
             : <button type="button" className="btn-onblue solid" onClick={enterFull}><span aria-hidden="true">&#x26F6;</span> Full screen</button>)}
           {screen === 'intake' && !image && !appText && !tour && <button type="button" className="btn-onblue" onClick={() => setTour({ step: 0 })}>Tour</button>}
-          <button type="button" className="btn-onblue" onClick={reset}>Next label</button>
+          <button type="button" className="btn-onblue next" onClick={reset}>Next label</button>
         </Header>
         {screen === 'intake' && notice && <div className="notice" role="status">{notice}</div>}
         {screen === 'intake' && <Intake intake={intake} />}

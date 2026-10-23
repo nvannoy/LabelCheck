@@ -61,6 +61,14 @@ button { cursor: pointer; }
 .full .header .title { flex-grow: 0; font-size: 1.5rem; }
 .header .version { font-size: 0.8125rem; font-weight: 400; margin-left: 0.5rem; opacity: 0.85; }
 .header .spacer { flex-grow: 1; }
+/* Compact review: the four controls do not fit one row, so make two on purpose. Title and
+   Next label on the first, text size and Full screen on the second, right-aligned. */
+.header.stacked { padding-top: 0.5rem; padding-bottom: 0.5rem; row-gap: 0.5rem; }
+.header.stacked .title { order: 1; }
+.header.stacked .next { order: 2; }
+.header.stacked .spacer { order: 3; flex: 0 0 100%; height: 0; }
+.header.stacked .textsize { order: 4; margin-left: auto; }
+.header.stacked .btn-onblue:not(.next) { order: 5; }
 .textsize { display: flex; border: 2px solid #FFFFFF; border-radius: 8px; overflow: hidden; }
 .textsize button { min-width: 2.5rem; height: 2rem; border: 0; background: transparent; color: #FFFFFF; font-weight: 700; font-size: 0.9375rem; }
 .textsize button + button { border-left: 2px solid #FFFFFF; font-size: 1.1875rem; }
