@@ -35,8 +35,8 @@ function WarningBody({ field }) {
         <span className="mark" aria-hidden="true">{mark}</span>
         <span><strong>Wording:</strong> {lead}</span>
       </div>
-      {field.status !== 'match' && field.found && (
-        <div className="compare"><div><div className="cap">Label says</div><div className="val small">{field.found.length > 160 ? `${field.found.slice(0, 160)}...` : field.found}</div></div></div>
+      {field.status !== 'match' && (
+        <div className="compare"><div><div className="cap">Required wording (27 CFR 16.21)</div><div className="val small">{WARNING_TEXT}</div></div></div>
       )}
       <Measured typography={field.typography} />
       <div className="byeye">

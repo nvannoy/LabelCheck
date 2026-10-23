@@ -144,7 +144,7 @@ export default function Review({ image, read, application, result, fields, mode,
           </div>
           {legend && <Legend />}
           {full && !wide && <ReadTable fields={fields} />}
-          <ByEyePanel fields={fields} labelByEye={result.labelByEye} />
+          <ByEyePanel labelByEye={result.labelByEye} />
           <DecisionBar choice={choice} onChoose={setChoice} />
           {choice && (
             <NotesPanel choice={choice} fileName={image.name} fields={fields} labelByEye={result.labelByEye}
