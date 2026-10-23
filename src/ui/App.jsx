@@ -4,6 +4,7 @@ import Header, { Footer } from './Header.jsx'
 import Intake from './Intake.jsx'
 import Review from './Review.jsx'
 import { startWorker, readImage } from '../ocr/ocr.js'
+import { measureWarning } from '../ocr/measure.js'
 import { parseApplication, importedFromCountry, APPLICATION_FIELDS } from '../engine/parse.js'
 import { checkLabel, qualityProblems } from '../engine/check.js'
 import { classifyPaste, classifyDrop, isEditable } from './paste.js'
@@ -28,6 +29,8 @@ export default function App() {
   const [edits, setEdits] = useState({})
   const [importedChoice, setImportedChoice] = useState(null)
   const [screen, setScreen] = useState('intake')
+  const [labelWidth, setLabelWidth] = useState('') // real width in inches of the label with the warning, optional
+  const [typography, setTypography] = useState(null)
   const [mode, setMode] = useState('compact') // compact column, or full (fullscreen, two columns)
 
   // The engine starts loading as the page opens, so it is ready when the image arrives.
@@ -63,6 +66,8 @@ export default function App() {
     setAppText('')
     setEdits({})
     setImportedChoice(null)
+    setLabelWidth('')
+    setTypography(null)
     setScreen('intake')
   }, [leaveFull])
 
@@ -154,14 +159,40 @@ export default function App() {
     return a
   }, [values, imported])
 
-  const review = useMemo(() => {
+  // First check without type measurements, to find the warning's words.
+  const base = useMemo(() => {
     if (screen !== 'review' || read.status !== 'done') return null
-    const result = checkLabel({ words: read.result.words, application, quality: read.result.quality })
-    return { result, fields: result.fields.map((f) => ({ ...f, display: rowStatus(f) })) }
+    return checkLabel({ words: read.result.words, application, quality: read.result.quality })
   }, [screen, read, application])
+  const statementWords = base?.fields.find((f) => f.id === 'warning')?.statementWords
+
+  // Then measure the warning's type from the image. It can only make the result
+  // worse, so the first screen of results never changes for the better.
+  useEffect(() => {
+    if (!statementWords || !image?.file || read.closer) { setTypography(null); return undefined }
+    let alive = true
+    ;(async () => {
+      const bitmap = await createImageBitmap(image.file)
+      try {
+        const t = measureWarning({
+          source: bitmap, width: bitmap.width, height: bitmap.height, makeCanvas: (w, h) => new OffscreenCanvas(w, h),
+          statementWords, panels: read.result.panels, labelWidthIn: labelWidth, netContents: application.netContents, quality: read.result.quality,
+        })
+        if (alive) setTypography(t)
+      } catch { if (alive) setTypography(null) } finally { bitmap.close() }
+    })()
+    return () => { alive = false }
+  }, [statementWords, image, read, labelWidth, application.netContents])
+
+  const review = useMemo(() => {
+    if (!base) return null
+    const result = checkLabel({ words: read.result.words, application, quality: read.result.quality, typography })
+    return { result, fields: result.fields.map((f) => ({ ...f, display: rowStatus(f) })) }
+  }, [base, read, application, typography])
 
   const intake = {
     engine, image, read, onFile, appText, setAppText, parsed, values, count, imported,
+    labelWidth, setLabelWidth,
     setValue: (id, v) => setEdits((e) => ({ ...e, [id]: v.trim() })),
     setImported: setImportedChoice,
     onStart: () => setScreen('review'),
@@ -178,7 +209,7 @@ export default function App() {
         </Header>
         {screen === 'intake' && notice && <div className="notice" role="status">{notice}</div>}
         {screen === 'intake' && <Intake intake={intake} />}
-        {review && <Review image={image} read={read} application={application} result={review.result} fields={review.fields} mode={mode} textScale={textSize.scale} onNext={reset} />}
+        {review && <Review image={image} read={read} application={application} result={review.result} fields={review.fields} mode={mode} textScale={textSize.scale} onNext={reset} labelWidth={labelWidth} setLabelWidth={setLabelWidth} />}
       </div>
       <Footer wide={mode === 'full' && Boolean(review)} />
     </div>

@@ -9,7 +9,42 @@ function applicationSays(field, application) {
 
 // The warning row says what the app could settle (the wording) and what only a
 // person can (bold type, size, legibility), instead of showing the long statute.
-function WarningBody({ field }) {
+const MARK = {
+  bold: { bold: '\u2713', unclear: '?', 'not-bold': '\u2715' },
+  size: { ok: '\u2713', close: '?', unknown: '?', small: '\u2715' },
+  cpi: { ok: '\u2713', close: '?', unknown: '?', high: '\u2715' },
+}
+const KIND = { '\u2713': 'match', '?': 'check', '\u2715': 'mismatch' }
+
+// What the app measured from the image about the warning's type, and a box for
+// the label width that the size and characters-per-inch measurements need.
+function Measured({ typography, labelWidth, setLabelWidth }) {
+  const rows = typography && [
+    ['Bold', MARK.bold[typography.bold.status], typography.bold.text],
+    ['Type size', MARK.size[typography.size.status], typography.size.text],
+    ['Characters per inch', MARK.cpi[typography.cpi.status], typography.cpi.text],
+  ]
+  return (
+    <div className="measured">
+      <strong>Measured from the image (estimates):</strong>
+      {rows && (
+        <ul>
+          {rows.map(([name, mark, text]) => (
+            <li key={name}><span className={`mk ${KIND[mark]}`} aria-hidden="true">{mark}</span><span><b>{name}:</b> {text}</span></li>
+          ))}
+        </ul>
+      )}
+      {!rows && <p>Measuring...</p>}
+      <label className="width">
+        Label width in inches{typography?.needsScale ? ' (needed for size)' : ''}:{' '}
+        <input type="number" min="0.5" step="0.1" inputMode="decimal" value={labelWidth} onChange={(e) => setLabelWidth(e.target.value)} />
+      </label>
+      <p className="small">The width of the label that carries the warning, as printed. A picture has no real size, so type size and characters per inch need it. Good to about 20%.</p>
+    </div>
+  )
+}
+
+function WarningBody({ field, labelWidth, setLabelWidth }) {
   const mark = { match: '\u2713', check: '?', mismatch: '\u2715' }[field.status]
   const lead = field.status === 'match'
     ? 'Wording matches the statute word for word, and the title is in capital letters.'
@@ -23,6 +58,7 @@ function WarningBody({ field }) {
       {field.status !== 'match' && field.found && (
         <div className="compare"><div><div className="cap">Label says</div><div className="val small">{field.found.length > 160 ? `${field.found.slice(0, 160)}...` : field.found}</div></div></div>
       )}
+      <Measured typography={field.typography} labelWidth={labelWidth} setLabelWidth={setLabelWidth} />
       <div className="byeye">
         <strong>Still to confirm by eye:</strong>
         <ul className="eyelist">{field.byEye.map((t) => <li key={t}><span aria-hidden="true">?</span>{t}</li>)}</ul>
@@ -32,7 +68,7 @@ function WarningBody({ field }) {
   )
 }
 
-export default function FieldRow({ field, number, focused, preview, seen, application, rowRef, onFocus, onPreview }) {
+export default function FieldRow({ field, number, focused, preview, seen, application, rowRef, onFocus, onPreview, labelWidth, setLabelWidth }) {
   const { display } = field
   const differs = field.status === 'mismatch'
   return (
@@ -47,7 +83,7 @@ export default function FieldRow({ field, number, focused, preview, seen, applic
         <span className={`pill ${display.kind}`} aria-hidden="true"><span>{display.symbol}</span>{display.text}</span>
       </button>
       {focused && field.id === 'warning' && field.status !== 'na' && (
-        <div className="row-body"><WarningBody field={field} /></div>
+        <div className="row-body"><WarningBody field={field} labelWidth={labelWidth} setLabelWidth={setLabelWidth} /></div>
       )}
       {focused && !(field.id === 'warning' && field.status !== 'na') && (
         <div className="row-body">

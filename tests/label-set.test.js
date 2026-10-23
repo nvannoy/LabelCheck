@@ -5,11 +5,11 @@ import { generated, samples, regression, WARNING } from '../scripts/label-specs.
 const results = JSON.parse(readFileSync(new URL('./expected-results.json', import.meta.url), 'utf8'))
 
 describe('label test set', () => {
-  it('has 28 generated labels, 2 TTB samples and 1 regression sample', () => {
-    expect(generated).toHaveLength(28)
+  it('has 31 generated labels, 2 TTB samples and 1 regression sample', () => {
+    expect(generated).toHaveLength(31)
     expect(samples).toHaveLength(2)
     expect(regression).toHaveLength(1)
-    expect(results).toHaveLength(31)
+    expect(results).toHaveLength(34)
   })
 
   it('has unique ids', () => {

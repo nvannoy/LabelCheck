@@ -80,7 +80,7 @@ function applicationText(app) {
 const allMatch = () => Object.fromEntries(FIELDS.map((f) => [f, 'match']))
 
 // expect: ideal status per field. country is 'na' for domestic products.
-function make(id, baseKey, defect, { app = {}, label = {}, style = {}, expect = {} } = {}) {
+function make(id, baseKey, defect, { app = {}, label = {}, style = {}, expect = {}, pixels = false } = {}) {
   const b = bases[baseKey]
   const application = { ...b.application, ...app }
   const fields = { ...allMatch(), ...(application.imported ? {} : { country: 'na' }), ...expect }
@@ -89,6 +89,8 @@ function make(id, baseKey, defect, { app = {}, label = {}, style = {}, expect = 
     id,
     kind: 'generated',
     defect,
+    pixels, // true when the expected result depends on the image itself, not only the text
+    labelWidthIn: 8, // the invented real width of the drawn label, so type size can be measured
     application,
     ...applicationText(application),
     label: cleanLabel(application, label),
@@ -145,10 +147,15 @@ export const generated = [
     expect: { warning: 'mismatch' },
   }),
 
+  // Warning type. The words are right but the type is not, which only the image shows.
+  make('d18-warning-title-not-bold', 'bourbon', 'Warning title printed in regular weight, not bold', { pixels: true, style: { titleBold: false }, expect: { warning: 'check' } }),
+  make('d19-warning-all-bold', 'vodka', 'Whole warning printed in bold, so the title is not set apart', { pixels: true, style: { bodyBold: true }, expect: { warning: 'check' } }),
+  make('d20-warning-too-small', 'gin', 'Warning type too small for the container size', { pixels: true, style: { warningSize: 14 }, expect: { warning: 'check' } }),
+
   // Image quality. Text is right, but the image is hard to read, so these must not be Ready.
-  make('q01-low-resolution', 'bourbon', 'Image shrunk to about 450 px wide', { style: { outputWidth: 450 }, expect: { brand: 'check', classType: 'check', abv: 'check', netContents: 'check', bottler: 'check', warning: 'check' } }),
-  make('q02-low-contrast', 'vodka', 'Pale gray text on a white background', { style: { fg: '#c9c9c9' }, expect: { brand: 'check', classType: 'check', abv: 'check', netContents: 'check', bottler: 'check', warning: 'check' } }),
-  make('q03-tiny-warning', 'gin', 'Warning printed at a very small size', { style: { warningSize: 11 }, expect: { warning: 'check' } }),
+  make('q01-low-resolution', 'bourbon', 'Image shrunk to about 450 px wide', { pixels: true, style: { outputWidth: 450 }, expect: { brand: 'check', classType: 'check', abv: 'check', netContents: 'check', bottler: 'check', warning: 'check' } }),
+  make('q02-low-contrast', 'vodka', 'Pale gray text on a white background', { pixels: true, style: { fg: '#c9c9c9' }, expect: { brand: 'check', classType: 'check', abv: 'check', netContents: 'check', bottler: 'check', warning: 'check' } }),
+  make('q03-tiny-warning', 'gin', 'Warning printed at a very small size', { pixels: true, style: { warningSize: 11 }, expect: { warning: 'check' } }),
 ]
 
 // Real TTB sample images. The application text is what the label itself shows,

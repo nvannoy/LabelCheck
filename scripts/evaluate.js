@@ -3,7 +3,7 @@
 // Scoring rules are in tests/TEST-PROCEDURE.md. The key measure is zero
 // known-bad labels coming out Ready to Approve.
 import { readFileSync } from 'node:fs'
-import { startNodeWorker, readFile } from './node-ocr.js'
+import { startNodeWorker, readFile, measureFile } from './node-ocr.js'
 import { checkLabel } from '../src/engine/check.js'
 import { applicationFromText } from '../src/engine/parse.js'
 
@@ -17,7 +17,13 @@ for (const r of results) {
   // The application comes from the paste-ready text, as it does in the app.
   const { application } = applicationFromText(r.applicationText)
   const read = await readFile(worker, r.image, { application })
-  const out = checkLabel({ words: read.words, application, quality: read.quality })
+  // The type measurement runs on the warning's words, as the app does after a read.
+  const first = checkLabel({ words: read.words, application, quality: read.quality })
+  const statementWords = first.fields.find((f) => f.id === 'warning').statementWords
+  const typography = statementWords
+    ? await measureFile(r.image, { statementWords, panels: read.panels, labelWidthIn: r.labelWidthIn, netContents: application.netContents, quality: read.quality })
+    : null
+  const out = checkLabel({ words: read.words, application, quality: read.quality, typography })
   const ms = Math.round(performance.now() - t0)
 
   const failures = [] // dangerous: a bad field called match

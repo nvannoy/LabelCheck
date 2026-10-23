@@ -2,6 +2,7 @@
 // label: "ready" only means every check passed, and the agent still decides.
 import { FIELDS, LABEL_BY_EYE } from './fields.js'
 import { indexWords } from './words.js'
+import { BOLD_BY_EYE, LEGIBLE_BY_EYE } from './warning.js'
 
 const MIN_WIDTH = 500 // px; below this the text is too small to trust OCR
 const MIN_CONTRAST = 100 // gray levels between the darkest and lightest 1% of pixels
@@ -14,7 +15,24 @@ export function qualityProblems(quality) {
   return problems
 }
 
-export function checkLabel({ words, application, quality }) {
+// Folds the type measurements into the warning result. Measurements can only make
+// the result worse: a clear failure sends a matching warning to Needs review, and
+// a clear pass never upgrades anything (the agent still confirms).
+function applyTypography(r, t) {
+  if (!t) return r
+  const items = [LEGIBLE_BY_EYE]
+  if (t.bold.status !== 'bold') items.unshift(BOLD_BY_EYE)
+  if (t.size.status === 'close' || t.size.status === 'unknown') items.push('Type size (27 CFR 16.22): measure it by hand.')
+  if (t.cpi.status === 'close' || t.cpi.status === 'unknown') items.push('Characters per inch (27 CFR 16.22): count them by hand.')
+  const failed = [t.bold.status === 'not-bold' && t.bold.text, t.size.status === 'small' && t.size.text, t.cpi.status === 'high' && t.cpi.text].filter(Boolean)
+  const out = { ...r, typography: t, byEye: items }
+  if (r.status === 'match' && failed.length) {
+    return { ...out, status: 'check', reason: `The wording matches, but the type looks wrong. ${failed.join(' ')}` }
+  }
+  return out
+}
+
+export function checkLabel({ words, application, quality, typography }) {
   const index = indexWords(words)
   const problems = qualityProblems(quality)
 
@@ -27,7 +45,7 @@ export function checkLabel({ words, application, quality }) {
     if (f.id !== 'warning' && !application[f.id]) {
       return { ...base, status: 'check', found: null, bbox: null, byEye: f.byEye, reason: 'The application text has no value for this field, so it cannot be compared. Add it, or check the label by eye.' }
     }
-    const r = f.compare(index, application)
+    const r = f.id === 'warning' ? applyTypography(f.compare(index, application), typography) : f.compare(index, application)
     const byEye = [...f.byEye, ...(r.byEye ?? [])]
     if (r.status === 'match' && problems.length) {
       return { ...base, ...r, status: 'check', byEye, reason: `${problems.join(' ')} Confirm this field by eye. (${r.reason})` }

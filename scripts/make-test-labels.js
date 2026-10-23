@@ -24,7 +24,7 @@ const MARGIN = 80
 
 // Draws words wrapped to maxWidth. The first two words (GOVERNMENT WARNING:)
 // are bold, as the regulation requires.
-function drawWarning(ctx, text, x, y, maxWidth, size, family, lineHeight) {
+function drawWarning(ctx, text, x, y, maxWidth, size, family, lineHeight, titleBold = true, bodyBold = false) {
   const words = text.split(' ')
   let line = []
   let cursor = y
@@ -47,7 +47,7 @@ function drawWarning(ctx, text, x, y, maxWidth, size, family, lineHeight) {
     return total
   }
   words.forEach((word, i) => {
-    const item = { text: word, bold: i < 2 }
+    const item = { text: word, bold: i < 2 ? titleBold : bodyBold }
     if (line.length && widthOf([...line, item]) > maxWidth) flush()
     line.push(item)
   })
@@ -95,7 +95,7 @@ function render({ label, style }) {
 
   if (label.warning) {
     ctx.textAlign = 'left'
-    drawWarning(ctx, label.warning, MARGIN, 850, W - MARGIN * 2, style.warningSize ?? 22, font, (style.warningSize ?? 22) * 1.55)
+    drawWarning(ctx, label.warning, MARGIN, 850, W - MARGIN * 2, style.warningSize ?? 22, font, (style.warningSize ?? 22) * 1.55, style.titleBold ?? true, style.bodyBold ?? false)
   }
   return canvas
 }
@@ -121,6 +121,8 @@ const entry = (s) => ({
   kind: s.kind,
   image: s.file ?? `generated/labels/${s.id}.png`,
   defect: s.defect ?? s.note ?? null,
+  pixels: s.pixels ?? false,
+  labelWidthIn: s.labelWidthIn ?? null,
   application: s.application,
   applicationText: s.applicationText,
   extraLines: s.extraLines,

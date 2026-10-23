@@ -25,6 +25,9 @@ export function draftNotes({ decision, fileName, fields, labelByEye, imageProble
     lines.push(`${i + 1}. ${f.label}: ${text}${reviewed[f.id] ? ' (reviewed)' : ''}`)
   })
 
+  const t = fields.find((f) => f.id === 'warning')?.typography
+  if (t) lines.push('', 'Warning type, estimated from the image:', `- Bold: ${t.bold.text}`, `- Type size: ${t.size.text}`, `- Characters per inch: ${t.cpi.text}`)
+
   if (imageProblems.length) lines.push('', 'Image:', ...imageProblems.map((p) => `- ${p}`))
 
   lines.push('', 'Confirm by eye (the app cannot read these):')

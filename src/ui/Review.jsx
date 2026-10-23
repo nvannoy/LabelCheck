@@ -28,7 +28,7 @@ function useWide() {
   return wide
 }
 
-export default function Review({ image, read, application, result, fields, mode, textScale, onNext }) {
+export default function Review({ image, read, application, result, fields, mode, textScale, onNext, labelWidth, setLabelWidth }) {
   const full = mode === 'full'
   const wide = useWide()
 
@@ -137,7 +137,7 @@ export default function Review({ image, read, application, result, fields, mode,
             {fields.map((f, i) => (
               <div role="listitem" key={f.id}>
                 <FieldRow field={f} number={i + 1} focused={focusId === f.id} preview={previewId === f.id} seen={seen[f.id]}
-                  application={application} rowRef={(el) => { rowRefs.current[f.id] = el }}
+                  application={application} labelWidth={labelWidth} setLabelWidth={setLabelWidth} rowRef={(el) => { rowRefs.current[f.id] = el }}
                   onFocus={setFocusId} onPreview={setPreviewId} />
               </div>
             ))}

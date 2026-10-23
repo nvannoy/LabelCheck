@@ -55,13 +55,14 @@ This file summarizes the rules in plain words. It is not legal advice and the ap
 - Must be separate and apart from all other information.
 - "GOVERNMENT WARNING" must be in capital letters and bold. The rest of the statement may not be bold.
 - Code check: exact word match after normalizing only whitespace and line breaks. "GOVERNMENT WARNING:" must be all caps.
-- Agent check: bold type, letters not compressed, characters per inch.
+- The app estimates bold type from stroke thickness, and, when the agent enters the label width, type size and characters per inch. Estimates can only make a result worse. The agent confirms the rest.
+- Agent check: letters not compressed, separate and apart, contrasting background.
 - Minimum type size, by container size (16.22(b)):
   - 237 mL or less: at least 1 mm
   - over 237 mL up to 3 L: at least 2 mm
   - over 3 L: at least 3 mm
 - Maximum characters per inch (16.22(a)(4)): 40 for 1 mm type, 25 for 2 mm, 12 for 3 mm.
-- Agent check: type size and characters per inch cannot be measured from an image without knowing its physical scale.
+- Type size and characters per inch cannot be measured from an image alone; they need the label's real width.
 
 ## Rules that apply to every mandatory item
 

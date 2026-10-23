@@ -18,7 +18,7 @@ AI reads, code judges, the agent decides.
 
 Rules the engine follows:
 
-- The government warning is compared word for word against 27 CFR 16.21. Bold type, size and legibility cannot be read from OCR, so they are always listed for the agent to confirm by eye.
+- The government warning is compared word for word against 27 CFR 16.21. The app also measures the warning's type from the image: whether "GOVERNMENT WARNING:" is bolder than the rest (stroke thickness compared inside the warning), and, if the agent enters the label's real width in inches, the smallest letter height in mm and the characters per inch against 27 CFR 16.22. These are estimates that can only make a result worse, never better: a clear failure sends the warning to Needs review. The agent still confirms what the app could not settle, and always confirms legibility and contrast.
 - Alcohol content and net contents are compared as exact numbers (net contents after unit conversion). No fuzzy matching.
 - Brand name ignores capitals, punctuation and apostrophes. Bottler name and address use a looser match and can only ever return Check, never Mismatch.
 - Anything uncertain (low OCR confidence, field not found, a small or low-contrast image) is **Check**, never a match.
@@ -66,17 +66,17 @@ Vite, React (JSX, no TypeScript), tesseract.js 7, Vitest, Atkinson Hyperlegible 
 
 ## Testing
 
-The test set has 31 labels: 28 generated fictional labels (one defect each, plus clean ones), 2 TTB spirits sample images, and 1 TTB malt beverage image used as an OCR regression check. Every label has paste-ready application text. The procedure, scoring rules and files are in `tests/TEST-PROCEDURE.md`.
+The test set has 34 labels: 31 generated fictional labels (one defect each, plus clean ones), 2 TTB spirits sample images, and 1 TTB malt beverage image used as an OCR regression check. Every label has paste-ready application text. The procedure, scoring rules and files are in `tests/TEST-PROCEDURE.md`.
 
 The key measure is that no known-bad label may come out Ready to approve. Extra Needs review results are acceptable.
 
 ## Results
 
-Last run (`npm run verify`, version 0.2.1):
+Last run (`npm run verify`, version 0.2.7):
 
-- 120 tests across 9 files pass.
-- **0 of 20 known-bad labels called Ready to approve.** No bad field was called a match.
-- 205 of 217 field results (94%) were exactly as expected. All 12 misses went to review, the safe direction.
+- 148 tests across 12 files pass.
+- **0 of 23 known-bad labels called Ready to approve.** No bad field was called a match.
+- 226 of 238 field results (95%) were exactly as expected. All 12 misses went to review, the safe direction.
 - 7 of 11 clean labels came out Ready to approve. The other 4 went to review.
 - Reading time in Node over four runs: mean 2.2 to 2.6 s, median 1.9 to 2.4 s, slowest 4.5 to 6.0 s. The 6.0 s run overlapped with other work on the machine; the other three were under 5 s.
 - Reading time in the browser (7 cases including the slowest): first result in 1.4 to 2.4 s, finished in 1.6 to 4.4 s.
@@ -99,6 +99,6 @@ Machine: Intel Core i7-1068NG7 (4 cores, 8 threads), 32 GB RAM, macOS, in the bu
 - The browser reads slightly slower and less accurately than Node. For example, the TTB ABC sample is read with the brand matching in the browser but flagged in Node. The cause is not yet explained.
 - Where a field is genuinely missing, the second pass adds 1 to 2 s. The slowest browser case measured was 4.4 s and the slowest Node case reached 6.0 s once under load, so the 5 s target is met on this machine only some of the time, with no margin for a slower PC. The first result is shown before the second pass finishes.
 - OCR struggles with stylized fonts, outlined letters, pale text on pale backgrounds and artwork behind text. Skewed or glare-affected images are not supported.
-- Bold type, type size, contrast and "same field of vision" cannot be judged from pixels and are always left to the agent.
+- Boldness is estimated by comparing stroke thickness, calibrated on generated labels in five font families. It is not judged for letters under about 14 px tall, so most small, low-resolution labels (like the TTB samples) get "cannot tell". Type size and characters per inch need the label width in inches from the agent and are good to about 20%. Contrast and "same field of vision" are always left to the agent.
 - Images under 500 px wide or with very low contrast turn every match into Check.
 - The TTB malt beverage sample has a red ellipse drawn over its alcohol content, which defeats the normal pass. The second pass recovers it, but it is a stress case and not a typical label.

@@ -6,6 +6,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { readLabel } from '../src/ocr/read.js'
+import { measureWarning } from '../src/ocr/measure.js'
 import { flattenWords } from '../src/ocr/ocr.js'
 
 export async function startNodeWorker() {
@@ -31,5 +32,14 @@ export async function readFile(worker, path, options = {}) {
   return readLabel({
     source: img, width: img.width, height: img.height,
     makeCanvas: (w, h) => createCanvas(w, h), recognize, ...options,
+  })
+}
+
+// The same measurement the app runs after a read, with the node canvas.
+export async function measureFile(path, { statementWords, panels, labelWidthIn, netContents, quality }) {
+  const img = await loadImage(path)
+  return measureWarning({
+    source: img, width: img.width, height: img.height, makeCanvas: (w, h) => createCanvas(w, h),
+    statementWords, panels, labelWidthIn, netContents, quality,
   })
 }

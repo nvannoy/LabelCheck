@@ -4,6 +4,8 @@
     "kind": "generated",
     "image": "generated/labels/c01-clean-bourbon.png",
     "defect": null,
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Harlan Ridge",
       "classType": "Kentucky Straight Bourbon Whiskey",
@@ -42,6 +44,8 @@
     "kind": "generated",
     "image": "generated/labels/c02-clean-vodka.png",
     "defect": null,
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Silver Pike",
       "classType": "Vodka",
@@ -80,6 +84,8 @@
     "kind": "generated",
     "image": "generated/labels/c03-clean-gin-dark.png",
     "defect": null,
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Juniper Hollow",
       "classType": "London Dry Gin",
@@ -118,6 +124,8 @@
     "kind": "generated",
     "image": "generated/labels/c04-clean-rum-1p75l.png",
     "defect": null,
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Copper Marsh",
       "classType": "Aged Rum",
@@ -156,6 +164,8 @@
     "kind": "generated",
     "image": "generated/labels/c05-clean-tequila-import.png",
     "defect": null,
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Valle Sombra",
       "classType": "Tequila Reposado",
@@ -194,6 +204,8 @@
     "kind": "generated",
     "image": "generated/labels/c06-clean-brandy-alcohol-format.png",
     "defect": null,
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Alder Fork",
       "classType": "Apple Brandy",
@@ -232,6 +244,8 @@
     "kind": "generated",
     "image": "generated/labels/c07-brand-case-differs.png",
     "defect": "Brand printed in capitals, application has mixed case (should match)",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Harlan Ridge",
       "classType": "Kentucky Straight Bourbon Whiskey",
@@ -270,6 +284,8 @@
     "kind": "generated",
     "image": "generated/labels/c08-brand-apostrophe-differs.png",
     "defect": "Brand has a curly apostrophe, application a straight one (should match)",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Pike's Bend",
       "classType": "Vodka",
@@ -308,6 +324,8 @@
     "kind": "generated",
     "image": "generated/labels/d01-abv-wrong.png",
     "defect": "Label says 40%, application says 45%",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Harlan Ridge",
       "classType": "Kentucky Straight Bourbon Whiskey",
@@ -346,6 +364,8 @@
     "kind": "generated",
     "image": "generated/labels/d02-abv-missing.png",
     "defect": "No alcohol content on the label",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Silver Pike",
       "classType": "Vodka",
@@ -384,6 +404,8 @@
     "kind": "generated",
     "image": "generated/labels/d03-abv-proof-only.png",
     "defect": "Only proof is printed, no percentage",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Juniper Hollow",
       "classType": "London Dry Gin",
@@ -422,6 +444,8 @@
     "kind": "generated",
     "image": "generated/labels/d04-net-wrong.png",
     "defect": "Label says 1 L, application says 1.75 L",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Copper Marsh",
       "classType": "Aged Rum",
@@ -460,6 +484,8 @@
     "kind": "generated",
     "image": "generated/labels/d05-net-missing.png",
     "defect": "No net contents on the label",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Alder Fork",
       "classType": "Apple Brandy",
@@ -498,6 +524,8 @@
     "kind": "generated",
     "image": "generated/labels/d06-brand-different.png",
     "defect": "Label brand is a different name",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Juniper Hollow",
       "classType": "London Dry Gin",
@@ -536,6 +564,8 @@
     "kind": "generated",
     "image": "generated/labels/d07-class-wrong.png",
     "defect": "Label says Rye Whiskey, application says Bourbon",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Harlan Ridge",
       "classType": "Kentucky Straight Bourbon Whiskey",
@@ -574,6 +604,8 @@
     "kind": "generated",
     "image": "generated/labels/d08-bottler-name-different.png",
     "defect": "Different company name in the bottler line",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Copper Marsh",
       "classType": "Aged Rum",
@@ -612,6 +644,8 @@
     "kind": "generated",
     "image": "generated/labels/d09-bottler-address-different.png",
     "defect": "Right company, different city and state",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Silver Pike",
       "classType": "Vodka",
@@ -650,6 +684,8 @@
     "kind": "generated",
     "image": "generated/labels/d10-bottler-missing.png",
     "defect": "No bottler name and address",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Alder Fork",
       "classType": "Apple Brandy",
@@ -688,6 +724,8 @@
     "kind": "generated",
     "image": "generated/labels/d11-import-country-missing.png",
     "defect": "Import with no country of origin on the label",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Valle Sombra",
       "classType": "Tequila Reposado",
@@ -726,6 +764,8 @@
     "kind": "generated",
     "image": "generated/labels/d12-import-country-wrong.png",
     "defect": "Label says Spain, application says Mexico",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Valle Sombra",
       "classType": "Tequila Reposado",
@@ -764,6 +804,8 @@
     "kind": "generated",
     "image": "generated/labels/d13-warning-word-changed.png",
     "defect": "Warning says \"drive a truck\" instead of \"drive a car\"",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Harlan Ridge",
       "classType": "Kentucky Straight Bourbon Whiskey",
@@ -802,6 +844,8 @@
     "kind": "generated",
     "image": "generated/labels/d14-warning-sentence-dropped.png",
     "defect": "Warning clause (2) is missing",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Silver Pike",
       "classType": "Vodka",
@@ -840,6 +884,8 @@
     "kind": "generated",
     "image": "generated/labels/d15-warning-title-mixed-case.png",
     "defect": "Title printed as \"Government Warning:\" instead of all capitals",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Juniper Hollow",
       "classType": "London Dry Gin",
@@ -878,6 +924,8 @@
     "kind": "generated",
     "image": "generated/labels/d16-warning-missing.png",
     "defect": "No government warning on the label",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Copper Marsh",
       "classType": "Aged Rum",
@@ -916,6 +964,8 @@
     "kind": "generated",
     "image": "generated/labels/d17-warning-clauses-swapped.png",
     "defect": "Warning clauses (1) and (2) appear in the wrong order",
+    "pixels": false,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Alder Fork",
       "classType": "Apple Brandy",
@@ -950,10 +1000,132 @@
     }
   },
   {
+    "id": "d18-warning-title-not-bold",
+    "kind": "generated",
+    "image": "generated/labels/d18-warning-title-not-bold.png",
+    "defect": "Warning title printed in regular weight, not bold",
+    "pixels": true,
+    "labelWidthIn": 8,
+    "application": {
+      "brand": "Harlan Ridge",
+      "classType": "Kentucky Straight Bourbon Whiskey",
+      "abv": "45% Alc./Vol.",
+      "netContents": "750 mL",
+      "bottler": "Harlan Ridge Distilling Co., Bardstown, KY",
+      "imported": false,
+      "country": null
+    },
+    "applicationText": "Brand: Harlan Ridge\nClass and Type: Kentucky Straight Bourbon Whiskey\nABV: 45% Alc./Vol.\nNet Contents: 750 mL\nName and Address: Harlan Ridge Distilling Co., Bardstown, KY\nSerial Number: 24-0001",
+    "extraLines": 1,
+    "labelText": {
+      "brand": "Harlan Ridge",
+      "classType": "Kentucky Straight Bourbon Whiskey",
+      "abv": "45% Alc./Vol.",
+      "netContents": "750 mL",
+      "bottler": "Bottled by Harlan Ridge Distilling Co., Bardstown, KY",
+      "country": null,
+      "warning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+    },
+    "expected": {
+      "fields": {
+        "brand": "match",
+        "classType": "match",
+        "abv": "match",
+        "netContents": "match",
+        "bottler": "match",
+        "country": "na",
+        "warning": "check"
+      },
+      "overall": "not-ready"
+    }
+  },
+  {
+    "id": "d19-warning-all-bold",
+    "kind": "generated",
+    "image": "generated/labels/d19-warning-all-bold.png",
+    "defect": "Whole warning printed in bold, so the title is not set apart",
+    "pixels": true,
+    "labelWidthIn": 8,
+    "application": {
+      "brand": "Silver Pike",
+      "classType": "Vodka",
+      "abv": "40% Alc./Vol.",
+      "netContents": "1 L",
+      "bottler": "Silver Pike Spirits, Minneapolis, MN",
+      "imported": false,
+      "country": null
+    },
+    "applicationText": "COLA APPLICATION SUMMARY\nDate Received: 03/14/2026\n\nBrand Name: Silver Pike\nClass/Type: Vodka\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 1 L\nBottler: Silver Pike Spirits, Minneapolis, MN\nCountry of Origin: United States\nStatus: Pending",
+    "extraLines": 3,
+    "labelText": {
+      "brand": "Silver Pike",
+      "classType": "Vodka",
+      "abv": "40% Alc./Vol.",
+      "netContents": "1 L",
+      "bottler": "Bottled by Silver Pike Spirits, Minneapolis, MN",
+      "country": null,
+      "warning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+    },
+    "expected": {
+      "fields": {
+        "brand": "match",
+        "classType": "match",
+        "abv": "match",
+        "netContents": "match",
+        "bottler": "match",
+        "country": "na",
+        "warning": "check"
+      },
+      "overall": "not-ready"
+    }
+  },
+  {
+    "id": "d20-warning-too-small",
+    "kind": "generated",
+    "image": "generated/labels/d20-warning-too-small.png",
+    "defect": "Warning type too small for the container size",
+    "pixels": true,
+    "labelWidthIn": 8,
+    "application": {
+      "brand": "Juniper Hollow",
+      "classType": "London Dry Gin",
+      "abv": "47% Alc./Vol.",
+      "netContents": "750 mL",
+      "bottler": "Juniper Hollow Distillers, Portland, OR",
+      "imported": false,
+      "country": null
+    },
+    "applicationText": "Brand Name: Juniper Hollow\nClass/Type: London Dry Gin\nAlcohol Content: 47% Alc./Vol.\nNet Contents: 750 mL\nApplicant: Juniper Hollow Distillers, Portland, OR\nOrigin: Domestic\nPermit No.: DSP-KY-1234",
+    "extraLines": 1,
+    "labelText": {
+      "brand": "Juniper Hollow",
+      "classType": "London Dry Gin",
+      "abv": "47% Alc./Vol.",
+      "netContents": "750 mL",
+      "bottler": "Bottled by Juniper Hollow Distillers, Portland, OR",
+      "country": null,
+      "warning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+    },
+    "expected": {
+      "fields": {
+        "brand": "match",
+        "classType": "match",
+        "abv": "match",
+        "netContents": "match",
+        "bottler": "match",
+        "country": "na",
+        "warning": "check"
+      },
+      "overall": "not-ready"
+    }
+  },
+  {
     "id": "q01-low-resolution",
     "kind": "generated",
     "image": "generated/labels/q01-low-resolution.png",
     "defect": "Image shrunk to about 450 px wide",
+    "pixels": true,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Harlan Ridge",
       "classType": "Kentucky Straight Bourbon Whiskey",
@@ -992,6 +1164,8 @@
     "kind": "generated",
     "image": "generated/labels/q02-low-contrast.png",
     "defect": "Pale gray text on a white background",
+    "pixels": true,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Silver Pike",
       "classType": "Vodka",
@@ -1030,6 +1204,8 @@
     "kind": "generated",
     "image": "generated/labels/q03-tiny-warning.png",
     "defect": "Warning printed at a very small size",
+    "pixels": true,
+    "labelWidthIn": 8,
     "application": {
       "brand": "Juniper Hollow",
       "classType": "London Dry Gin",
@@ -1068,6 +1244,8 @@
     "kind": "sample",
     "image": "tests/samples/ttb-brand-label-new1.jpg",
     "defect": "Brand label and back label in one image (the app supports one label per image, so this is a stress case).",
+    "pixels": false,
+    "labelWidthIn": null,
     "application": {
       "brand": "ABC",
       "classType": "Straight Rye Whisky",
@@ -1098,6 +1276,8 @@
     "kind": "sample",
     "image": "tests/samples/ttb-brand-label-new2.jpg",
     "defect": "Imported rum liqueur, brand label and back label in one image.",
+    "pixels": false,
+    "labelWidthIn": null,
     "application": {
       "brand": "12345 Imports",
       "classType": "Rum with Coconut Liqueur",
@@ -1128,6 +1308,8 @@
     "kind": "regression",
     "image": "tests/samples/ttb-malt-and-hop-honey-huckleberry.png",
     "defect": "Malt beverage, front and back label in one image. Red ellipse drawn over \"5% ALC./VOL.\" (white on blue).",
+    "pixels": false,
+    "labelWidthIn": null,
     "application": {
       "brand": "Malt & Hop",
       "classType": "Ale with Honey and Huckleberry Flavor",
