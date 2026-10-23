@@ -14,8 +14,22 @@ const LEGEND = [
   ['na', 'Not required', 'Gray and a dash. This field does not apply to this product.'],
 ]
 
+// True on a window wide and tall enough for the two-column full layout.
+function useWide() {
+  const query = '(min-width: 1000px) and (min-height: 560px)'
+  const [wide, setWide] = useState(() => window.matchMedia(query).matches)
+  useEffect(() => {
+    const m = window.matchMedia(query)
+    const on = () => setWide(m.matches)
+    m.addEventListener('change', on)
+    return () => m.removeEventListener('change', on)
+  }, [])
+  return wide
+}
+
 export default function Review({ image, read, application, result, fields, mode, textScale, onNext }) {
   const full = mode === 'full'
+  const wide = useWide()
 
   // First field to look at: the worst one.
   const firstId = (fields.find((f) => f.status === 'mismatch') ?? fields.find((f) => f.status === 'check') ?? fields[0]).id
@@ -98,7 +112,7 @@ export default function Review({ image, read, application, result, fields, mode,
         <div className="left">
           <LabelImage src={image.url} width={read.result.quality.width} height={read.result.quality.height} fields={fields}
             focusId={focusId} previewId={previewId} onFocus={setFocusId} onPreview={setPreviewId} boxRefs={boxRefs} />
-          {full && <ReadTable fields={fields} />}
+          {full && wide && <ReadTable fields={fields} />}
         </div>
         <div className="right">
           <div className="rows" role="list" aria-label="Fields">
@@ -111,7 +125,7 @@ export default function Review({ image, read, application, result, fields, mode,
             ))}
           </div>
           {legend && <Legend />}
-          {!full && <Hint legend={legend} setLegend={setLegend} full={false} />}
+          {full && !wide && <ReadTable fields={fields} />}
           <ByEyePanel fields={fields} labelByEye={result.labelByEye} />
           <DecisionBar choice={choice} onChoose={setChoice} />
           {choice && (
@@ -120,7 +134,7 @@ export default function Review({ image, read, application, result, fields, mode,
           )}
         </div>
       </div>
-      {full && <Hint legend={legend} setLegend={setLegend} full />}
+      <Hint legend={legend} setLegend={setLegend} full={full} />
       {path && (
         <svg className="connector" aria-hidden="true">
           <path d={path.d} fill="none" stroke={color} strokeWidth="2.5" strokeDasharray="2 6" strokeLinecap="round" />

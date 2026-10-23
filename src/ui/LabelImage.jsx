@@ -108,8 +108,8 @@ export default function LabelImage({ src, width, height, fields, focusId, previe
       </div>
       <div className="zoombar" role="group" aria-label="Zoom the label">
         <div className="zrow">
-          <button type="button" aria-label="Zoom out" onClick={() => step(-1)} disabled={zoom === LEVELS[0]}>&#8722;</button>
           <span className="level" role="status" aria-live="polite">{Math.round(zoom * 100)}%</span>
+          <button type="button" aria-label="Zoom out" onClick={() => step(-1)} disabled={zoom === LEVELS[0]}>&#8722;</button>
           <button type="button" aria-label="Zoom in" onClick={() => step(1)} disabled={zoom === LEVELS.at(-1)}>+</button>
         </div>
         <div className="zrow">
