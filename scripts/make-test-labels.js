@@ -1,22 +1,12 @@
 // Renders the generated test labels and writes tests/expected-results.json.
-// Images go to generated/labels/ and are not committed. Uses macOS system
-// fonts, so run it on a Mac. Fictional brands only.
-import { createCanvas, GlobalFonts } from '@napi-rs/canvas'
+// Images go to generated/labels/ and are not committed. Fonts are bundled (see fonts.js),
+// so it runs the same on macOS, Windows and Linux. Fictional brands only.
+import { createCanvas } from '@napi-rs/canvas'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { generated, samples, regression } from './label-specs.js'
+import { registerFonts } from './fonts.js'
 
-const FONT_DIR = '/System/Library/Fonts/Supplemental'
-const fontFiles = {
-  Georgia: ['Georgia.ttf', 'Georgia Bold.ttf'],
-  'Times New Roman': ['Times New Roman.ttf', 'Times New Roman Bold.ttf'],
-  Arial: ['Arial.ttf', 'Arial Bold.ttf'],
-  'Trebuchet MS': ['Trebuchet MS.ttf', 'Trebuchet MS Bold.ttf'],
-  Verdana: ['Verdana.ttf', 'Verdana Bold.ttf'],
-}
-for (const [family, [regular, bold]] of Object.entries(fontFiles)) {
-  GlobalFonts.registerFromPath(`${FONT_DIR}/${regular}`, family)
-  GlobalFonts.registerFromPath(`${FONT_DIR}/${bold}`, `${family} Bold`)
-}
+registerFonts()
 
 const W = 900
 const H = 1200
@@ -88,8 +78,8 @@ function render({ label, style }) {
 
   put(label.brand, 230, label.brand.length > 14 ? 76 : 92, true)
   put(label.classType, 360, 40)
-  put(label.abv, 480, 38)
-  put(label.netContents, 550, 38)
+  put(label.abv, 480, 46)
+  put(label.netContents, 550, 46)
   put(label.bottler, 680, 28)
   put(label.country, 730, 28)
 

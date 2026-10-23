@@ -1,16 +1,16 @@
 // Draws the made-up sample label used by the in-app tour and records what the reader
 // finds on it, so the tour shows real results without running OCR.
-// Fictional brand only. Uses macOS system fonts, so run it on a Mac:
+// Fictional brand only. Fonts are bundled (see fonts.js), so it runs on any system:
 //   node scripts/make-tour-sample.js
 // Writes src/tour/sample-label.png and src/tour/sample-read.json. Both are committed
 // because the app ships and uses them.
-import { createCanvas, GlobalFonts } from '@napi-rs/canvas'
+import { createCanvas } from '@napi-rs/canvas'
+import { registerFonts } from './fonts.js'
 import { writeFileSync } from 'node:fs'
 import { startNodeWorker, readFile } from './node-ocr.js'
 import { WARNING } from './label-specs.js'
 
-GlobalFonts.registerFromPath('/System/Library/Fonts/Supplemental/Georgia.ttf', 'Georgia')
-GlobalFonts.registerFromPath('/System/Library/Fonts/Supplemental/Georgia Bold.ttf', 'GeorgiaBold')
+registerFonts()
 
 const W = 900
 const H = 1200
@@ -27,11 +27,11 @@ ctx.fillStyle = '#2a2014'
 ctx.textAlign = 'center'
 
 const line = (text, y, font) => { ctx.font = font; ctx.fillText(text, W / 2, y) }
-line('CEDAR FORK', 230, '96px GeorgiaBold')
-line('Straight Rye Whiskey', 360, '44px Georgia')
-line('45% Alc./Vol. (90 Proof)', 480, '38px Georgia')
-line('750 mL', 550, '38px Georgia')
-line('Bottled by Cedar Fork Distilling Co., Louisville, KY', 680, '27px Georgia')
+line('CEDAR FORK', 230, '96px "Lora Bold"')
+line('Straight Rye Whiskey', 360, '44px Lora')
+line('45% Alc./Vol. (90 Proof)', 480, '38px Lora')
+line('750 mL', 550, '38px Lora')
+line('Bottled by Cedar Fork Distilling Co., Louisville, KY', 680, '27px Lora')
 
 // The warning, wrapped to the label width. The first two words are the bold title.
 ctx.textAlign = 'left'
@@ -40,14 +40,14 @@ let first = true
 const drawRow = (row) => {
   let x = 80
   row.forEach((t, i) => {
-    ctx.font = first && i < 2 ? '22px GeorgiaBold' : '22px Georgia'
+    ctx.font = first && i < 2 ? '22px "Lora Bold"' : '22px Lora'
     ctx.fillText(t, x, y)
     x += ctx.measureText(`${t} `).width
   })
   y += 34
   first = false
 }
-const widthOf = (row) => row.reduce((a, t, i) => { ctx.font = first && i < 2 ? '22px GeorgiaBold' : '22px Georgia'; return a + ctx.measureText(`${t} `).width }, 0)
+const widthOf = (row) => row.reduce((a, t, i) => { ctx.font = first && i < 2 ? '22px "Lora Bold"' : '22px Lora'; return a + ctx.measureText(`${t} `).width }, 0)
 let row = []
 for (const word of WARNING.split(' ')) {
   if (row.length && widthOf([...row, word]) > W - 160) { drawRow(row); row = [] }

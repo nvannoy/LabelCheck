@@ -1,0 +1,26 @@
+name: verify
+
+# Runs the same command a developer runs, on the three systems reviewers use, so a result
+# that depends on the computer (fonts, paths, line endings) shows up here.
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Version check, tests, evaluation, build and browser tests
+        run: npm run verify

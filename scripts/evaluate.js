@@ -12,7 +12,7 @@ import { QA_LABEL_CASES, judge } from '../tests/qa/label-cases.js'
 let results = JSON.parse(readFileSync('tests/expected-results.json', 'utf8'))
 
 // The generated labels are not committed. On a fresh clone, draw them first (the drawing
-// script uses macOS system fonts). Where that is not possible, run on the committed
+// script uses bundled fonts, so it works on any system). If that fails, run on the committed
 // sample images only and say so.
 if (results.some((r) => !existsSync(r.image))) {
   try {

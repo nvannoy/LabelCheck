@@ -4,6 +4,7 @@ import { describe, it, expect } from 'vitest'
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs'
 import { execSync } from 'node:child_process'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { FIELDS } from '../src/engine/fields.js'
 import { checkLabel } from '../src/engine/check.js'
 import { applicationFromText, parseApplication } from '../src/engine/parse.js'
@@ -29,7 +30,7 @@ function walk(dir) {
   }
   return out
 }
-const sourceFiles = (dir) => walk(new URL(`../${dir}`, import.meta.url).pathname).filter((f) => /\.(jsx?|html|css)$/.test(f))
+const sourceFiles = (dir) => walk(fileURLToPath(new URL(`../${dir}`, import.meta.url))).filter((f) => /\.(jsx?|html|css)$/.test(f))
 
 describe('B1 seven fields', () => {
   it('has exactly the seven fields of the brief, one config entry each', () => {
@@ -174,7 +175,7 @@ describe('M2 nothing sensitive is stored', () => {
 })
 
 describe('M3, M4 no outside connections', () => {
-  const files = [...sourceFiles('src'), ...['index.html'].map((f) => new URL(`../${f}`, import.meta.url).pathname)]
+  const files = [...sourceFiles('src'), fileURLToPath(new URL('../index.html', import.meta.url))]
   it('has no URL to another site in the app source or page', () => {
     for (const f of files) {
       const urls = (readFileSync(f, 'utf8').match(/https?:\/\/[^\s'"`)]+/g) ?? []).filter((u) => !/w3\.org|reactjs\.org|localhost/.test(u))
@@ -204,7 +205,7 @@ describe('M6 static hosting, easy to move to Azure', () => {
     expect(existsSync(new URL('../netlify/functions', import.meta.url))).toBe(false)
     const toml = read('netlify.toml')
     expect(toml).not.toMatch(/\[functions\]|\[\[edge_functions\]\]|forms|identity/i)
-    expect(execSync('git ls-files', { cwd: new URL('..', import.meta.url).pathname, encoding: 'utf8' })).not.toMatch(/netlify\/functions|\.netlify\//)
+    expect(execSync('git ls-files', { cwd: fileURLToPath(new URL('..', import.meta.url)), encoding: 'utf8' })).not.toMatch(/netlify\/functions|\.netlify\//)
   })
   it('lists the migration steps in the README', () => {
     const readme = read('README.md')
@@ -237,7 +238,7 @@ describe('M7, B7, B8 prototype statement and documentation', () => {
 })
 
 describe('B10 repository hygiene', () => {
-  const tracked = execSync('git ls-files', { cwd: new URL('..', import.meta.url).pathname, encoding: 'utf8' }).split('\n').filter(Boolean)
+  const tracked = execSync('git ls-files', { cwd: fileURLToPath(new URL('..', import.meta.url)), encoding: 'utf8' }).split('\n').filter(Boolean)
   it('tracks no secrets and no generated label images', () => {
     expect(tracked.filter((f) => /(^|\/)\.env|\.pem$|\.key$|secret|credentials/i.test(f))).toEqual([])
     expect(tracked.filter((f) => f.startsWith('generated/') || f.startsWith('public/ocr/'))).toEqual([])

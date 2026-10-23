@@ -11,27 +11,27 @@ const FIELDS = ['brand', 'classType', 'abv', 'netContents', 'bottler', 'country'
 const bases = {
   bourbon: {
     application: { brand: 'Harlan Ridge', classType: 'Kentucky Straight Bourbon Whiskey', abv: '45% Alc./Vol.', netContents: '750 mL', bottler: "Harlan Ridge Distilling Co., Bardstown, KY", imported: false, country: null },
-    style: { layout: 'classic', font: 'Georgia', bg: '#f4ecd8', fg: '#2b1f0e' },
+    style: { layout: 'classic', font: 'Libre Baskerville', bg: '#f4ecd8', fg: '#2b1f0e' },
   },
   vodka: {
     application: { brand: 'Silver Pike', classType: 'Vodka', abv: '40% Alc./Vol.', netContents: '1 L', bottler: 'Silver Pike Spirits, Minneapolis, MN', imported: false, country: null },
-    style: { layout: 'modern', font: 'Arial', bg: '#ffffff', fg: '#10233f' },
+    style: { layout: 'modern', font: 'Arimo', bg: '#ffffff', fg: '#10233f' },
   },
   gin: {
     application: { brand: 'Juniper Hollow', classType: 'London Dry Gin', abv: '47% Alc./Vol.', netContents: '750 mL', bottler: 'Juniper Hollow Distillers, Portland, OR', imported: false, country: null },
-    style: { layout: 'dark', font: 'Trebuchet MS', bg: '#14281e', fg: '#f2efe4' },
+    style: { layout: 'dark', font: 'Fira Sans', bg: '#14281e', fg: '#f2efe4' },
   },
   rum: {
     application: { brand: 'Copper Marsh', classType: 'Aged Rum', abv: '40% Alc./Vol.', netContents: '1.75 L', bottler: 'Copper Marsh Rum Works, Savannah, GA', imported: false, country: null },
-    style: { layout: 'classic', font: 'Times New Roman', bg: '#efe3c8', fg: '#3b1d0a' },
+    style: { layout: 'classic', font: 'Open Sans', bg: '#efe3c8', fg: '#3b1d0a' },
   },
   tequila: {
     application: { brand: 'Valle Sombra', classType: 'Tequila Reposado', abv: '40% Alc./Vol.', netContents: '750 mL', bottler: 'Sombra Imports, San Diego, CA', imported: true, country: 'Mexico' },
-    style: { layout: 'modern', font: 'Verdana', bg: '#f7efe0', fg: '#5a1a12' },
+    style: { layout: 'modern', font: 'Open Sans', bg: '#f7efe0', fg: '#5a1a12' },
   },
   brandy: {
     application: { brand: 'Alder Fork', classType: 'Apple Brandy', abv: '40% Alc./Vol.', netContents: '750 mL', bottler: 'Alder Fork Cellars, Hudson, NY', imported: false, country: null },
-    style: { layout: 'dark', font: 'Georgia', bg: '#2a1a2e', fg: '#f3e9d2' },
+    style: { layout: 'dark', font: 'Libre Baskerville', bg: '#2a1a2e', fg: '#f3e9d2' },
   },
 }
 

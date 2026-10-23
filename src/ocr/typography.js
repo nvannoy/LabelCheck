@@ -8,12 +8,13 @@
 // none either. The estimate can make a result worse (send it to Needs review)
 // but never better.
 
-// Calibrated on the generated test labels (five font families): real bold titles
-// measured 1.15 to 1.49, a regular-weight title 1.06, an all-bold warning 0.89.
-// The small TTB samples (letters about 12 px tall) gave unreliable numbers, so
-// boldness is not judged below MIN_LETTER_PX.
-const BOLD_RATIO = 1.12 // title strokes at least this much thicker than the body: bold
-const NOT_BOLD_RATIO = 1.08 // at most this much: the title is not bolder than the body
+// Calibrated on the generated test labels, drawn with five bundled font families: real bold
+// titles measured 1.31 to 1.74, a regular-weight title 1.13, an all-bold warning 1.18. (The
+// title is all capitals and the body is not, which adds a little to every ratio.) The small
+// TTB samples (letters about 12 px tall) gave unreliable numbers, so boldness is not judged
+// below MIN_LETTER_PX.
+const BOLD_RATIO = 1.26 // title strokes at least this much thicker than the body: bold
+const NOT_BOLD_RATIO = 1.2 // at most this much: the title is not bolder than the body
 const MIN_LETTER_PX = 14 // below this, strokes blur together and boldness cannot be judged
 
 const median = (xs) => {
@@ -40,18 +41,25 @@ function otsu(values) {
   return threshold
 }
 
+// Which gray level separates ink from paper, and whether ink is the dark side. Worked out once
+// for the whole warning area: inside a tight box around bold light letters on a dark label,
+// the letters can cover more than half the box, so the smaller side is not always the ink.
+export function inkModel(gray) {
+  const t = otsu(gray)
+  let dark = 0
+  for (const v of gray) if (v <= t) dark++
+  return { t, inkIsDark: dark <= gray.length - dark }
+}
+
 // Ink area and edge length inside one box. Thickness of a stroke is 2 x area / edge length.
-function inkSums(gray, gw, gh, box) {
+function inkSums(gray, gw, gh, box, model) {
   const x0 = Math.max(0, Math.floor(box.x0)), y0 = Math.max(0, Math.floor(box.y0))
   const x1 = Math.min(gw, Math.ceil(box.x1)), y1 = Math.min(gh, Math.ceil(box.y1))
   const w = x1 - x0, h = y1 - y0
   if (w < 3 || h < 3) return null
   const values = new Uint8Array(w * h)
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) values[y * w + x] = gray[(y0 + y) * gw + x0 + x]
-  const t = otsu(values)
-  let dark = 0
-  for (const v of values) if (v <= t) dark++
-  const inkIsDark = dark <= values.length - dark // the smaller class is the text
+  const { t, inkIsDark } = model
   const ink = (i) => (values[i] <= t) === inkIsDark
   let area = 0, edge = 0
   for (let y = 0; y < h; y++) {
@@ -69,10 +77,10 @@ function inkSums(gray, gw, gh, box) {
 }
 
 // Stroke thickness over a group of words, in pixels of `gray`.
-export function strokeThickness(gray, gw, gh, boxes) {
+export function strokeThickness(gray, gw, gh, boxes, model = inkModel(gray)) {
   let area = 0, edge = 0
   for (const b of boxes) {
-    const s = inkSums(gray, gw, gh, b)
+    const s = inkSums(gray, gw, gh, b, model)
     if (s) { area += s.area; edge += s.edge }
   }
   return edge ? (2 * area) / edge : null
@@ -88,8 +96,9 @@ export function describeBold(words, gray, gw, gh, scale, reliable = true) {
   if (!title.length || !body.length || titleH < MIN_LETTER_PX) {
     return { status: 'unclear', text: 'The letters are too small in this image to tell whether the title is bold.' }
   }
-  const tw = strokeThickness(gray, gw, gh, title.map(box))
-  const bw = strokeThickness(gray, gw, gh, body.map(box))
+  const model = inkModel(gray)
+  const tw = strokeThickness(gray, gw, gh, title.map(box), model)
+  const bw = strokeThickness(gray, gw, gh, body.map(box), model)
   if (!tw || !bw) return { status: 'unclear', text: 'The letters could not be measured in this image.' }
   const ratio = (tw / (titleH * scale)) / (bw / (bodyH * scale))
   const r = Math.round(ratio * 100) / 100
