@@ -6,6 +6,7 @@ import Review from './Review.jsx'
 import { startWorker, readImage } from '../ocr/ocr.js'
 import { parseApplication, importedFromCountry, APPLICATION_FIELDS } from '../engine/parse.js'
 import { checkLabel, qualityProblems } from '../engine/check.js'
+import { classifyPaste, classifyDrop, isEditable } from './paste.js'
 import { rowStatus, TIERS, tierSummary } from './status.js'
 
 const NOT_AN_IMAGE = 'That file is not an image. Choose a PNG, JPG or similar picture of the label.'
@@ -94,16 +95,54 @@ export default function App() {
     }
   }, [])
 
-  // Paste anywhere on the intake screen.
+  const [notice, setNotice] = useState(null)
+  const noticeTimer = useRef(null)
+  const say = useCallback((text) => {
+    setNotice(text)
+    clearTimeout(noticeTimer.current)
+    noticeTimer.current = setTimeout(() => setNotice(null), 5000)
+  }, [])
+
+  // New application text replaces the old text, and the edits and the
+  // Domestic or Imported choice made for the old one.
+  const takeText = useCallback((text) => {
+    setAppText(text)
+    setEdits({})
+    setImportedChoice(null)
+    const { found } = parseApplication(text)
+    say(`Pasted application text. Found ${found} of ${APPLICATION_FIELDS.length} fields.`)
+  }, [say])
+
+  const take = useCallback((item) => {
+    if (!item) return
+    if (item.kind === 'image') { onFile(item.file, 'pasted'); say('Pasted the label image. Reading started.') }
+    else takeText(item.text)
+  }, [onFile, say, takeText])
+
+  // Paste or drop anywhere on the intake screen: the app tells an image from
+  // text, so nothing needs a click first. A paste into a box being typed in
+  // (an Edit field) is left alone.
   useEffect(() => {
     if (screen !== 'intake') return undefined
     const onPaste = (e) => {
-      const file = [...(e.clipboardData?.files ?? [])].find((f) => f.type.startsWith('image/'))
-      if (file) { e.preventDefault(); onFile(file, 'pasted') }
+      if (isEditable(e.target)) return
+      const item = classifyPaste(e.clipboardData)
+      if (item) { e.preventDefault(); take(item) }
+    }
+    const onDragOver = (e) => e.preventDefault()
+    const onDrop = async (e) => {
+      e.preventDefault()
+      take(await classifyDrop(e.dataTransfer))
     }
     document.addEventListener('paste', onPaste)
-    return () => document.removeEventListener('paste', onPaste)
-  }, [screen, onFile])
+    document.addEventListener('dragover', onDragOver)
+    document.addEventListener('drop', onDrop)
+    return () => {
+      document.removeEventListener('paste', onPaste)
+      document.removeEventListener('dragover', onDragOver)
+      document.removeEventListener('drop', onDrop)
+    }
+  }, [screen, take])
 
   const parsed = useMemo(() => parseApplication(appText), [appText])
   const values = useMemo(() => ({ ...parsed.fields, ...edits }), [parsed, edits])
@@ -137,6 +176,7 @@ export default function App() {
             : <button type="button" className="btn-onblue solid" onClick={enterFull}><span aria-hidden="true">&#x26F6;</span> Full screen</button>)}
           <button type="button" className="btn-onblue" onClick={reset}>Next label</button>
         </Header>
+        {screen === 'intake' && notice && <div className="notice" role="status">{notice}</div>}
         {screen === 'intake' && <Intake intake={intake} />}
         {review && <Review image={image} read={read} application={application} result={review.result} fields={review.fields} mode={mode} textScale={textSize.scale} onNext={reset} />}
       </div>

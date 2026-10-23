@@ -13,11 +13,6 @@ function ImageStep({ intake }) {
   const input = useRef(null)
   const [over, setOver] = useState(false)
   const pick = () => input.current?.click()
-  const onDrop = (e) => {
-    e.preventDefault()
-    setOver(false)
-    if (e.dataTransfer.files[0]) onFile(e.dataTransfer.files[0], 'dropped')
-  }
 
   let badge = null
   if (read.status === 'reading') badge = <span className="pill check" role="status"><span aria-hidden="true">?</span>Reading…</span>
@@ -30,7 +25,7 @@ function ImageStep({ intake }) {
       <div className="step-head">
         <span className="n" aria-hidden="true">1</span>
         <h2 id="step1">Label image</h2>
-        {badge ?? <span className="aside">{engine === 'loading' ? 'Preparing the reader…' : 'Paste, drop or choose'}</span>}
+        {badge ?? <span className="aside">{engine === 'loading' ? 'Preparing the reader…' : 'Paste or drop'}</span>}
       </div>
       <input ref={input} type="file" accept="image/*" className="sr-only" tabIndex={-1} aria-hidden="true"
         onChange={(e) => { if (e.target.files[0]) onFile(e.target.files[0], 'chosen'); e.target.value = '' }} />
@@ -48,8 +43,8 @@ function ImageStep({ intake }) {
         </div>
       ) : (
         <div className={`drop${over ? ' over' : ''}`}
-          onDragOver={(e) => { e.preventDefault(); setOver(true) }} onDragLeave={() => setOver(false)} onDrop={onDrop}>
-          <div>Paste an image (Ctrl+V or Cmd+V) or drop it here</div>
+          onDragOver={() => setOver(true)} onDragLeave={() => setOver(false)} onDrop={() => setOver(false)}>
+          <div>Just paste (Ctrl+V or Cmd+V) or drop the label image anywhere on this page</div>
           <div className="or">or</div>
           <button type="button" className="btn" onClick={pick}>Choose an image</button>
         </div>
@@ -94,7 +89,7 @@ function ApplicationStep({ intake }) {
       <div className="step-head">
         <span className="n" aria-hidden="true">2</span>
         <h2 id="step2">Application text</h2>
-        <span className="aside">Copy all, paste here</span>
+        <span className="aside">Copy all, then just paste</span>
       </div>
       <label className="sr-only" htmlFor="apptext">Application text</label>
       <textarea id="apptext" className="apptext" value={appText} onChange={(e) => setAppText(e.target.value)}

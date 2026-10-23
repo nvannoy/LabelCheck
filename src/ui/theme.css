@@ -290,3 +290,5 @@ button { cursor: pointer; }
   .full .left { overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
   .full .left .imagebox { height: min(34rem, 52vh); flex-shrink: 0; }
 }
+
+.notice { padding: 0.5rem 1.25rem; background: var(--hint-bg); border-bottom: 1px solid var(--line); color: var(--navy); font-size: 0.9375rem; font-weight: 700; }
