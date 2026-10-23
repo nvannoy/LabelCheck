@@ -237,3 +237,8 @@ button { cursor: pointer; }
 .probe img { max-width: 440px; display: block; margin: 1rem 0; }
 
 .row-head .seen { font-size: 0.8125rem; color: var(--muted); }
+
+.byeye-panel { padding: 0.75rem 1.25rem; background: #FFFFFF; border-bottom: 1px solid var(--line); border-left: 6px solid var(--amber); }
+.byeye-panel h2 { margin: 0 0 0.25rem; font-size: 1rem; color: var(--amber); }
+.byeye-panel ul { margin: 0; padding-left: 1.125rem; font-size: 0.875rem; color: var(--ink-2); }
+.byeye-panel li { margin: 0.125rem 0; }

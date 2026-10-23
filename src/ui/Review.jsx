@@ -3,6 +3,7 @@ import { checkLabel } from '../engine/check.js'
 import { rowStatus, TIERS, tierSummary } from './status.js'
 import LabelImage from './LabelImage.jsx'
 import FieldRow from './FieldRow.jsx'
+import { DecisionBar, NotesPanel, ByEyePanel } from './Decision.jsx'
 
 const LEGEND = [
   ['match', 'Match', 'Solid green border and a check mark. The label agrees with the application.'],
@@ -11,7 +12,7 @@ const LEGEND = [
   ['na', 'Not required', 'Gray and a dash. This field does not apply to this product.'],
 ]
 
-export default function Review({ image, read, application, textScale }) {
+export default function Review({ image, read, application, textScale, onNext }) {
   const result = useMemo(
     () => checkLabel({ words: read.result.words, application, quality: read.result.quality }),
     [read, application],
@@ -24,6 +25,7 @@ export default function Review({ image, read, application, textScale }) {
   const [previewId, setPreviewId] = useState(null)
   const [seen, setSeen] = useState({})
   const [legend, setLegend] = useState(false)
+  const [choice, setChoice] = useState(null) // the agent's decision; never set by the app
 
   const frame = useRef(null)
   const rowRefs = useRef({})
@@ -103,6 +105,12 @@ export default function Review({ image, read, application, textScale }) {
         <span>Tab or &#8593; &#8595; next field. Enter marks it reviewed.</span>
         <button type="button" className="iconbtn" aria-label="What do the colors and symbols mean?" aria-expanded={legend} onClick={() => setLegend((v) => !v)}>i</button>
       </div>
+      <ByEyePanel fields={fields} labelByEye={result.labelByEye} />
+      <DecisionBar choice={choice} onChoose={setChoice} />
+      {choice && (
+        <NotesPanel choice={choice} fileName={image.name} fields={fields} labelByEye={result.labelByEye}
+          imageProblems={result.imageProblems} reviewed={seen} onNext={onNext} />
+      )}
       {path && (
         <svg className="connector" aria-hidden="true">
           <path d={path.d} fill="none" stroke={color} strokeWidth="2.5" strokeDasharray="2 6" strokeLinecap="round" />

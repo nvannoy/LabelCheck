@@ -98,7 +98,7 @@ export default function App() {
           <button type="button" className="btn-onblue" onClick={reset}>Next label</button>
         </Header>
         {screen === 'intake' && <Intake intake={intake} />}
-        {screen === 'review' && <Review image={image} read={read} application={application} textScale={textSize.scale} />}
+        {screen === 'review' && <Review image={image} read={read} application={application} textScale={textSize.scale} onNext={reset} />}
       </div>
       <Footer />
     </div>
