@@ -5,7 +5,8 @@ import Intake from './Intake.jsx'
 import Review from './Review.jsx'
 import { startWorker, readImage } from '../ocr/ocr.js'
 import { parseApplication, APPLICATION_FIELDS } from '../engine/parse.js'
-import { qualityProblems } from '../engine/check.js'
+import { checkLabel, qualityProblems } from '../engine/check.js'
+import { rowStatus, TIERS, tierSummary } from './status.js'
 
 const NOT_AN_IMAGE = 'That file is not an image. Choose a PNG, JPG or similar picture of the label.'
 const NOTHING_READ = 'Nothing could be read from this image. Try a clearer or larger picture of the label.'
@@ -26,6 +27,7 @@ export default function App() {
   const [edits, setEdits] = useState({})
   const [importedChoice, setImportedChoice] = useState(null)
   const [screen, setScreen] = useState('intake')
+  const [mode, setMode] = useState('compact') // compact column, or full (fullscreen, two columns)
 
   // The engine starts loading as the page opens, so it is ready when the image arrives.
   useEffect(() => {
@@ -34,7 +36,26 @@ export default function App() {
     return () => { ready.current?.then((w) => w.terminate()).catch(() => {}) }
   }, [])
 
+  // Full mode asks the browser for full screen. If the agent leaves it with Esc,
+  // the layout goes back to compact. Where the API is missing, only the layout changes.
+  const modeRef = useRef(mode)
+  modeRef.current = mode
+  useEffect(() => {
+    const onChange = () => { if (!document.fullscreenElement && modeRef.current === 'full') setMode('compact') }
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [])
+  const enterFull = useCallback(async () => {
+    setMode('full')
+    try { await document.documentElement.requestFullscreen?.() } catch { /* stay in the full layout without fullscreen */ }
+  }, [])
+  const leaveFull = useCallback(async () => {
+    setMode('compact')
+    try { if (document.fullscreenElement) await document.exitFullscreen() } catch { /* already out */ }
+  }, [])
+
   const reset = useCallback(() => {
+    leaveFull()
     current.current++
     setImage((old) => { if (old) URL.revokeObjectURL(old.url); return null })
     setRead(EMPTY_READ)
@@ -42,7 +63,7 @@ export default function App() {
     setEdits({})
     setImportedChoice(null)
     setScreen('intake')
-  }, [])
+  }, [leaveFull])
 
   const onFile = useCallback(async (file, source) => {
     const id = ++current.current
@@ -84,6 +105,12 @@ export default function App() {
   const count = APPLICATION_FIELDS.filter((id) => values[id]).length
   const application = useMemo(() => ({ ...values, imported }), [values, imported])
 
+  const review = useMemo(() => {
+    if (screen !== 'review' || read.status !== 'done') return null
+    const result = checkLabel({ words: read.result.words, application, quality: read.result.quality })
+    return { result, fields: result.fields.map((f) => ({ ...f, display: rowStatus(f) })) }
+  }, [screen, read, application])
+
   const intake = {
     engine, image, read, onFile, appText, setAppText, parsed, values, count, imported,
     setValue: (id, v) => setEdits((e) => ({ ...e, [id]: v.trim() })),
@@ -93,14 +120,26 @@ export default function App() {
 
   return (
     <div className="app">
-      <div className="frame compact">
-        <Header textSize={textSize}>
+      <div className={`frame ${mode === 'full' && review ? 'full' : 'compact'}`}>
+        <Header textSize={textSize} middle={mode === 'full' && review && <TierChip result={review.result} />}>
+          {review && (mode === 'full'
+            ? <button type="button" className="btn-onblue solid" onClick={leaveFull}>Compact view</button>
+            : <button type="button" className="btn-onblue solid" onClick={enterFull}><span aria-hidden="true">&#x26F6;</span> Full screen</button>)}
           <button type="button" className="btn-onblue" onClick={reset}>Next label</button>
         </Header>
         {screen === 'intake' && <Intake intake={intake} />}
-        {screen === 'review' && <Review image={image} read={read} application={application} textScale={textSize.scale} onNext={reset} />}
+        {review && <Review image={image} read={read} application={application} result={review.result} fields={review.fields} mode={mode} textScale={textSize.scale} onNext={reset} />}
       </div>
-      <Footer />
+      <Footer wide={mode === 'full' && Boolean(review)} />
+    </div>
+  )
+}
+
+function TierChip({ result }) {
+  const tier = TIERS[result.tier]
+  return (
+    <div className={`chip ${result.tier}`} role="status">
+      <span aria-hidden="true">{tier.symbol}</span>{tier.name}<span className="sub">{tierSummary(result)}</span>
     </div>
   )
 }

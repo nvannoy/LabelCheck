@@ -1,9 +1,9 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { checkLabel } from '../engine/check.js'
-import { rowStatus, TIERS, tierSummary } from './status.js'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { TIERS, tierSummary } from './status.js'
 import LabelImage from './LabelImage.jsx'
 import FieldRow from './FieldRow.jsx'
 import { DecisionBar, NotesPanel, ByEyePanel } from './Decision.jsx'
+import ReadTable from './ReadTable.jsx'
 
 const LEGEND = [
   ['match', 'Match', 'Solid green border and a check mark. The label agrees with the application.'],
@@ -12,12 +12,8 @@ const LEGEND = [
   ['na', 'Not required', 'Gray and a dash. This field does not apply to this product.'],
 ]
 
-export default function Review({ image, read, application, textScale, onNext }) {
-  const result = useMemo(
-    () => checkLabel({ words: read.result.words, application, quality: read.result.quality }),
-    [read, application],
-  )
-  const fields = useMemo(() => result.fields.map((f) => ({ ...f, display: rowStatus(f) })), [result])
+export default function Review({ image, read, application, result, fields, mode, textScale, onNext }) {
+  const full = mode === 'full'
 
   // First field to look at: the worst one.
   const firstId = (fields.find((f) => f.status === 'mismatch') ?? fields.find((f) => f.status === 'check') ?? fields[0]).id
@@ -64,7 +60,7 @@ export default function Review({ image, read, application, textScale, onNext }) 
     ro.observe(frame.current)
     window.addEventListener('resize', draw)
     return () => { ro.disconnect(); window.removeEventListener('resize', draw) }
-  }, [shownId, textScale, fields])
+  }, [shownId, textScale, fields, full])
 
   // Keep the focused row in view when the keyboard moves it.
   useEffect(() => { rowRefs.current[focusId]?.scrollIntoView?.({ block: 'nearest' }) }, [focusId])
@@ -74,14 +70,19 @@ export default function Review({ image, read, application, textScale, onNext }) 
 
   return (
     <div ref={frame} style={{ position: 'relative' }}>
-      <div className={`tier ${result.tier}`} role="status">
-        <span className="icon" aria-hidden="true">{tier.symbol}</span>
-        <span className="name">{tier.name}</span>
-        <span className="sub">{tierSummary(result)}</span>
-      </div>
+      {!full && (
+        <div className={`tier ${result.tier}`} role="status">
+          <span className="icon" aria-hidden="true">{tier.symbol}</span>
+          <span className="name">{tier.name}</span>
+          <span className="sub">{tierSummary(result)}</span>
+        </div>
+      )}
       <div className="cols">
-        <LabelImage src={image.url} width={read.result.quality.width} height={read.result.quality.height} fields={fields}
-          focusId={focusId} previewId={previewId} onFocus={setFocusId} onPreview={setPreviewId} boxRefs={boxRefs} />
+        <div className="left">
+          <LabelImage src={image.url} width={read.result.quality.width} height={read.result.quality.height} fields={fields}
+            focusId={focusId} previewId={previewId} onFocus={setFocusId} onPreview={setPreviewId} boxRefs={boxRefs} />
+          {full && <ReadTable fields={fields} />}
+        </div>
         <div>
           <div className="rows" role="list" aria-label="Fields">
             {fields.map((f, i) => (
@@ -92,31 +93,44 @@ export default function Review({ image, read, application, textScale, onNext }) 
               </div>
             ))}
           </div>
+          {legend && <Legend />}
+          {!full && <Hint legend={legend} setLegend={setLegend} full={false} />}
+          <ByEyePanel fields={fields} labelByEye={result.labelByEye} />
+          <DecisionBar choice={choice} onChoose={setChoice} />
+          {choice && (
+            <NotesPanel choice={choice} fileName={image.name} fields={fields} labelByEye={result.labelByEye}
+              imageProblems={result.imageProblems} reviewed={seen} onNext={onNext} />
+          )}
         </div>
       </div>
-      {legend && (
-        <div className="legend" role="region" aria-label="What the colors and symbols mean">
-          {LEGEND.map(([kind, name, text]) => (
-            <div key={kind}><span className={`pill ${kind}`}><span aria-hidden="true">{{ match: '✓', check: '?', mismatch: '✕', na: '–' }[kind]}</span>{name}</span><span>{text}</span></div>
-          ))}
-        </div>
-      )}
-      <div className="hint">
-        <span>Tab or &#8593; &#8595; next field. Enter marks it reviewed.</span>
-        <button type="button" className="iconbtn" aria-label="What do the colors and symbols mean?" aria-expanded={legend} onClick={() => setLegend((v) => !v)}>i</button>
-      </div>
-      <ByEyePanel fields={fields} labelByEye={result.labelByEye} />
-      <DecisionBar choice={choice} onChoose={setChoice} />
-      {choice && (
-        <NotesPanel choice={choice} fileName={image.name} fields={fields} labelByEye={result.labelByEye}
-          imageProblems={result.imageProblems} reviewed={seen} onNext={onNext} />
-      )}
+      {full && <Hint legend={legend} setLegend={setLegend} full />}
       {path && (
         <svg className="connector" aria-hidden="true">
           <path d={path.d} fill="none" stroke={color} strokeWidth="2.5" strokeDasharray="2 6" strokeLinecap="round" />
           <circle cx={path.cx} cy={path.cy} r="3.5" fill={color} />
         </svg>
       )}
+    </div>
+  )
+}
+
+function Legend() {
+  return (
+    <div className="legend" role="region" aria-label="What the colors and symbols mean">
+      {LEGEND.map(([kind, name, text]) => (
+        <div key={kind}><span className={`pill ${kind}`}><span aria-hidden="true">{{ match: '\u2713', check: '?', mismatch: '\u2715', na: '\u2013' }[kind]}</span>{name}</span><span>{text}</span></div>
+      ))}
+    </div>
+  )
+}
+
+function Hint({ legend, setLegend, full }) {
+  return (
+    <div className={`hint${full ? ' bottom' : ''}`}>
+      <span>{full
+        ? 'Tab or \u2191 \u2193 moves to the next field. Enter marks it reviewed. Hover over a box on the label to preview that field.'
+        : 'Tab or \u2191 \u2193 next field. Enter marks it reviewed.'}</span>
+      <button type="button" className="iconbtn" aria-label="What do the colors and symbols mean?" aria-expanded={legend} onClick={() => setLegend((v) => !v)}>i</button>
     </div>
   )
 }
