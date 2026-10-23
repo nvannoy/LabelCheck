@@ -2,46 +2,102 @@
 
 A browser-only prototype that helps a TTB compliance agent check an alcohol label image against its COLA application text. Built as a take-home assessment. Not affiliated with or endorsed by TTB.
 
+Live: https://labelcheck-grtwrx.netlify.app/
+
 ## How this was built
 
 Claude Code wrote most of the code in this repository. The developer reviewed it and is expected to be able to explain every part. Simple code is preferred over clever code.
 
-## Status
+## Approach
 
-The app is usable end to end in the browser.
+AI reads, code judges, the agent decides.
 
-- **Intake:** paste (Ctrl+V or Cmd+V), drop or choose a label image. OCR starts the moment the image arrives and the read time is shown. Paste the application text and the app finds up to six fields (brand, class and type, alcohol content, net contents, bottler, country). Each can be edited, and a Domestic or Imported toggle decides whether country of origin is required.
-- **Review (compact):** the image with a numbered box per field, seven field rows with one expanded, a tier (Likely reject, Needs review, Ready to approve), and Tab or arrow keys sharing one focus with the mouse. A- and A+ change the text size (remembered in localStorage, nothing else is stored).
-- **Review (full):** Full screen button, two columns on wide screens, plus a "What the app read" table.
-- **Decision:** "Label verified" and "Issues found" are the agent's own buttons. The app never approves a label. Drafted notes can be edited and copied. Next label clears everything. The checks only a person can do (warning bold type and size, legibility, type size, field of vision) are always shown.
-- **Engine:** `src/engine` holds the field config, comparators and the government warning check. `npm run evaluate` scores the 31-label test set.
-- **Debug page:** the OCR probe is at `/?probe`.
+- **Read:** Tesseract (tesseract.js) runs in a web worker in the browser and returns words with positions and confidence. The OCR engine, WebAssembly core, language data and font are all served from the app's own origin. Nothing leaves the browser and nothing loads from a CDN.
+- **Judge:** plain JavaScript rules in `src/engine` compare what was read with the application text. Each of the seven fields is one entry in `src/engine/fields.js` (id, label, rule sentence, comparator). Every rule sentence cites the regulation it comes from; the summaries are in `docs/rules-reference.md`.
+- **Decide:** the app never approves a label. "Label verified" and "Issues found" are the agent's own buttons, and nothing is preselected.
+
+Rules the engine follows:
+
+- The government warning is compared word for word against 27 CFR 16.21. Bold type, size and legibility cannot be read from OCR, so they are always listed for the agent to confirm by eye.
+- Alcohol content and net contents are compared as exact numbers (net contents after unit conversion). No fuzzy matching.
+- Brand name ignores capitals, punctuation and apostrophes. Bottler name and address use a looser match and can only ever return Check, never Mismatch.
+- Anything uncertain (low OCR confidence, field not found, a small or low-contrast image) is **Check**, never a match.
+
+## How a label is read
+
+1. The image is split at a blank vertical gap into panels (for example a brand label and a back label side by side).
+2. Each panel is upscaled, stretched to full contrast and read, and the words are mapped back to whole-image positions.
+3. Only if alcohol content or net contents has no candidate, the front panel is read again in sparse-text mode. This finds small boxed text, such as white text on a blue box, that the normal pass skips. The first result is shown straight away with a "taking a closer look" message while this runs. Inverting the colors was tried first and never added a word.
+
+## Screens
 
 Screens follow the mockups in `docs/mockup/`.
 
-How a label is read: the image is split at a blank vertical gap into panels (for example a brand label and a back label side by side), each panel is upscaled and read with Tesseract, and the words are mapped back to whole-image positions. A second pass runs only when alcohol content or net contents has no candidate: the front panel is read again in sparse-text mode, which finds small boxed text (white text on a blue box) that the normal pass skips. Inverting the colors was tried first and never added a word.
+- **Intake:** paste (Ctrl+V or Cmd+V), drop or choose a label image. OCR starts the moment the image arrives and the read time is shown. Paste the application text and the app finds up to six fields (brand, class and type, alcohol content, net contents, bottler, country). Each can be edited. A Domestic or Imported toggle decides whether country of origin is required.
+- **Review (compact):** the image with a numbered box per field, seven field rows with one expanded, and a tier: Likely reject, Needs review or Ready to approve. Tab, arrow keys and the mouse share one focus. A- and A+ change the text size, which is the only thing stored in localStorage.
+- **Review (full):** a Full screen button, two columns on wide screens, and a "What the app read" table.
+- **Decision:** drafted notes can be edited and copied. Next label clears the image, the application text and the notes.
+- **Debug page:** the OCR probe is at `/?probe`.
 
-## Running it
+## Application text format
+
+Paste labeled lines, one field per line. Spellings the parser accepts include `Brand Name`, `Class/Type`, `Alcohol Content` or `ABV`, `Net Contents`, `Applicant`, `Bottler` or `Name and Address`, and `Country of Origin` or `Origin`. Other lines (permit numbers, dates) are ignored and counted. `Origin: Domestic` or `United States` means a domestic product. Ready-made examples for every test label are in `tests/applications/`.
+
+## Setup and running
 
 ```
 npm install     # also copies the OCR engine and font into public/ (postinstall)
 npm run dev
 npm run build
 npm test
+npm run evaluate
+npm run verify  # version check, tests, evaluate, then a production build
 ```
 
-`public/ocr/` is generated by `scripts/copy-ocr.js` and is not committed. Everything the app loads (OCR worker, WASM core, English language data, Atkinson Hyperlegible) is served from this app's own origin. Nothing loads from a CDN.
+`public/ocr/` is generated by `scripts/copy-ocr.js` and is not committed. Hosting is static: `netlify.toml` and `public/_headers` are the only hosting files, so moving to another static host means porting those two. Every push needs a new version in `package.json`; `npm run verify` fails if the version matches `origin/main`.
 
-## Security headers
+## Tools
 
-`public/_headers` (Netlify) sets a strict Content Security Policy: `default-src 'self'`, `connect-src 'self'`, `worker-src 'self' blob:`, and `'wasm-unsafe-eval'` for OCR's WebAssembly.
+Vite, React (JSX, no TypeScript), tesseract.js 7, Vitest, Atkinson Hyperlegible (self-hosted). `@napi-rs/canvas` is a dev dependency used only by the test-label generator and the evaluation script. The edit-distance code for fuzzy matching is written in the repo (`src/engine/text.js`) instead of a library, because it is 15 lines and easy to audit.
 
-## Measured timings
+## Security
 
-Machine: Intel Core i7-1068NG7 (4 cores, 8 threads), 32 GB RAM, macOS. Browser numbers are from the built-in browser pane; Node numbers are from `npm run evaluate`.
+`public/_headers` sets a strict Content Security Policy: `default-src 'self'`, `connect-src 'self'`, `worker-src 'self' blob:`, and `'wasm-unsafe-eval'` for OCR's WebAssembly. No backend, no analytics, no cookies. Label images and application text stay in memory and disappear on Next label or reload.
 
-- Reading a label in Node (31 test images): mean about 2.1 s, slowest about 2.9 s.
-- Reading a label in the browser (TTB two-panel sample): about 2.5 to 4 s. Browser reads are slower and slightly less accurate than Node, which is not yet explained.
-- OCR engine load on the deployed site: 2 to 5 s, varying from load to load. This is the one-time cost per page load. Files under `/ocr/` and `/fonts/` are cached for 30 days (`public/_headers`), which removed the revalidation requests but left load time dominated by compiling the engine.
+## Testing
 
-Last results of `npm run evaluate`: 0 of 20 known-bad labels called Ready to Approve, 7 of 11 clean labels Ready to Approve, and the rest sent to review.
+The test set has 31 labels: 28 generated fictional labels (one defect each, plus clean ones), 2 TTB spirits sample images, and 1 TTB malt beverage image used as an OCR regression check. Every label has paste-ready application text. The procedure, scoring rules and files are in `tests/TEST-PROCEDURE.md`.
+
+The key measure is that no known-bad label may come out Ready to approve. Extra Needs review results are acceptable.
+
+## Results
+
+Last run (`npm run verify`, version 0.2.1):
+
+- 120 tests across 9 files pass.
+- **0 of 20 known-bad labels called Ready to approve.** No bad field was called a match.
+- 205 of 217 field results (94%) were exactly as expected. All 12 misses went to review, the safe direction.
+- 7 of 11 clean labels came out Ready to approve. The other 4 went to review.
+- Reading time in Node over four runs: mean 2.2 to 2.6 s, median 1.9 to 2.4 s, slowest 4.5 to 6.0 s. The 6.0 s run overlapped with other work on the machine; the other three were under 5 s.
+- Reading time in the browser (7 cases including the slowest): first result in 1.4 to 2.4 s, finished in 1.6 to 4.4 s.
+- OCR engine load on the deployed site: 2 to 5 s once per page load. Files under `/ocr/` and `/fonts/` are cached for 30 days.
+- Bundle: 283 kB (91 kB gzipped).
+
+Machine: Intel Core i7-1068NG7 (4 cores, 8 threads), 32 GB RAM, macOS, in the built-in browser pane. An ordinary office PC may be slower.
+
+## Assumptions
+
+- One label image per application. Two labels side by side in one image work only when there is a blank vertical gap between them.
+- Distilled spirits rules (27 CFR Part 5 and Part 16). Beer and wine rules are not covered. The two TTB spirits samples and one malt beverage image are real government examples kept in `tests/samples/` as the one exception to using generated labels only.
+- The application text is pasted as labeled lines (see above), copied from the COLA record by the agent.
+- Bottler name and address and country of origin are best-effort fields.
+
+## Limitations
+
+- **The app errs toward review.** 4 of 11 clean labels went to Needs review. Each had a reason: a brand printed in a decorative or all-capitals font that OCR reads with low confidence, a bottler printed in a decorative font, or capital letters and punctuation differing in the warning. The result is safe, but an agent will see extra reviews.
+- The browser reads slightly slower and less accurately than Node. For example, the TTB ABC sample is read with the brand matching in the browser but flagged in Node. The cause is not yet explained.
+- Where a field is genuinely missing, the second pass adds 1 to 2 s. The slowest browser case measured was 4.4 s and the slowest Node case reached 6.0 s once under load, so the 5 s target is met on this machine only some of the time, with no margin for a slower PC. The first result is shown before the second pass finishes.
+- OCR struggles with stylized fonts, outlined letters, pale text on pale backgrounds and artwork behind text. Skewed or glare-affected images are not supported.
+- Bold type, type size, contrast and "same field of vision" cannot be judged from pixels and are always left to the agent.
+- Images under 500 px wide or with very low contrast turn every match into Check.
+- The TTB malt beverage sample has a red ellipse drawn over its alcohol content, which defeats the normal pass. The second pass recovers it, but it is a stress case and not a typical label.
