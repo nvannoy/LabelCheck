@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { APPLICATION_FIELDS } from '../engine/parse.js'
+import { isEditable } from './paste.js'
 
 const LABELS = {
   brand: 'Brand name', classType: 'Class / type', abv: 'Alcohol content',
@@ -120,12 +121,26 @@ function ApplicationStep({ intake }) {
 
 export default function Intake({ intake }) {
   const { read, count, onStart } = intake
-  let why = 'The review opens at the size you last used.'
+  let why = 'Press Enter to start. The review opens at the size you last used.'
   let ready = true
   if (read.status === 'idle') { ready = false; why = 'Add a label image to start.' }
   else if (read.status === 'reading') { ready = false; why = 'Wait for the label to finish reading.' }
   else if (read.status === 'error') { ready = false; why = 'Replace the image to continue.' }
   else if (count === 0) { ready = false; why = 'Paste the application text to start.' }
+
+  // Enter starts the review once it is ready, with nothing clicked first. In a text box
+  // Enter still types a new line, so Ctrl or Cmd with Enter is used there. Enter on another
+  // button still presses that button.
+  useEffect(() => {
+    if (!ready) return undefined
+    const onKey = (e) => {
+      if (e.key !== 'Enter' || e.defaultPrevented || e.altKey || e.shiftKey) return
+      const idle = e.target === document.body || e.target === document.documentElement
+      if (idle || (isEditable(e.target) && (e.ctrlKey || e.metaKey))) { e.preventDefault(); onStart() }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [ready, onStart])
 
   return (
     <>
