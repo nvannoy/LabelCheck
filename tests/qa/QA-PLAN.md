@@ -9,6 +9,7 @@ Every case quotes the requirement, lists the steps and says what a pass looks li
 - **App:** the live site, https://labelcheck-grtwrx.netlify.app/. Write down the version shown next to "Label check".
 - **Time:** about 90 minutes, on desktop Chrome or Edge, with the files below.
 - **Files:** clone the repository. The three real samples are in `tests/samples/`. Application text for every label is in `tests/applications/<id>.txt`. The generated images (c, d and q series) are not on GitHub: draw them on a Mac with `node scripts/make-test-labels.js`, which writes `generated/labels/`. `npm run evaluate` does this for you on a Mac.
+- **The tour opens first.** A guided tour opens every time the app opens. Press Esc or Skip tour before a run. Pasting a label or text also closes it.
 - **One run:** paste the image on the page (Ctrl+V or Cmd+V) or use Choose an image. Wait for "Read in". Paste the application text. Press Start review (or Enter).
 - **Results:** write Pass, Fail or Blocked per case. Record version, browser, computer, date and tester.
 - **Safe direction:** on a known-bad label, Check or Mismatch is a pass and Ready to approve is a fail. On a clean label, Check is acceptable but must be recorded as an extra review.
@@ -78,6 +79,15 @@ Run with Chrome DevTools open (F12).
 | M5 | A policy that enforces the above | Read the page's response headers. Run a full review and read the Console. | A Content-Security-Policy header with `default-src 'self'` and `connect-src 'self'`. No policy violations or red errors in the Console. | Auto: test (`public/_headers`). Browser (live headers, Console) |
 | M6 | "We're on Azure now after the migration in 2019." | Look for a `netlify/functions` folder or Netlify-only features. Read the README migration section. | None found. Only `netlify.toml` and `public/_headers` are host-specific. The README lists the migration steps. | Auto: test |
 | M7 | "Think of this as a standalone proof-of-concept" | Read the README and the footer on every screen. | The footer reads "Prototype built for a take-home assessment. Not affiliated with or endorsed by TTB." The README states assumptions, limitations and measured results. | Auto: test. Browser |
+
+## The tour (added after the plan was written)
+
+| ID | Requirement | Steps | Pass when | Checked by |
+| --- | --- | --- | --- | --- |
+| T1 | A tour with a sample label that can be ignored | Open the app. Press Esc. Press the Tour button. Press Skip tour. | The tour opens at launch. Esc and Skip tour close it and leave the first screen empty and ready. The Tour button brings it back. | Browser |
+| T2 | The tour walks through a whole review | Step through all 11 steps with Next and with the Enter key. | Each step points at the part of the screen it describes. The sample shows Likely reject with one mismatch (net contents). The arrow keys do not move the review behind the tour. | Auto: test (sample result, steps). Browser |
+| T3 | The tour never gets in the way of real work | Open the tour, then paste a real label or text. | The tour closes and the pasted label or text is used. The sample is gone. | Browser |
+| T4 | The tour stores nothing | Run the tour, close it, and look at Local storage. | Only the text size is stored. | Auto: test. Browser |
 
 ## Dave Morrison, senior agent: judgment and no extra burden
 

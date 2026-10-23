@@ -1,13 +1,13 @@
 # QA results
 
-Plan: `tests/qa/QA-PLAN.md` (41 cases).
+Plan: `tests/qa/QA-PLAN.md` (45 cases: the 41 from the stakeholder PDF plus 4 tour cases added in 0.2.13).
 
 | Entry | Value |
 | --- | --- |
 | App version tested | 0.2.12 (production build, the same files that are deployed; the live site shows 0.2.11 until this is pushed) |
 | Browser and computer | In-app Chromium browser pane, viewport emulated at 1280 by 800, on a MacBook (Intel Core i7-1068NG7, 8 threads, 32 GB, macOS). Node 25 for the evaluation. |
 | Tester and date | Claude Code (automated checks and a scripted browser run), 23 Oct 2026. Not a human tester: see "Not run" below. |
-| Cases passed, failed, blocked | 37 pass, 0 fail, 4 blocked (S1, S2, S3, M4) |
+| Cases passed, failed, blocked | 41 pass, 0 fail, 4 blocked (S1, S2, S3, M4). The 41 stakeholder cases were run on 0.2.12, the 4 tour cases on 0.2.13. |
 | Blockers open | None. S1 needs an office PC and is the one to watch. |
 | Ready to submit | Not until a human has run S1, S2 and S3 on an ordinary office PC |
 
@@ -62,6 +62,17 @@ Plan: `tests/qa/QA-PLAN.md` (41 cases).
 | B8 | Pass | The README limitations list batch, one image, spirits only, skew and glare, and the bold and size limits. `src/engine` has no browser code (tested). Each field is one entry in `fields.js`. |
 | B9 | Pass | s01: brand Check, bottler Check, the rest Match (net contents now reads and matches). s02: warning Check (capital letters or punctuation differ), the rest Match. r01: class and bottler Check, the rest Match. No field wrongly shows Match. All three are Needs review, which the plan accepts. |
 | B10 | Pass | No secrets or generated images tracked (tested). CLAUDE.md and docs present. Small, single-purpose commits. |
+
+## Tour cases (0.2.13)
+
+| ID | Result | Evidence |
+| --- | --- | --- |
+| T1 | Pass | The tour opened at launch ("Step 1 of 11"). Esc closed it, removed the sample and left the first screen empty with the page no longer inert. The Tour button reopened it. |
+| T2 | Pass | Stepped through all 11 steps: each had a spotlight except the welcome and closing steps; the sample showed Likely reject, 1 mismatch (net contents), then opened the government warning row. Down-arrow key events sent while the tour was open did not move the review's focus. The unit tests check the sample result and the step list. |
+| T3 | Pass | Pasting application text while the tour was open closed the tour, removed the sample and put the pasted text in the text box (Found 4 of 6 fields). |
+| T4 | Pass | Local storage held only `labelcheck-text-size` after running and closing the tour; the tour code contains no storage calls (tested). |
+
+The tour opens at launch, so earlier S4 ("two steps and one Start review button on the first screen") now also sees a tour card and a Tour button. The two numbered steps and the single Start review button are still there once the tour is closed.
 
 ## Release blockers
 
