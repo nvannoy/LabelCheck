@@ -234,10 +234,6 @@ button { cursor: pointer; }
 
 .row-head .seen { font-size: 0.8125rem; color: var(--muted); }
 
-.byeye-panel { padding: 0.75rem 1.25rem; background: #FFFFFF; border-bottom: 1px solid var(--line); border-left: 6px solid var(--amber); }
-.byeye-panel h2 { margin: 0 0 0.25rem; font-size: 1rem; color: var(--amber); }
-.byeye-panel ul { margin: 0; padding-left: 1.125rem; font-size: 0.875rem; color: var(--ink-2); }
-.byeye-panel li { margin: 0.125rem 0; }
 
 .readtable td { vertical-align: top; overflow-wrap: anywhere; }
 .chip { display: inline-flex; align-items: center; gap: 0.625rem; margin-left: 1rem; padding: 0.375rem 0.875rem; border: 3px solid #FFFFFF; border-radius: 8px; font-size: 1.125rem; font-weight: 700; flex-wrap: wrap; }
@@ -333,3 +329,6 @@ button { cursor: pointer; }
 details.required { margin-top: 0.5rem; font-size: 0.875rem; color: var(--ink-2); }
 details.required summary { cursor: pointer; font-weight: 700; color: var(--navy); }
 details.required p { margin: 0.25rem 0 0; }
+
+.legend .whole { display: block; font-size: 0.875rem; color: var(--ink-2); }
+.legend .whole ul { margin: 0.25rem 0 0; padding-left: 1.125rem; }

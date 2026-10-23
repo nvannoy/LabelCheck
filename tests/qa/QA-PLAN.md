@@ -113,7 +113,7 @@ A warning that cannot be read must never be treated as correct.
 | J5 | "all caps and bold" (bold) | Run d18 and d19, then c01. | d18 and d19 are not Ready to approve. The bold estimate and the by-eye list are shown. On c01 the by-eye list still appears. | Auto: evaluate, test |
 | J6 | "burying it in tiny text" | Run q03. | Warning is Check, never Match. | Auto: evaluate, test |
 | J7 | "it would be amazing if the tool could handle images that aren't perfectly shot" | Run q01 and q02. Then photograph a label on a screen at an angle, or with glare, and run it. | q01 shows the low-resolution flag. No field is Ready to approve on q01 or q02. The angled photo does not crash the app and does not give Ready to approve. Skew and glare are a documented limitation. | Auto: evaluate. Browser (synthetic skew and glare). Real photo: Human |
-| J8 | Bold and size always left to the agent | Run c01, s01 and s02. Look at the Warning row and the "Only you can check" list. | The warning row always shows Check bold, and the by-eye list names bold type, size and legibility. | Browser (see deviation below) |
+| J8 | Bold and size always left to the agent | Run c01, s01 and s02. Look at the Warning row (its three lines, and the by-eye items in the drafted notes). | The warning row shows Check bold when the wording matches, and its lines name the title's boldness and legibility. | Browser (see deviation below) |
 
 ## The brief: fields, errors, documentation and code
 

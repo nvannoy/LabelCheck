@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { TIERS, tierSummary } from './status.js'
 import LabelImage from './LabelImage.jsx'
 import FieldRow from './FieldRow.jsx'
-import { DecisionBar, NotesPanel, ByEyePanel } from './Decision.jsx'
+import { DecisionBar, NotesPanel } from './Decision.jsx'
 import { isEditable } from './paste.js'
 import ReadTable from './ReadTable.jsx'
 
@@ -158,9 +158,8 @@ export default function Review({ image, read, application, result, fields, mode,
               </div>
             ))}
           </div>
-          {legend && <Legend />}
+          {legend && <Legend labelByEye={result.labelByEye} />}
           {full && !wide && <ReadTable fields={fields} />}
-          <ByEyePanel labelByEye={result.labelByEye} />
           <DecisionBar choice={choice} onChoose={choose} confirming={confirming} flagged={result.counts.mismatch}
             onConfirm={() => { setConfirming(false); setChoice('verified') }} onCancel={() => setConfirming(false)} />
           {choice && (
@@ -170,7 +169,7 @@ export default function Review({ image, read, application, result, fields, mode,
         </div>
       </div>
       {!full && <Hint legend={legend} setLegend={setLegend} full={false} />}
-      {full && helpOpen && <HelpPop onClose={onCloseHelp} />}
+      {full && helpOpen && <HelpPop onClose={onCloseHelp} labelByEye={result.labelByEye} />}
       {path && (
         <svg className="connector" aria-hidden="true">
           <path d={path.d} fill="none" stroke={color} strokeWidth="2.5" strokeDasharray="2 6" strokeLinecap="round" />
@@ -181,18 +180,24 @@ export default function Review({ image, read, application, result, fields, mode,
   )
 }
 
-function Legend() {
+function Legend({ labelByEye }) {
   return (
     <div className="legend" role="region" aria-label="What the colors and symbols mean">
       {LEGEND.map(([kind, name, text]) => (
         <div key={kind}><span className={`pill ${kind}`}><span aria-hidden="true">{{ match: '\u2713', check: '?', mismatch: '\u2715', na: '\u2013' }[kind]}</span>{name}</span><span>{text}</span></div>
       ))}
+      {labelByEye?.length > 0 && (
+        <div className="whole">
+          <b>Also check by eye, on the whole label:</b>
+          <ul>{labelByEye.map((t) => <li key={t}>{t}</li>)}</ul>
+        </div>
+      )}
     </div>
   )
 }
 
 // Full mode has no bar at the bottom, so nothing sits over the label data. Help opens from the header.
-function HelpPop({ onClose }) {
+function HelpPop({ onClose, labelByEye }) {
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', onKey)
@@ -201,7 +206,7 @@ function HelpPop({ onClose }) {
   return (
     <div id="help-pop" className="helppop" role="region" aria-label="Help">
       <p>&#8593; &#8595; or Tab moves to the next field, with no click needed. Enter marks it reviewed. Hover over a box on the label to preview that field.</p>
-      <Legend />
+      <Legend labelByEye={labelByEye} />
     </div>
   )
 }

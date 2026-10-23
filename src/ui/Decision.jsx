@@ -58,15 +58,3 @@ export function NotesPanel({ choice, fileName, fields, labelByEye, imageProblems
     </section>
   )
 }
-
-// Checks that apply to the whole label. The warning's own checks show only when its row is open.
-export function ByEyePanel({ labelByEye }) {
-  return (
-    <section className="byeye-panel" aria-labelledby="byeye-h">
-      <h2 id="byeye-h">Only you can check</h2>
-      <ul>
-        {labelByEye.map((t) => <li key={t}>{t}</li>)}
-      </ul>
-    </section>
-  )
-}
