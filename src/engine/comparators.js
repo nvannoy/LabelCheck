@@ -5,6 +5,7 @@
 // the brand, class and bottler; never for the warning, ABV or net contents.
 import { tokens } from './text.js'
 import { bestWindow, locate, locateChars, textOf, textLines, boxOfWords } from './words.js'
+import { countryName } from './countries.js'
 import { parseAbv, parseNetContents, sameAmount, parseCountryPhrases } from './parse.js'
 
 const LOW_CONFIDENCE = 70
@@ -194,5 +195,10 @@ export function country(index, application) {
   const w = bestWindow(index, application.country ?? '')
   const place = locate(index, w.from, w.to)
   if (hit) return lowConfidence({ status: 'match', found: want.join(' '), ...place, reason: `The label names ${application.country} as the country of origin.` }, 'The country of origin')
-  return { status: 'mismatch', found: phrases[0].join(' '), ...place, reason: `The label names "${phrases[0].join(' ')}" but the application says ${application.country}.` }
+  // Mismatch only for a real, different country. A garbled read goes to the agent.
+  const named = phrases.map(countryName).find(Boolean)
+  if (!named) {
+    return { status: 'check', found: phrases[0].join(' '), ...place, reason: 'Could not read the country clearly. Confirm by eye.' }
+  }
+  return { status: 'mismatch', found: named, ...place, reason: `The label names "${named}" but the application says ${application.country}.` }
 }
