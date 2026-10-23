@@ -3,7 +3,7 @@
 // statute after normalizing only whitespace and line breaks (OCR words are
 // already whitespace-separated). Bold type and size cannot be read from OCR,
 // so they are always returned as byEye items for the agent.
-import { indexWords, bestWindow, locate } from './words.js'
+import { indexWords, bestWindow } from './words.js'
 
 export const WARNING_TEXT =
   'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'
@@ -58,13 +58,26 @@ export function checkWarning(words) {
   let end = after.length
   const last = after.findIndex((w, i) => i >= 30 && /^problems\.?$/i.test(w.text))
   if (last >= 0) end = last + 1
-  const got = after.slice(0, end)
+  // Artwork behind the text (hops, borders) produces stray marks such as "\" or "P;".
+  // A mark that is both unsure and not a word is dropped, and the agent is told.
+  const raw = after.slice(0, end)
+  const got = raw.filter((w) => !(w.confidence < 70 && !/[A-Za-z0-9]{2,}/.test(w.text)))
+  const ignored = raw.length - got.length
   const text = got.map((w) => w.text).join(' ')
-  const box = locate(index, anchor.from, index.toks.length)
-  const place = { found: text, bbox: box.bbox, confidence: Math.round(got.reduce((a, w) => a + w.confidence, 0) / got.length) }
+  const place = {
+    found: text,
+    confidence: Math.round(got.reduce((a, w) => a + w.confidence, 0) / got.length),
+    bbox: {
+      x0: Math.min(...got.map((w) => w.bbox.x0)), y0: Math.min(...got.map((w) => w.bbox.y0)),
+      x1: Math.max(...got.map((w) => w.bbox.x1)), y1: Math.max(...got.map((w) => w.bbox.y1)),
+    },
+  }
 
   const ops = align(EXPECTED, got)
-  if (!ops.length) return { ...base, ...place, status: 'match', reason: 'The warning matches the required wording exactly.' }
+  if (!ops.length) {
+    const note = ignored ? ` (${ignored} stray ${ignored === 1 ? 'mark' : 'marks'} from the artwork ignored)` : ''
+    return { ...base, ...place, status: 'match', reason: `The warning matches the required wording exactly${note}.` }
+  }
 
   const title = ops.filter((o) => o.at < 2 && caseOnly(o) && o.conf >= SURE)
   if (title.length) {

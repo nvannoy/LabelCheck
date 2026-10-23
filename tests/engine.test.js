@@ -126,3 +126,43 @@ describe('field checks', () => {
     for (const f of FIELDS) expect(f.rule.length).toBeGreaterThan(20)
   })
 })
+
+describe('split names and repeated names', () => {
+  const MALT = { ...APP, brand: 'Malt & Hop', bottler: 'Malt & Hop Brewery, Hyattsville, MD' }
+  it('matches a bottler whose name and city are printed apart', () => {
+    const s = status('Brewed and bottled by MALT & HOP BREWERY Honey Ale 5% Alc./Vol. 1 Pint HYATTSVILLE, MD', MALT)
+    expect(s.bottler).toBe('match')
+  })
+  it('does not match when the name part is wrong, even if the city is right', () => {
+    expect(status('Bottled by Hop & Malt Cellars HYATTSVILLE, MD 5% 1 Pint', MALT).bottler).toBe('check')
+  })
+  it('does not match a bottler found only in the brand line', () => {
+    const app = { ...APP, brand: 'Copper Marsh', bottler: 'Copper Marsh Rum Works, Savannah, GA' }
+    expect(status('Copper Marsh Rum 40% 750 mL Bottled by Marsh Island Rum Works, Savannah, GA', app).bottler).not.toBe('match')
+  })
+  it('uses the surer reading when a brand is printed twice', () => {
+    const words = [...wordsFrom('MALT HOP,', 43), ...wordsFrom('Ale 5% 1 Pint'), ...wordsFrom('MALT & HOP', 95)]
+    const out = checkLabel({ words, application: MALT })
+    expect(out.fields.find((f) => f.id === 'brand').status).toBe('match')
+  })
+})
+
+describe('stray marks from artwork inside the warning', () => {
+  it('ignores unsure non-words and still matches', () => {
+    const words = wordsFrom(WARNING_TEXT)
+    words.splice(30, 0, { text: '\\', confidence: 28, bbox: { x0: 0, y0: 0, x1: 5, y1: 5 } }, { text: 'P;', confidence: 0, bbox: { x0: 0, y0: 0, x1: 5, y1: 5 } })
+    const r = checkWarning(words)
+    expect(r.status).toBe('match')
+    expect(r.reason).toContain('2 stray marks')
+  })
+  it('does not drop a confident word', () => {
+    const words = wordsFrom(WARNING_TEXT)
+    words.splice(30, 0, { text: 'extra', confidence: 95, bbox: { x0: 0, y0: 0, x1: 5, y1: 5 } })
+    expect(checkWarning(words).status).toBe('mismatch')
+  })
+  it('boxes only the warning words', () => {
+    const words = [...wordsFrom(WARNING_TEXT), ...wordsFrom('Ale 5%')]
+    const r = checkWarning(words)
+    expect(r.bbox.x1).toBe(words.find((w) => w.text === 'problems.').bbox.x1)
+  })
+})

@@ -65,12 +65,30 @@ export function netContents(index, application) {
 }
 
 // Bottler name and address: looser match, and never worse than Needs Review.
+// The name and the city are often printed in different places on a label, so
+// the name part (before the first comma) and the address part are each looked
+// for as a run of words anywhere. Both must be found nearly exactly to match,
+// and a name that is only partly right is never enough.
 export function bottler(index, application) {
-  const w = bestWindow(index, application.bottler)
-  const place = locate(index, w.from, w.to)
-  const found = textOf(index, w.from, w.to)
-  if (w.score >= 0.95) return lowConfidence({ status: 'match', found, ...place, reason: 'The bottler name and address match.' }, 'The bottler name and address')
-  if (w.score >= 0.6) return { status: 'check', found, ...place, reason: `The label has "${found}", which is similar to the application but not the same. Compare the name and address.` }
+  const [name, ...rest] = application.bottler.split(',').map((x) => x.trim()).filter(Boolean)
+  const address = rest.join(' ')
+  const whole = bestWindow(index, application.bottler)
+  const nameW = bestWindow(index, name)
+  const addrW = address ? bestWindow(index, address) : null
+  const apart = Boolean(addrW) && nameW.score >= 0.95 && addrW.score >= 0.9
+  const together = whole.score >= 0.95
+  if (together || apart) {
+    const place = together ? locate(index, whole.from, whole.to) : locate(index, nameW.from, nameW.to)
+    const found = together ? textOf(index, whole.from, whole.to) : `${textOf(index, nameW.from, nameW.to)} ... ${textOf(index, addrW.from, addrW.to)}`
+    const where = together ? '' : ' The name and the address are printed apart on the label.'
+    return lowConfidence({ status: 'match', found, ...place, reason: `The bottler name and address match.${where}` }, 'The bottler name and address')
+  }
+  const score = Math.max(whole.score, addrW ? (nameW.score + addrW.score) / 2 : nameW.score)
+  if (score >= 0.6) {
+    const place = locate(index, nameW.from, nameW.to)
+    const found = textOf(index, nameW.from, nameW.to)
+    return { status: 'check', found, ...place, reason: `The label has "${found}", which is similar to the application but not the same. Compare the name and address.` }
+  }
   return notFound('The bottler name and address')
 }
 

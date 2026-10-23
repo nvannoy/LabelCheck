@@ -13,6 +13,7 @@ export function indexWords(words) {
   return { words, toks, spans, text: words.map((w) => w.text).join(' ') }
 }
 
+const runWords = (index, from, to) => [...new Set(index.toks.slice(from, to).map((k) => k.wi))].map((i) => index.words[i])
 const mean = (xs) => xs.reduce((a, b) => a + b, 0) / (xs.length || 1)
 
 // Box and average confidence for a run of tokens.
@@ -51,13 +52,17 @@ function boxOf(index, wis) {
 export function bestWindow(index, phrase, skip = () => false) {
   const want = squash(phrase)
   const n = tokens(phrase).length
-  let best = { score: 0, from: 0, to: 0 }
+  let best = { score: 0, from: 0, to: 0, conf: 0 }
   for (let i = 0; i < index.toks.length; i++) {
     if (skip(i)) continue
     for (let len = Math.max(1, n - 1); len <= n + 1 && i + len <= index.toks.length; len++) {
       const got = index.toks.slice(i, i + len).map((k) => k.t).join('')
       const score = similarity(want, got)
-      if (score > best.score) best = { score, from: i, to: i + len }
+      if (score < best.score) continue
+      // Equal scores: prefer the reading the OCR was surer of (the same name can
+      // appear twice, once in a plain font and once in a decorative one).
+      const conf = mean(runWords(index, i, i + len).map((w) => w.confidence))
+      if (score > best.score || conf > best.conf) best = { score, from: i, to: i + len, conf }
     }
   }
   return best

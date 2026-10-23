@@ -251,3 +251,17 @@ button { cursor: pointer; }
 .chip.ready { background: var(--green-bg); color: var(--green); }
 .full .left { display: flex; flex-direction: column; gap: 1.25rem; }
 .full .hint.bottom { margin-top: 0; }
+
+.verdict { display: flex; gap: 0.5rem; align-items: flex-start; padding: 0.5rem 0.75rem; border-radius: 6px; background: #FFFFFF; font-size: 0.9375rem; }
+.verdict .mark { flex-shrink: 0; width: 1.5rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 700; }
+.verdict.match { border: 2px solid var(--green); }
+.verdict.match .mark { border: 2px solid var(--green); color: var(--green); }
+.verdict.check { border: 2px dashed var(--amber); }
+.verdict.check .mark { border: 2px dashed var(--amber); color: var(--amber); }
+.verdict.mismatch { border: 3px solid var(--red); }
+.verdict.mismatch .mark { border: 3px solid var(--red); color: var(--red); }
+.compare .val.small { font-size: 0.9375rem; font-weight: 400; }
+.eyelist { list-style: none; padding-left: 0 !important; }
+.eyelist li { display: flex; gap: 0.5rem; margin: 0.25rem 0; }
+.eyelist li span { flex-shrink: 0; width: 1.125rem; height: 1.125rem; display: flex; align-items: center; justify-content: center; border: 2px dashed var(--amber); border-radius: 50%; font-size: 0.6875rem; font-weight: 700; color: var(--amber); margin-top: 0.125rem; }
+.row-body .verdict + .byeye, .row-body .compare + .byeye { margin-top: 0.5rem; }

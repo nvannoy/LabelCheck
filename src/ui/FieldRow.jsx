@@ -7,6 +7,31 @@ function applicationSays(field, application) {
   return application[APPLICATION_KEY[field.id]] || 'Not given'
 }
 
+// The warning row says what the app could settle (the wording) and what only a
+// person can (bold type, size, legibility), instead of showing the long statute.
+function WarningBody({ field }) {
+  const mark = { match: '\u2713', check: '?', mismatch: '\u2715' }[field.status]
+  const lead = field.status === 'match'
+    ? 'Wording matches the statute word for word, and the title is in capital letters.'
+    : field.reason
+  return (
+    <>
+      <div className={`verdict ${field.status}`}>
+        <span className="mark" aria-hidden="true">{mark}</span>
+        <span><strong>Wording:</strong> {lead}</span>
+      </div>
+      {field.status !== 'match' && field.found && (
+        <div className="compare"><div><div className="cap">Label says</div><div className="val small">{field.found.length > 160 ? `${field.found.slice(0, 160)}...` : field.found}</div></div></div>
+      )}
+      <div className="byeye">
+        <strong>Still to confirm by eye:</strong>
+        <ul className="eyelist">{field.byEye.map((t) => <li key={t}><span aria-hidden="true">?</span>{t}</li>)}</ul>
+      </div>
+      <div className="note"><span className="i" aria-hidden="true">i</span><span>{field.rule}</span></div>
+    </>
+  )
+}
+
 export default function FieldRow({ field, number, focused, preview, seen, application, rowRef, onFocus, onPreview, onKeyDown }) {
   const { display } = field
   const differs = field.status === 'mismatch'
@@ -21,7 +46,10 @@ export default function FieldRow({ field, number, focused, preview, seen, applic
         {seen && <span className="seen" aria-hidden="true">Reviewed</span>}
         <span className={`pill ${display.kind}`} aria-hidden="true"><span>{display.symbol}</span>{display.text}</span>
       </button>
-      {focused && (
+      {focused && field.id === 'warning' && field.status !== 'na' && (
+        <div className="row-body"><WarningBody field={field} /></div>
+      )}
+      {focused && !(field.id === 'warning' && field.status !== 'na') && (
         <div className="row-body">
           {field.status !== 'na' && (
             <div className="compare">
