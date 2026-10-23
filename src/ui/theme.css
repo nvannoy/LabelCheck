@@ -276,6 +276,9 @@ button { cursor: pointer; }
 @media (min-width: 1000px) and (min-height: 560px) {
   .full .cols { display: grid; overflow: hidden; padding-bottom: 0.75rem; align-items: stretch; grid-template-rows: minmax(0, 1fr); }
   .full .right { overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
+  /* The decision buttons stay in view at the bottom of the scrolling checks instead of
+     being cut off by the edge of the pane. */
+  .full .decision { position: sticky; bottom: 0; z-index: 2; padding: 0.75rem 0; background: var(--bg); }
   /* The left column never scrolls: the label takes whatever height is left after the
      read table, and the table has one short line per field. */
   .full .left { display: flex; flex-direction: column; gap: 0.75rem; overflow: hidden; min-height: 0; }
