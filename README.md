@@ -8,7 +8,16 @@ Claude Code wrote most of the code in this repository. The developer reviewed it
 
 ## Status
 
-Phase 1 (engine) is in place: `src/engine` holds the field config, comparators and the government warning check, and `npm run evaluate` scores the 31-label test set. The page at `/` is still a throwaway OCR probe. There is no review screen yet.
+The app is usable end to end in the browser.
+
+- **Intake:** paste (Ctrl+V or Cmd+V), drop or choose a label image. OCR starts the moment the image arrives and the read time is shown. Paste the application text and the app finds up to six fields (brand, class and type, alcohol content, net contents, bottler, country). Each can be edited, and a Domestic or Imported toggle decides whether country of origin is required.
+- **Review (compact):** the image with a numbered box per field, seven field rows with one expanded, a tier (Likely reject, Needs review, Ready to approve), and Tab or arrow keys sharing one focus with the mouse. A- and A+ change the text size (remembered in localStorage, nothing else is stored).
+- **Review (full):** Full screen button, two columns on wide screens, plus a "What the app read" table.
+- **Decision:** "Label verified" and "Issues found" are the agent's own buttons. The app never approves a label. Drafted notes can be edited and copied. Next label clears everything. The checks only a person can do (warning bold type and size, legibility, type size, field of vision) are always shown.
+- **Engine:** `src/engine` holds the field config, comparators and the government warning check. `npm run evaluate` scores the 31-label test set.
+- **Debug page:** the OCR probe is at `/?probe`.
+
+Screens follow the mockups in `docs/mockup/`.
 
 How a label is read: the image is split at a blank vertical gap into panels (for example a brand label and a back label side by side), each panel is upscaled and read with Tesseract, and the words are mapped back to whole-image positions. An optional second pass with inverted colors exists but is off by default, because on the test set it never added a word and cost 1.4 to 2.6 s each time it ran.
 
