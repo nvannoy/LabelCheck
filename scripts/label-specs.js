@@ -49,6 +49,34 @@ function cleanLabel(app, over = {}) {
   }
 }
 
+// The text an agent would copy from the application and paste into the app.
+// Three layouts, used in turn, so the parser sees different spellings, extra
+// lines and different ways to say a product is domestic.
+const originLine = (app, label, domestic) => `${label}: ${app.imported ? app.country : domestic}`
+const TEXT_STYLES = [
+  (a) => ({
+    extra: 1,
+    text: [`Brand Name: ${a.brand}`, `Class/Type: ${a.classType}`, `Alcohol Content: ${a.abv}`, `Net Contents: ${a.netContents}`,
+      `Applicant: ${a.bottler}`, originLine(a, 'Origin', 'Domestic'), 'Permit No.: DSP-KY-1234'],
+  }),
+  (a) => ({
+    extra: 1,
+    text: [`Brand: ${a.brand}`, `Class and Type: ${a.classType}`, `ABV: ${a.abv}`, `Net Contents: ${a.netContents}`,
+      `Name and Address: ${a.bottler}`, ...(a.imported ? [`Country of Origin: ${a.country}`] : []), 'Serial Number: 24-0001'],
+  }),
+  (a) => ({
+    extra: 3,
+    text: ['COLA APPLICATION SUMMARY', 'Date Received: 03/14/2026', '', `Brand Name: ${a.brand}`, `Class/Type: ${a.classType}`,
+      `Alcohol Content: ${a.abv}`, `Net Contents: ${a.netContents}`, `Bottler: ${a.bottler}`,
+      originLine(a, 'Country of Origin', 'United States'), 'Status: Pending'],
+  }),
+]
+let made = 0
+function applicationText(app) {
+  const { text, extra } = TEXT_STYLES[made++ % TEXT_STYLES.length](app)
+  return { applicationText: text.join('\n'), extraLines: extra }
+}
+
 const allMatch = () => Object.fromEntries(FIELDS.map((f) => [f, 'match']))
 
 // expect: ideal status per field. country is 'na' for domestic products.
@@ -62,6 +90,7 @@ function make(id, baseKey, defect, { app = {}, label = {}, style = {}, expect = 
     kind: 'generated',
     defect,
     application,
+    ...applicationText(application),
     label: cleanLabel(application, label),
     style: { ...b.style, ...style },
     expected: { fields, overall },
@@ -132,6 +161,8 @@ export const samples = [
     source: 'https://www.ttb.gov/regulated-commodities/beverage-alcohol/distilled-spirits/ds-labeling-home/ds-brand-label',
     note: 'Brand label and back label in one image (the app supports one label per image, so this is a stress case).',
     application: { brand: 'ABC', classType: 'Straight Rye Whisky', abv: '45% Alc./Vol.', netContents: '750 mL', bottler: 'ABC Distillery, Frederick, MD', imported: false, country: null },
+    applicationText: 'Brand Name: ABC\nClass/Type: Straight Rye Whisky\nAlcohol Content: 45% Alc./Vol.\nNet Contents: 750 mL\nApplicant: ABC Distillery, Frederick, MD\nOrigin: Domestic',
+    extraLines: 0,
     expected: { fields: { ...allMatch(), country: 'na' }, overall: 'ready' },
   },
   {
@@ -141,6 +172,8 @@ export const samples = [
     source: 'https://www.ttb.gov/regulated-commodities/beverage-alcohol/distilled-spirits/ds-labeling-home/ds-brand-label',
     note: 'Imported rum liqueur, brand label and back label in one image.',
     application: { brand: '12345 Imports', classType: 'Rum with Coconut Liqueur', abv: '18% Alc./Vol.', netContents: '200 mL', bottler: '12345 Imports, Miami, FL', imported: true, country: 'Canada' },
+    applicationText: 'Brand Name: 12345 Imports\nClass/Type: Rum with Coconut Liqueur\nAlcohol Content: 18% Alc./Vol.\nNet Contents: 200 mL\nApplicant: 12345 Imports, Miami, FL\nOrigin: Canada',
+    extraLines: 0,
     expected: { fields: allMatch(), overall: 'ready' },
   },
 ]
@@ -155,7 +188,9 @@ export const regression = [
     file: 'tests/samples/ttb-malt-and-hop-honey-huckleberry.png',
     source: 'https://www.ttb.gov/regulated-commodities/beverage-alcohol/beer/labeling/malt-beverage-alcohol-content',
     note: 'Malt beverage, front and back label in one image. Red ellipse drawn over "5% ALC./VOL." (white on blue).',
-    application: { brand: 'Malt & Hop Brewery', classType: 'Ale with Honey and Huckleberry Flavor', abv: '5% Alc./Vol.', netContents: '1 Pint', bottler: 'Malt & Hop Brewery, Hyattsville, MD', imported: false, country: null },
+    application: { brand: 'Malt & Hop', classType: 'Ale with Honey and Huckleberry Flavor', abv: '5% Alc./Vol.', netContents: '1 Pint, 0.9 Fl. Oz.', bottler: 'Malt & Hop Brewery, Hyattsville, MD', imported: false, country: null },
+    applicationText: 'Brand Name: Malt & Hop\nClass/Type: Ale with Honey and Huckleberry Flavor\nAlcohol Content: 5% Alc./Vol.\nNet Contents: 1 Pint, 0.9 Fl. Oz.\nApplicant: Malt & Hop Brewery, Hyattsville, MD\nOrigin: Domestic',
+    extraLines: 0,
     expected: { fields: { ...allMatch(), country: 'na' }, overall: 'ready' },
   },
 ]

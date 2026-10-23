@@ -122,8 +122,13 @@ const entry = (s) => ({
   image: s.file ?? `generated/labels/${s.id}.png`,
   defect: s.defect ?? s.note ?? null,
   application: s.application,
+  applicationText: s.applicationText,
+  extraLines: s.extraLines,
   labelText: s.label ?? null,
   expected: s.expected,
 })
+// One paste-ready text file per label, so a person can try the same label in the app.
+mkdirSync('tests/applications', { recursive: true })
+for (const s of [...generated, ...samples, ...regression]) writeFileSync(`tests/applications/${s.id}.txt`, `${s.applicationText}\n`)
 writeFileSync('tests/expected-results.json', `${JSON.stringify([...generated, ...samples, ...regression].map(entry), null, 2)}\n`)
 console.log(`wrote ${generated.length} labels to generated/labels/ and tests/expected-results.json (${generated.length + samples.length + regression.length} entries)`)

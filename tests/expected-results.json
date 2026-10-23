@@ -13,6 +13,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand Name: Harlan Ridge\nClass/Type: Kentucky Straight Bourbon Whiskey\nAlcohol Content: 45% Alc./Vol.\nNet Contents: 750 mL\nApplicant: Harlan Ridge Distilling Co., Bardstown, KY\nOrigin: Domestic\nPermit No.: DSP-KY-1234",
+    "extraLines": 1,
     "labelText": {
       "brand": "Harlan Ridge",
       "classType": "Kentucky Straight Bourbon Whiskey",
@@ -49,6 +51,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand: Silver Pike\nClass and Type: Vodka\nABV: 40% Alc./Vol.\nNet Contents: 1 L\nName and Address: Silver Pike Spirits, Minneapolis, MN\nSerial Number: 24-0001",
+    "extraLines": 1,
     "labelText": {
       "brand": "Silver Pike",
       "classType": "Vodka",
@@ -85,6 +89,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "COLA APPLICATION SUMMARY\nDate Received: 03/14/2026\n\nBrand Name: Juniper Hollow\nClass/Type: London Dry Gin\nAlcohol Content: 47% Alc./Vol.\nNet Contents: 750 mL\nBottler: Juniper Hollow Distillers, Portland, OR\nCountry of Origin: United States\nStatus: Pending",
+    "extraLines": 3,
     "labelText": {
       "brand": "Juniper Hollow",
       "classType": "London Dry Gin",
@@ -121,6 +127,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand Name: Copper Marsh\nClass/Type: Aged Rum\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 1.75 L\nApplicant: Copper Marsh Rum Works, Savannah, GA\nOrigin: Domestic\nPermit No.: DSP-KY-1234",
+    "extraLines": 1,
     "labelText": {
       "brand": "Copper Marsh",
       "classType": "Aged Rum",
@@ -157,6 +165,8 @@
       "imported": true,
       "country": "Mexico"
     },
+    "applicationText": "Brand: Valle Sombra\nClass and Type: Tequila Reposado\nABV: 40% Alc./Vol.\nNet Contents: 750 mL\nName and Address: Sombra Imports, San Diego, CA\nCountry of Origin: Mexico\nSerial Number: 24-0001",
+    "extraLines": 1,
     "labelText": {
       "brand": "Valle Sombra",
       "classType": "Tequila Reposado",
@@ -193,6 +203,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "COLA APPLICATION SUMMARY\nDate Received: 03/14/2026\n\nBrand Name: Alder Fork\nClass/Type: Apple Brandy\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 750 mL\nBottler: Alder Fork Cellars, Hudson, NY\nCountry of Origin: United States\nStatus: Pending",
+    "extraLines": 3,
     "labelText": {
       "brand": "Alder Fork",
       "classType": "Apple Brandy",
@@ -229,6 +241,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand Name: Harlan Ridge\nClass/Type: Kentucky Straight Bourbon Whiskey\nAlcohol Content: 45% Alc./Vol.\nNet Contents: 750 mL\nApplicant: Harlan Ridge Distilling Co., Bardstown, KY\nOrigin: Domestic\nPermit No.: DSP-KY-1234",
+    "extraLines": 1,
     "labelText": {
       "brand": "HARLAN RIDGE",
       "classType": "Kentucky Straight Bourbon Whiskey",
@@ -265,6 +279,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand: Pike's Bend\nClass and Type: Vodka\nABV: 40% Alc./Vol.\nNet Contents: 1 L\nName and Address: Silver Pike Spirits, Minneapolis, MN\nSerial Number: 24-0001",
+    "extraLines": 1,
     "labelText": {
       "brand": "Pike’s Bend",
       "classType": "Vodka",
@@ -301,6 +317,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "COLA APPLICATION SUMMARY\nDate Received: 03/14/2026\n\nBrand Name: Harlan Ridge\nClass/Type: Kentucky Straight Bourbon Whiskey\nAlcohol Content: 45% Alc./Vol.\nNet Contents: 750 mL\nBottler: Harlan Ridge Distilling Co., Bardstown, KY\nCountry of Origin: United States\nStatus: Pending",
+    "extraLines": 3,
     "labelText": {
       "brand": "Harlan Ridge",
       "classType": "Kentucky Straight Bourbon Whiskey",
@@ -337,6 +355,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand Name: Silver Pike\nClass/Type: Vodka\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 1 L\nApplicant: Silver Pike Spirits, Minneapolis, MN\nOrigin: Domestic\nPermit No.: DSP-KY-1234",
+    "extraLines": 1,
     "labelText": {
       "brand": "Silver Pike",
       "classType": "Vodka",
@@ -373,6 +393,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand: Juniper Hollow\nClass and Type: London Dry Gin\nABV: 47% Alc./Vol.\nNet Contents: 750 mL\nName and Address: Juniper Hollow Distillers, Portland, OR\nSerial Number: 24-0001",
+    "extraLines": 1,
     "labelText": {
       "brand": "Juniper Hollow",
       "classType": "London Dry Gin",
@@ -409,6 +431,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "COLA APPLICATION SUMMARY\nDate Received: 03/14/2026\n\nBrand Name: Copper Marsh\nClass/Type: Aged Rum\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 1.75 L\nBottler: Copper Marsh Rum Works, Savannah, GA\nCountry of Origin: United States\nStatus: Pending",
+    "extraLines": 3,
     "labelText": {
       "brand": "Copper Marsh",
       "classType": "Aged Rum",
@@ -445,6 +469,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand Name: Alder Fork\nClass/Type: Apple Brandy\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 750 mL\nApplicant: Alder Fork Cellars, Hudson, NY\nOrigin: Domestic\nPermit No.: DSP-KY-1234",
+    "extraLines": 1,
     "labelText": {
       "brand": "Alder Fork",
       "classType": "Apple Brandy",
@@ -481,6 +507,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand: Juniper Hollow\nClass and Type: London Dry Gin\nABV: 47% Alc./Vol.\nNet Contents: 750 mL\nName and Address: Juniper Hollow Distillers, Portland, OR\nSerial Number: 24-0001",
+    "extraLines": 1,
     "labelText": {
       "brand": "Juniper Hallow Reserve",
       "classType": "London Dry Gin",
@@ -517,6 +545,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "COLA APPLICATION SUMMARY\nDate Received: 03/14/2026\n\nBrand Name: Harlan Ridge\nClass/Type: Kentucky Straight Bourbon Whiskey\nAlcohol Content: 45% Alc./Vol.\nNet Contents: 750 mL\nBottler: Harlan Ridge Distilling Co., Bardstown, KY\nCountry of Origin: United States\nStatus: Pending",
+    "extraLines": 3,
     "labelText": {
       "brand": "Harlan Ridge",
       "classType": "Kentucky Straight Rye Whiskey",
@@ -553,6 +583,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand Name: Copper Marsh\nClass/Type: Aged Rum\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 1.75 L\nApplicant: Copper Marsh Rum Works, Savannah, GA\nOrigin: Domestic\nPermit No.: DSP-KY-1234",
+    "extraLines": 1,
     "labelText": {
       "brand": "Copper Marsh",
       "classType": "Aged Rum",
@@ -589,6 +621,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand: Silver Pike\nClass and Type: Vodka\nABV: 40% Alc./Vol.\nNet Contents: 1 L\nName and Address: Silver Pike Spirits, Minneapolis, MN\nSerial Number: 24-0001",
+    "extraLines": 1,
     "labelText": {
       "brand": "Silver Pike",
       "classType": "Vodka",
@@ -625,6 +659,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "COLA APPLICATION SUMMARY\nDate Received: 03/14/2026\n\nBrand Name: Alder Fork\nClass/Type: Apple Brandy\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 750 mL\nBottler: Alder Fork Cellars, Hudson, NY\nCountry of Origin: United States\nStatus: Pending",
+    "extraLines": 3,
     "labelText": {
       "brand": "Alder Fork",
       "classType": "Apple Brandy",
@@ -661,6 +697,8 @@
       "imported": true,
       "country": "Mexico"
     },
+    "applicationText": "Brand Name: Valle Sombra\nClass/Type: Tequila Reposado\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 750 mL\nApplicant: Sombra Imports, San Diego, CA\nOrigin: Mexico\nPermit No.: DSP-KY-1234",
+    "extraLines": 1,
     "labelText": {
       "brand": "Valle Sombra",
       "classType": "Tequila Reposado",
@@ -697,6 +735,8 @@
       "imported": true,
       "country": "Mexico"
     },
+    "applicationText": "Brand: Valle Sombra\nClass and Type: Tequila Reposado\nABV: 40% Alc./Vol.\nNet Contents: 750 mL\nName and Address: Sombra Imports, San Diego, CA\nCountry of Origin: Mexico\nSerial Number: 24-0001",
+    "extraLines": 1,
     "labelText": {
       "brand": "Valle Sombra",
       "classType": "Tequila Reposado",
@@ -733,6 +773,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "COLA APPLICATION SUMMARY\nDate Received: 03/14/2026\n\nBrand Name: Harlan Ridge\nClass/Type: Kentucky Straight Bourbon Whiskey\nAlcohol Content: 45% Alc./Vol.\nNet Contents: 750 mL\nBottler: Harlan Ridge Distilling Co., Bardstown, KY\nCountry of Origin: United States\nStatus: Pending",
+    "extraLines": 3,
     "labelText": {
       "brand": "Harlan Ridge",
       "classType": "Kentucky Straight Bourbon Whiskey",
@@ -769,6 +811,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand Name: Silver Pike\nClass/Type: Vodka\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 1 L\nApplicant: Silver Pike Spirits, Minneapolis, MN\nOrigin: Domestic\nPermit No.: DSP-KY-1234",
+    "extraLines": 1,
     "labelText": {
       "brand": "Silver Pike",
       "classType": "Vodka",
@@ -805,6 +849,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand: Juniper Hollow\nClass and Type: London Dry Gin\nABV: 47% Alc./Vol.\nNet Contents: 750 mL\nName and Address: Juniper Hollow Distillers, Portland, OR\nSerial Number: 24-0001",
+    "extraLines": 1,
     "labelText": {
       "brand": "Juniper Hollow",
       "classType": "London Dry Gin",
@@ -841,6 +887,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "COLA APPLICATION SUMMARY\nDate Received: 03/14/2026\n\nBrand Name: Copper Marsh\nClass/Type: Aged Rum\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 1.75 L\nBottler: Copper Marsh Rum Works, Savannah, GA\nCountry of Origin: United States\nStatus: Pending",
+    "extraLines": 3,
     "labelText": {
       "brand": "Copper Marsh",
       "classType": "Aged Rum",
@@ -877,6 +925,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand Name: Alder Fork\nClass/Type: Apple Brandy\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 750 mL\nApplicant: Alder Fork Cellars, Hudson, NY\nOrigin: Domestic\nPermit No.: DSP-KY-1234",
+    "extraLines": 1,
     "labelText": {
       "brand": "Alder Fork",
       "classType": "Apple Brandy",
@@ -913,6 +963,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand: Harlan Ridge\nClass and Type: Kentucky Straight Bourbon Whiskey\nABV: 45% Alc./Vol.\nNet Contents: 750 mL\nName and Address: Harlan Ridge Distilling Co., Bardstown, KY\nSerial Number: 24-0001",
+    "extraLines": 1,
     "labelText": {
       "brand": "Harlan Ridge",
       "classType": "Kentucky Straight Bourbon Whiskey",
@@ -949,6 +1001,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "COLA APPLICATION SUMMARY\nDate Received: 03/14/2026\n\nBrand Name: Silver Pike\nClass/Type: Vodka\nAlcohol Content: 40% Alc./Vol.\nNet Contents: 1 L\nBottler: Silver Pike Spirits, Minneapolis, MN\nCountry of Origin: United States\nStatus: Pending",
+    "extraLines": 3,
     "labelText": {
       "brand": "Silver Pike",
       "classType": "Vodka",
@@ -985,6 +1039,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand Name: Juniper Hollow\nClass/Type: London Dry Gin\nAlcohol Content: 47% Alc./Vol.\nNet Contents: 750 mL\nApplicant: Juniper Hollow Distillers, Portland, OR\nOrigin: Domestic\nPermit No.: DSP-KY-1234",
+    "extraLines": 1,
     "labelText": {
       "brand": "Juniper Hollow",
       "classType": "London Dry Gin",
@@ -1021,6 +1077,8 @@
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand Name: ABC\nClass/Type: Straight Rye Whisky\nAlcohol Content: 45% Alc./Vol.\nNet Contents: 750 mL\nApplicant: ABC Distillery, Frederick, MD\nOrigin: Domestic",
+    "extraLines": 0,
     "labelText": null,
     "expected": {
       "fields": {
@@ -1049,6 +1107,8 @@
       "imported": true,
       "country": "Canada"
     },
+    "applicationText": "Brand Name: 12345 Imports\nClass/Type: Rum with Coconut Liqueur\nAlcohol Content: 18% Alc./Vol.\nNet Contents: 200 mL\nApplicant: 12345 Imports, Miami, FL\nOrigin: Canada",
+    "extraLines": 0,
     "labelText": null,
     "expected": {
       "fields": {
@@ -1069,14 +1129,16 @@
     "image": "tests/samples/ttb-malt-and-hop-honey-huckleberry.png",
     "defect": "Malt beverage, front and back label in one image. Red ellipse drawn over \"5% ALC./VOL.\" (white on blue).",
     "application": {
-      "brand": "Malt & Hop Brewery",
+      "brand": "Malt & Hop",
       "classType": "Ale with Honey and Huckleberry Flavor",
       "abv": "5% Alc./Vol.",
-      "netContents": "1 Pint",
+      "netContents": "1 Pint, 0.9 Fl. Oz.",
       "bottler": "Malt & Hop Brewery, Hyattsville, MD",
       "imported": false,
       "country": null
     },
+    "applicationText": "Brand Name: Malt & Hop\nClass/Type: Ale with Honey and Huckleberry Flavor\nAlcohol Content: 5% Alc./Vol.\nNet Contents: 1 Pint, 0.9 Fl. Oz.\nApplicant: Malt & Hop Brewery, Hyattsville, MD\nOrigin: Domestic",
+    "extraLines": 0,
     "labelText": null,
     "expected": {
       "fields": {

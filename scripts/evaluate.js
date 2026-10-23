@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs'
 import { startNodeWorker, readFile } from './node-ocr.js'
 import { checkLabel } from '../src/engine/check.js'
+import { applicationFromText } from '../src/engine/parse.js'
 
 const results = JSON.parse(readFileSync('tests/expected-results.json', 'utf8'))
 const worker = await startNodeWorker()
@@ -13,8 +14,10 @@ const rank = { match: 0, na: 0, check: 1, mismatch: 2 }
 const rows = []
 for (const r of results) {
   const t0 = performance.now()
-  const read = await readFile(worker, r.image, { application: r.application })
-  const out = checkLabel({ words: read.words, application: r.application, quality: read.quality })
+  // The application comes from the paste-ready text, as it does in the app.
+  const { application } = applicationFromText(r.applicationText)
+  const read = await readFile(worker, r.image, { application })
+  const out = checkLabel({ words: read.words, application, quality: read.quality })
   const ms = Math.round(performance.now() - t0)
 
   const failures = [] // dangerous: a bad field called match

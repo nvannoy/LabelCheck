@@ -5,6 +5,7 @@
 import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { checkLabel } from '../src/engine/check.js'
+import { applicationFromText } from '../src/engine/parse.js'
 import { wordsFrom } from './engine-helpers.js'
 
 const results = JSON.parse(readFileSync(new URL('./expected-results.json', import.meta.url), 'utf8'))
@@ -14,7 +15,8 @@ describe('golden labels with a perfect read', () => {
   for (const r of results.filter((x) => x.labelText && !x.id.startsWith('q'))) {
     it(r.id, () => {
       const text = Object.values(r.labelText).filter(Boolean).join(' ')
-      const out = checkLabel({ words: wordsFrom(text), application: r.application })
+      // The application comes from the paste-ready text, as it does in the app.
+      const out = checkLabel({ words: wordsFrom(text), application: applicationFromText(r.applicationText).application })
       for (const f of out.fields) {
         const want = r.expected.fields[f.id]
         // A clean field must match. A bad field may be a mismatch or, safer, a check, but never a match.

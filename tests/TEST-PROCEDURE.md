@@ -12,11 +12,18 @@ The test set has 31 labels: 28 generated fictional labels, 2 real sample images 
 | `tests/samples/` | The 2 TTB sample images. Committed because they cannot be regenerated. Source: the TTB distilled spirits brand label page. |
 | `generated/labels/` | Output images. Not committed. |
 
+## Application text for each label
+
+Every label has paste-ready application text in `tests/applications/<id>.txt` (also stored as `applicationText` in `expected-results.json`). Paste it into the app next to the label image to try the same case by hand. The files use three layouts in turn (different field names, extra lines such as permit numbers, and different ways to say Domestic) so the parser sees real variety. Generated from `scripts/label-specs.js`; do not edit by hand.
+
+`npm test` checks that every text file parses back to the application its label was built from, and `npm run evaluate` runs the whole path: image to OCR, text to parser, both to the engine.
+
 ## Running it
 
 ```
 npm test            # engine tests, plus a golden check of the expected results (no OCR)
-npm run evaluate    # reads all 31 images with OCR, runs the engine, prints accuracy and timing
+npm run evaluate    # reads all 31 images with OCR, parses the application text, runs the engine, prints accuracy and timing
+npm run verify      # tests, then evaluate, then a production build: run this before every push
 ```
 
 `npm run evaluate` exits with an error if any known-bad label comes out Ready to Approve, or any bad field is called a match.
