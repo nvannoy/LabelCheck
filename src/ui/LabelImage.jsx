@@ -113,7 +113,8 @@ export default function LabelImage({ src, width, height, fields, focusId, previe
           <button type="button" aria-label="Zoom in" onClick={() => step(1)} disabled={zoom === LEVELS.at(-1)}>+</button>
         </div>
         <div className="zrow">
-          <button type="button" className="wide" aria-label="Fit the whole label" onClick={() => setZoom(1)} disabled={zoom === 1}>Fit</button>
+          <span className="lab" aria-hidden="true">Zoom to:</span>
+          <button type="button" className="wide" aria-label="Zoom to fit the whole label" onClick={() => setZoom(1)} disabled={zoom === 1}>Fit</button>
           <button type="button" className="wide" aria-label="Zoom to the focused field" onClick={zoomToField} disabled={!canZoomToField}>Field</button>
         </div>
       </div>
