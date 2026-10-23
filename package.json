@@ -1,7 +1,7 @@
 {
   "name": "labelcheck",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,8 @@
     "test": "vitest run",
     "copy-ocr": "node scripts/copy-ocr.js",
     "evaluate": "node scripts/evaluate.js",
-    "verify": "npm test && npm run evaluate && npm run build",
+    "check-version": "node scripts/check-version.js",
+    "verify": "npm run check-version && npm test && npm run evaluate && npm run build",
     "postinstall": "node scripts/copy-ocr.js"
   },
   "dependencies": {

@@ -23,7 +23,7 @@ Every label has paste-ready application text in `tests/applications/<id>.txt` (a
 ```
 npm test            # engine tests, plus a golden check of the expected results (no OCR)
 npm run evaluate    # reads all 31 images with OCR, parses the application text, runs the engine, prints accuracy and timing
-npm run verify      # tests, then evaluate, then a production build: run this before every push
+npm run verify      # version check, tests, evaluate, then a production build: run this before every push
 ```
 
 `npm run evaluate` exits with an error if any known-bad label comes out Ready to Approve, or any bad field is called a match.
@@ -68,3 +68,7 @@ The government warning always carries an agent check for bold type and size, bec
 3. Run `npm test` and commit the spec and the updated `tests/expected-results.json`.
 
 Real brand artwork is never used. TTB sample images are the one exception, agreed with the developer, because TTB published them as examples.
+
+## Versions
+
+Every push needs a new version in `package.json`: 0.2.x for small changes, a new minor number for bigger ones. `npm run verify` fails if there are unpushed commits and the version matches `origin/main`.
