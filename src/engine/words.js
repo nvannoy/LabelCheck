@@ -20,6 +20,12 @@ export function locate(index, from, to) {
   return boxOf(index, [...new Set(index.toks.slice(from, to).map((k) => k.wi))])
 }
 
+// The label's own words for a run of tokens, as printed (case and punctuation kept).
+export function textOf(index, from, to) {
+  const wis = [...new Set(index.toks.slice(from, to).map((k) => k.wi))]
+  return wis.map((i) => index.words[i].text).join(' ')
+}
+
 // Same, for a character range in index.text (used for regex matches).
 export function locateChars(index, start, end) {
   const wis = []

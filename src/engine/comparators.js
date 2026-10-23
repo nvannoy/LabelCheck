@@ -4,7 +4,7 @@
 // Uncertain never passes (CLAUDE.md rule 7). Fuzzy matching is used only for
 // the brand, class and bottler; never for the warning, ABV or net contents.
 import { tokens } from './text.js'
-import { bestWindow, locate, locateChars } from './words.js'
+import { bestWindow, locate, locateChars, textOf } from './words.js'
 import { parseAbv, parseNetContents, parseCountryPhrases } from './parse.js'
 
 const LOW_CONFIDENCE = 70
@@ -24,7 +24,7 @@ export function brand(index, application) {
   const afterBy = (i) => i > 0 && /^(by|for)$/.test(index.toks[i - 1].t)
   const w = bestWindow(index, application.brand, afterBy)
   const place = locate(index, w.from, w.to)
-  const found = index.toks.slice(w.from, w.to).map((k) => k.t).join(' ')
+  const found = textOf(index, w.from, w.to)
   if (w.score === 1) return lowConfidence({ status: 'match', found, ...place, reason: 'The brand name matches.' }, 'The brand name')
   if (w.score >= 0.8) return { status: 'check', found, ...place, reason: `The label has "${found}", which is close to "${application.brand}" but not the same.` }
   return notFound('The brand name')
@@ -34,7 +34,7 @@ export function brand(index, application) {
 export function classType(index, application) {
   const w = bestWindow(index, application.classType)
   const place = locate(index, w.from, w.to)
-  const found = index.toks.slice(w.from, w.to).map((k) => k.t).join(' ')
+  const found = textOf(index, w.from, w.to)
   if (w.score === 1) return lowConfidence({ status: 'match', found, ...place, reason: 'The class and type match.' }, 'The class and type')
   if (w.score >= 0.8) return { status: 'check', found, ...place, reason: `The label has "${found}", which is close to "${application.classType}" but not the same.` }
   return notFound('The class and type')
@@ -68,7 +68,7 @@ export function netContents(index, application) {
 export function bottler(index, application) {
   const w = bestWindow(index, application.bottler)
   const place = locate(index, w.from, w.to)
-  const found = index.toks.slice(w.from, w.to).map((k) => k.t).join(' ')
+  const found = textOf(index, w.from, w.to)
   if (w.score >= 0.95) return lowConfidence({ status: 'match', found, ...place, reason: 'The bottler name and address match.' }, 'The bottler name and address')
   if (w.score >= 0.6) return { status: 'check', found, ...place, reason: `The label has "${found}", which is similar to the application but not the same. Compare the name and address.` }
   return notFound('The bottler name and address')
