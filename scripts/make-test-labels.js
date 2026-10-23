@@ -122,7 +122,6 @@ const entry = (s) => ({
   image: s.file ?? `generated/labels/${s.id}.png`,
   defect: s.defect ?? s.note ?? null,
   pixels: s.pixels ?? false,
-  labelWidthIn: s.labelWidthIn ?? null,
   application: s.application,
   applicationText: s.applicationText,
   extraLines: s.extraLines,

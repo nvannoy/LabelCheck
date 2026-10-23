@@ -45,6 +45,5 @@ export const FIELDS = [
 // Checks that apply to the whole label and can only be done by looking at it.
 export const LABEL_BY_EYE = [
   'Text is readily legible, contrasts with its background, and is separate from other information (27 CFR 5.52).',
-  'Type size meets the minimum for the container (27 CFR 5.53).',
   'Brand name, class or type and alcohol content are in the same field of vision (27 CFR 5.63(a)).',
 ]

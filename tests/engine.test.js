@@ -64,9 +64,9 @@ describe('government warning', () => {
   it('sends a missing warning to review', () => {
     expect(check('Harlan Ridge Bourbon 45% 750 mL').status).toBe('check')
   })
-  it('always asks the agent to check bold type and size', () => {
+  it('always asks the agent to check bold type and legibility when nothing was measured', () => {
     expect(check(WARNING_TEXT).byEye.join(' ')).toMatch(/bold/i)
-    expect(check(WARNING_TEXT).byEye.join(' ')).toMatch(/size/i)
+    expect(check(WARNING_TEXT).byEye.join(' ')).toMatch(/readable/i)
   })
 })
 
@@ -164,5 +164,24 @@ describe('stray marks from artwork inside the warning', () => {
     const words = [...wordsFrom(WARNING_TEXT), ...wordsFrom('Ale 5%')]
     const r = checkWarning(words)
     expect(r.bbox.x1).toBe(words.find((w) => w.text === 'problems.').bbox.x1)
+  })
+})
+
+describe('bold measurement in the warning result', () => {
+  const t = (status) => ({ bold: { status, text: `Bold: ${status}` }, failing: status === 'not-bold' })
+  const run = (typography) => checkLabel({ words: wordsFrom(LABEL), application: APP, typography }).fields.find((f) => f.id === 'warning')
+  it('sends a matching warning to review when the title is clearly not bold', () => {
+    const w = run(t('not-bold'))
+    expect(w.status).toBe('check')
+    expect(w.reason).toContain('type looks wrong')
+  })
+  it('never improves a result and keeps the legibility item for the agent', () => {
+    const w = run(t('bold'))
+    expect(w.status).toBe('match')
+    expect(w.byEye.join(' ')).toMatch(/readable/)
+    expect(w.byEye.join(' ')).not.toMatch(/Bold type/)
+  })
+  it('keeps the bold item when the measurement cannot tell', () => {
+    expect(run(t('unclear')).byEye.join(' ')).toMatch(/Bold type/)
   })
 })

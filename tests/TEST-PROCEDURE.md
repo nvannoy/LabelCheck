@@ -1,6 +1,6 @@
 # Test procedure: label set
 
-The test set has 34 labels: 31 generated fictional labels, 2 real sample images published by TTB, and 1 regression sample (a TTB malt beverage example used only as an OCR check).
+The test set has 33 labels: 30 generated fictional labels, 2 real sample images published by TTB, and 1 regression sample (a TTB malt beverage example used only as an OCR check).
 
 ## Files
 
@@ -22,7 +22,7 @@ Every label has paste-ready application text in `tests/applications/<id>.txt` (a
 
 ```
 npm test            # engine tests, plus a golden check of the expected results (no OCR)
-npm run evaluate    # reads all 34 images with OCR, parses the application text, runs the engine, prints accuracy and timing
+npm run evaluate    # reads all 33 images with OCR, parses the application text, runs the engine, prints accuracy and timing
 npm run verify      # version check, tests, evaluate, then a production build: run this before every push
 ```
 
@@ -40,7 +40,7 @@ The script uses macOS system fonts (Georgia, Times New Roman, Arial, Trebuchet M
 
 - `c01` to `c08`: clean labels. Expected Ready to Approve. `c07` (brand in capitals) and `c08` (curly apostrophe) check that harmless differences still match.
 - `d01` to `d17`: one defect each (ABV, net contents, brand, class, bottler, country, government warning). None may be Ready to Approve.
-- `d18` to `d20`: the warning words are right but the type is not (regular-weight title, all-bold warning, too-small type). Only the pixels show this, so the golden test skips them. Each generated label has an invented real width (`labelWidthIn`, 8 inches) so type size can be measured.
+- `d18`, `d19`: the warning words are right but the title weight is not (regular-weight title, all-bold warning). Only the pixels show this, so the golden test skips them. Type size is not tested: no scale is available.
 - `q01` to `q03`: right text but a hard-to-read image (small, pale, tiny warning). None may be Ready to Approve.
 - `r01`: the Malt & Hop regression sample. A red ellipse drawn over "5% ALC./VOL." defeats OCR there.
 - `s01`, `s02`: TTB samples. Each shows a brand label and a back label in one image, which is a stress case because the app supports one label per image. The application text is copied from what the label shows, since TTB publishes no matching application.

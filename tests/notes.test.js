@@ -23,7 +23,7 @@ describe('draftNotes', () => {
   it('always lists the warning checks that only a person can do', () => {
     for (const d of ['verified', 'issues']) {
       expect(notes(d)).toMatch(/Bold type/)
-      expect(notes(d)).toMatch(/Type size/)
+      expect(notes(d)).toMatch(/readable/)
     }
   })
   it('says when a verified label still had flagged fields', () => {

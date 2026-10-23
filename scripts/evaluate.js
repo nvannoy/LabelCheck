@@ -21,7 +21,7 @@ for (const r of results) {
   const first = checkLabel({ words: read.words, application, quality: read.quality })
   const statementWords = first.fields.find((f) => f.id === 'warning').statementWords
   const typography = statementWords
-    ? await measureFile(r.image, { statementWords, panels: read.panels, labelWidthIn: r.labelWidthIn, netContents: application.netContents, quality: read.quality })
+    ? await measureFile(r.image, { statementWords, quality: read.quality })
     : null
   const out = checkLabel({ words: read.words, application, quality: read.quality, typography })
   const ms = Math.round(performance.now() - t0)

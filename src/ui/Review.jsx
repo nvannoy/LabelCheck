@@ -28,7 +28,7 @@ function useWide() {
   return wide
 }
 
-export default function Review({ image, read, application, result, fields, mode, textScale, onNext, labelWidth, setLabelWidth }) {
+export default function Review({ image, read, application, result, fields, mode, textScale, onNext, helpOpen, onCloseHelp }) {
   const full = mode === 'full'
   const wide = useWide()
 
@@ -137,7 +137,7 @@ export default function Review({ image, read, application, result, fields, mode,
             {fields.map((f, i) => (
               <div role="listitem" key={f.id}>
                 <FieldRow field={f} number={i + 1} focused={focusId === f.id} preview={previewId === f.id} seen={seen[f.id]}
-                  application={application} labelWidth={labelWidth} setLabelWidth={setLabelWidth} rowRef={(el) => { rowRefs.current[f.id] = el }}
+                  application={application} rowRef={(el) => { rowRefs.current[f.id] = el }}
                   onFocus={setFocusId} onPreview={setPreviewId} />
               </div>
             ))}
@@ -152,7 +152,8 @@ export default function Review({ image, read, application, result, fields, mode,
           )}
         </div>
       </div>
-      <Hint legend={legend} setLegend={setLegend} full={full} />
+      {!full && <Hint legend={legend} setLegend={setLegend} full={false} />}
+      {full && helpOpen && <HelpPop onClose={onCloseHelp} />}
       {path && (
         <svg className="connector" aria-hidden="true">
           <path d={path.d} fill="none" stroke={color} strokeWidth="2.5" strokeDasharray="2 6" strokeLinecap="round" />
@@ -173,12 +174,25 @@ function Legend() {
   )
 }
 
+// Full mode has no bar at the bottom, so nothing sits over the label data. Help opens from the header.
+function HelpPop({ onClose }) {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [onClose])
+  return (
+    <div id="help-pop" className="helppop" role="region" aria-label="Help">
+      <p>&#8593; &#8595; or Tab moves to the next field, with no click needed. Enter marks it reviewed. Hover over a box on the label to preview that field.</p>
+      <Legend />
+    </div>
+  )
+}
+
 function Hint({ legend, setLegend, full }) {
   return (
     <div className={`hint${full ? ' bottom' : ''}`}>
-      <span>{full
-        ? '\u2191 \u2193 or Tab moves to the next field, with no click needed. Enter marks it reviewed. Hover over a box on the label to preview that field.'
-        : '\u2191 \u2193 or Tab: next field. Enter marks it reviewed.'}</span>
+      <span>{'\u2191 \u2193 or Tab: next field. Enter marks it reviewed.'}</span>
       <button type="button" className="iconbtn" aria-label="What do the colors and symbols mean?" aria-expanded={legend} onClick={() => setLegend((v) => !v)}>i</button>
     </div>
   )

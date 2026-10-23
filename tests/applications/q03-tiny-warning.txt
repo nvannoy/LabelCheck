@@ -1,7 +1,10 @@
+COLA APPLICATION SUMMARY
+Date Received: 03/14/2026
+
 Brand Name: Juniper Hollow
 Class/Type: London Dry Gin
 Alcohol Content: 47% Alc./Vol.
 Net Contents: 750 mL
-Applicant: Juniper Hollow Distillers, Portland, OR
-Origin: Domestic
-Permit No.: DSP-KY-1234
+Bottler: Juniper Hollow Distillers, Portland, OR
+Country of Origin: United States
+Status: Pending

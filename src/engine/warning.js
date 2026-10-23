@@ -8,12 +8,12 @@ import { indexWords, bestWindow } from './words.js'
 export const WARNING_TEXT =
   'GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.'
 
-// What is left for the agent. With measurements (see applyTypography in check.js) the
-// bold and size items drop out when the measurement was clear.
+// What is left for the agent. With a bold measurement (see applyTypography in
+// check.js) the bold item drops out when the measurement was clear.
+// Type size and characters per inch are not listed: no scale is available to check them.
 export const BOLD_BY_EYE = 'Bold type: "GOVERNMENT WARNING" must be bold and the rest must not be.'
-export const SIZE_BY_EYE = 'Type size and characters per inch (27 CFR 16.22). Enter the label width so the app can measure them.'
 export const LEGIBLE_BY_EYE = 'The statement is separate and apart from other information, readable, and on a contrasting background.'
-export const WARNING_BY_EYE = [BOLD_BY_EYE, SIZE_BY_EYE, LEGIBLE_BY_EYE]
+export const WARNING_BY_EYE = [BOLD_BY_EYE, LEGIBLE_BY_EYE]
 
 const EXPECTED = WARNING_TEXT.split(/\s+/)
 const SURE = 85 // OCR confidence at or above this means a wrong word is a real difference

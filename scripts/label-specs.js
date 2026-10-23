@@ -90,7 +90,6 @@ function make(id, baseKey, defect, { app = {}, label = {}, style = {}, expect = 
     kind: 'generated',
     defect,
     pixels, // true when the expected result depends on the image itself, not only the text
-    labelWidthIn: 8, // the invented real width of the drawn label, so type size can be measured
     application,
     ...applicationText(application),
     label: cleanLabel(application, label),
@@ -147,10 +146,10 @@ export const generated = [
     expect: { warning: 'mismatch' },
   }),
 
-  // Warning type. The words are right but the type is not, which only the image shows.
+  // Warning title weight. The words are right but the type is not, which only the image shows.
+  // Type size cannot be tested: neither the image nor the application data gives a scale.
   make('d18-warning-title-not-bold', 'bourbon', 'Warning title printed in regular weight, not bold', { pixels: true, style: { titleBold: false }, expect: { warning: 'check' } }),
   make('d19-warning-all-bold', 'vodka', 'Whole warning printed in bold, so the title is not set apart', { pixels: true, style: { bodyBold: true }, expect: { warning: 'check' } }),
-  make('d20-warning-too-small', 'gin', 'Warning type too small for the container size', { pixels: true, style: { warningSize: 14 }, expect: { warning: 'check' } }),
 
   // Image quality. Text is right, but the image is hard to read, so these must not be Ready.
   make('q01-low-resolution', 'bourbon', 'Image shrunk to about 450 px wide', { pixels: true, style: { outputWidth: 450 }, expect: { brand: 'check', classType: 'check', abv: 'check', netContents: 'check', bottler: 'check', warning: 'check' } }),

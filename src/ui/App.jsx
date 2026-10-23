@@ -29,8 +29,8 @@ export default function App() {
   const [edits, setEdits] = useState({})
   const [importedChoice, setImportedChoice] = useState(null)
   const [screen, setScreen] = useState('intake')
-  const [labelWidth, setLabelWidth] = useState('') // real width in inches of the label with the warning, optional
   const [typography, setTypography] = useState(null)
+  const [helpOpen, setHelpOpen] = useState(false) // full mode: keyboard hints and the symbol legend
   const [mode, setMode] = useState('compact') // compact column, or full (fullscreen, two columns)
 
   // The engine starts loading as the page opens, so it is ready when the image arrives.
@@ -66,7 +66,6 @@ export default function App() {
     setAppText('')
     setEdits({})
     setImportedChoice(null)
-    setLabelWidth('')
     setTypography(null)
     setScreen('intake')
   }, [leaveFull])
@@ -166,8 +165,8 @@ export default function App() {
   }, [screen, read, application])
   const statementWords = base?.fields.find((f) => f.id === 'warning')?.statementWords
 
-  // Then measure the warning's type from the image. It can only make the result
-  // worse, so the first screen of results never changes for the better.
+  // Then check from the image whether the warning title is bold. It can only make
+  // the result worse, so the first screen of results never changes for the better.
   useEffect(() => {
     if (!statementWords || !image?.file || read.closer) { setTypography(null); return undefined }
     let alive = true
@@ -176,13 +175,13 @@ export default function App() {
       try {
         const t = measureWarning({
           source: bitmap, width: bitmap.width, height: bitmap.height, makeCanvas: (w, h) => new OffscreenCanvas(w, h),
-          statementWords, panels: read.result.panels, labelWidthIn: labelWidth, netContents: application.netContents, quality: read.result.quality,
+          statementWords, quality: read.result.quality,
         })
         if (alive) setTypography(t)
       } catch { if (alive) setTypography(null) } finally { bitmap.close() }
     })()
     return () => { alive = false }
-  }, [statementWords, image, read, labelWidth, application.netContents])
+  }, [statementWords, image, read])
 
   const review = useMemo(() => {
     if (!base) return null
@@ -192,7 +191,6 @@ export default function App() {
 
   const intake = {
     engine, image, read, onFile, appText, setAppText, parsed, values, count, imported,
-    labelWidth, setLabelWidth,
     setValue: (id, v) => setEdits((e) => ({ ...e, [id]: v.trim() })),
     setImported: setImportedChoice,
     onStart: () => setScreen('review'),
@@ -202,6 +200,7 @@ export default function App() {
     <div className={`app${review ? ' fixed' : ''}${mode === 'full' && review ? ' fullmode' : ''}`}>
       <div className={`frame ${mode === 'full' && review ? 'full' : 'compact'}`}>
         <Header textSize={textSize} middle={mode === 'full' && review && <TierChip result={review.result} />}>
+          {review && mode === 'full' && <button type="button" className="btn-onblue" aria-expanded={helpOpen} aria-controls="help-pop" onClick={() => setHelpOpen((v) => !v)}>Help</button>}
           {review && (mode === 'full'
             ? <button type="button" className="btn-onblue solid" onClick={leaveFull}>Compact view</button>
             : <button type="button" className="btn-onblue solid" onClick={enterFull}><span aria-hidden="true">&#x26F6;</span> Full screen</button>)}
@@ -209,7 +208,7 @@ export default function App() {
         </Header>
         {screen === 'intake' && notice && <div className="notice" role="status">{notice}</div>}
         {screen === 'intake' && <Intake intake={intake} />}
-        {review && <Review image={image} read={read} application={application} result={review.result} fields={review.fields} mode={mode} textScale={textSize.scale} onNext={reset} labelWidth={labelWidth} setLabelWidth={setLabelWidth} />}
+        {review && <Review image={image} read={read} application={application} result={review.result} fields={review.fields} mode={mode} textScale={textSize.scale} onNext={reset} helpOpen={helpOpen} onCloseHelp={() => setHelpOpen(false)} />}
       </div>
       <Footer wide={mode === 'full' && Boolean(review)} />
     </div>

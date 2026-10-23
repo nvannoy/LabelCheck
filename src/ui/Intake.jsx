@@ -9,7 +9,7 @@ const LABELS = {
 const seconds = (ms) => `${(ms / 1000).toFixed(1)} s`
 
 function ImageStep({ intake }) {
-  const { image, read, engine, onFile, labelWidth, setLabelWidth } = intake
+  const { image, read, engine, onFile } = intake
   const input = useRef(null)
   const [over, setOver] = useState(false)
   const pick = () => input.current?.click()
@@ -48,13 +48,6 @@ function ImageStep({ intake }) {
           <div className="or">or</div>
           <button type="button" className="btn" onClick={pick}>Choose an image</button>
         </div>
-      )}
-      {image && (
-        <label className="width intake-width">
-          Label width in inches (optional):{' '}
-          <input type="number" min="0.5" step="0.1" inputMode="decimal" value={labelWidth} onChange={(e) => setLabelWidth(e.target.value)} />
-          <span className="small">Lets the app measure the warning's type size. Width of the label with the warning, as printed.</span>
-        </label>
       )}
       {read.status === 'error' && <div className="error" role="alert">{read.error}</div>}
       {read.status === 'done' && read.problems.map((p) => (

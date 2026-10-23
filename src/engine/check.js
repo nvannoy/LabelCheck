@@ -15,19 +15,15 @@ export function qualityProblems(quality) {
   return problems
 }
 
-// Folds the type measurements into the warning result. Measurements can only make
-// the result worse: a clear failure sends a matching warning to Needs review, and
-// a clear pass never upgrades anything (the agent still confirms).
+// Folds the bold measurement into the warning result. It can only make the result
+// worse: a title that clearly is not bolder sends a matching warning to Needs review,
+// and a clear pass never upgrades anything (the agent still confirms).
 function applyTypography(r, t) {
   if (!t) return r
-  const items = [LEGIBLE_BY_EYE]
-  if (t.bold.status !== 'bold') items.unshift(BOLD_BY_EYE)
-  if (t.size.status === 'close' || t.size.status === 'unknown') items.push('Type size (27 CFR 16.22): measure it by hand.')
-  if (t.cpi.status === 'close' || t.cpi.status === 'unknown') items.push('Characters per inch (27 CFR 16.22): count them by hand.')
-  const failed = [t.bold.status === 'not-bold' && t.bold.text, t.size.status === 'small' && t.size.text, t.cpi.status === 'high' && t.cpi.text].filter(Boolean)
+  const items = t.bold.status === 'bold' ? [LEGIBLE_BY_EYE] : [BOLD_BY_EYE, LEGIBLE_BY_EYE]
   const out = { ...r, typography: t, byEye: items }
-  if (r.status === 'match' && failed.length) {
-    return { ...out, status: 'check', reason: `The wording matches, but the type looks wrong. ${failed.join(' ')}` }
+  if (r.status === 'match' && t.failing) {
+    return { ...out, status: 'check', reason: `The wording matches, but the type looks wrong. ${t.bold.text}` }
   }
   return out
 }
