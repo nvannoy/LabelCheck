@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Review, compact mode</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Libre+Baskerville:wght@400;700&display=swap">
+<style>
+body{margin:0}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="position: relative; width: 440px; height: 900px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1; color: #1B1F24; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; overflow: hidden">
+
+  <!-- Header 56 -->
+  <div style="height: 56px; box-sizing: border-box; padding: 0 20px; display: flex; align-items: center; gap: 10px; background: #1F3A5F; color: #FFFFFF">
+    <div style="flex-grow: 1; font-size: 19px; font-weight: 700">Label check</div>
+    <div style="display: flex; border: 2px solid #FFFFFF; border-radius: 8px; overflow: hidden">
+      <button aria-label="Smaller text" style="width: 40px; height: 32px; border: 0; background: transparent; color: #FFFFFF; font-size: 15px; font-weight: 700">A&#8722;</button>
+      <button aria-label="Larger text" style="width: 40px; height: 32px; border: 0; border-left: 2px solid #FFFFFF; background: transparent; color: #FFFFFF; font-size: 19px; font-weight: 700">A+</button>
+    </div>
+    <button style="height: 36px; padding: 0 12px; border: 2px solid #FFFFFF; border-radius: 8px; background: #FFFFFF; color: #1F3A5F; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 6px">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#1F3A5F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/></svg>
+      Full screen
+    </button>
+  </div>
+
+  <!-- Tier banner 48 -->
+  <div style="height: 48px; box-sizing: border-box; padding: 0 20px; display: flex; align-items: center; gap: 10px; background: #FCE8E8; border-bottom: 3px solid #A11D1D; color: #7D1212">
+    <div style="width: 24px; height: 24px; box-sizing: border-box; border: 3px solid #A11D1D; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700">&#10005;</div>
+    <div style="font-size: 17px; font-weight: 700">Likely reject</div>
+    <div style="font-size: 15px">1 mismatch, 2 to check</div>
+  </div>
+
+  <!-- Image 260 -->
+  <div style="position: relative; height: 260px; background: #D8D4CA; flex-shrink: 0">
+    <div style="position: absolute; left: 30px; top: 10px; width: 380px; height: 236px; box-sizing: border-box; background: #F2E9D3; border: 2px solid #3A2A1A; font-family: 'Libre Baskerville', Georgia, serif; color: #2A1D12">
+      <div style="position: absolute; left: 40px; top: 18px; width: 300px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 21px; font-weight: 700; letter-spacing: 2px">OLD TOM DISTILLERY</div>
+      <div style="position: absolute; left: 70px; top: 64px; width: 240px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-style: italic">Kentucky Straight Bourbon Whiskey</div>
+      <div style="position: absolute; left: 20px; top: 96px; width: 170px; height: 18px; display: flex; align-items: center; font-size: 10px">45% Alc./Vol. (90 Proof)</div>
+      <div style="position: absolute; left: 230px; top: 96px; width: 130px; height: 18px; display: flex; align-items: center; justify-content: flex-end; font-size: 10px">750 mL</div>
+      <div style="position: absolute; left: 40px; top: 126px; width: 300px; height: 22px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 7.5px; line-height: 9px">Distilled and bottled by Old Tom Distillery, 120 Main Street, Bardstown, Kentucky</div>
+      <div style="position: absolute; left: 14px; top: 156px; width: 352px; height: 66px; font-size: 7.5px; line-height: 9px"><b>GOVERNMENT WARNING:</b> (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.</div>
+
+      <!-- Boxes: 1 match, 2 match, 3 match, 4 mismatch (focused), 5 check, 7 check -->
+      <div style="position: absolute; left: 36px; top: 16px; width: 308px; height: 44px; box-sizing: border-box; border: 2px solid #1E6B3A; border-radius: 3px"><div style="position: absolute; left: -10px; top: -10px; width: 20px; height: 20px; border-radius: 50%; background: #1E6B3A; color: #FFFFFF; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">1</div></div>
+      <div style="position: absolute; left: 66px; top: 62px; width: 248px; height: 26px; box-sizing: border-box; border: 2px solid #1E6B3A; border-radius: 3px"><div style="position: absolute; left: -10px; top: -10px; width: 20px; height: 20px; border-radius: 50%; background: #1E6B3A; color: #FFFFFF; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">2</div></div>
+      <div style="position: absolute; left: 16px; top: 94px; width: 178px; height: 22px; box-sizing: border-box; border: 2px solid #1E6B3A; border-radius: 3px"><div style="position: absolute; left: -10px; top: -10px; width: 20px; height: 20px; border-radius: 50%; background: #1E6B3A; color: #FFFFFF; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">3</div></div>
+      <div style="position: absolute; left: 226px; top: 94px; width: 138px; height: 22px; box-sizing: border-box; border: 4px solid #A11D1D; border-radius: 3px; box-shadow: 0 0 0 3px #FFFFFF, 0 0 0 5px #1F3A5F"><div style="position: absolute; left: -12px; top: -12px; width: 22px; height: 22px; border-radius: 50%; background: #A11D1D; color: #FFFFFF; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center">4</div></div>
+      <div style="position: absolute; left: 36px; top: 124px; width: 308px; height: 26px; box-sizing: border-box; border: 2px dashed #7A4F00; border-radius: 3px"><div style="position: absolute; left: -10px; top: -10px; width: 20px; height: 20px; border-radius: 50%; background: #7A4F00; color: #FFFFFF; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">5</div></div>
+      <div style="position: absolute; left: 10px; top: 154px; width: 360px; height: 72px; box-sizing: border-box; border: 2px dashed #7A4F00; border-radius: 3px"><div style="position: absolute; left: -10px; top: -10px; width: 20px; height: 20px; border-radius: 50%; background: #7A4F00; color: #FFFFFF; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">7</div></div>
+    </div>
+  </div>
+
+  <!-- Row 1 44 -->
+  <div style="height: 44px; flex-shrink: 0; box-sizing: border-box; padding: 0 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #DDD9CF; background: #FFFFFF">
+    <div style="width: 26px; height: 26px; box-sizing: border-box; border: 2px solid #1E6B3A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700">1</div>
+    <div style="flex-grow: 1; font-size: 17px; font-weight: 700">Brand name</div>
+    <div style="display: flex; align-items: center; gap: 6px; padding: 3px 10px; border: 2px solid #1E6B3A; border-radius: 6px; background: #E7F3EA; color: #1E6B3A; font-size: 15px; font-weight: 700"><span aria-hidden="true">&#10003;</span>Match</div>
+  </div>
+  <!-- Row 2 -->
+  <div style="height: 44px; flex-shrink: 0; box-sizing: border-box; padding: 0 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #DDD9CF; background: #FFFFFF">
+    <div style="width: 26px; height: 26px; box-sizing: border-box; border: 2px solid #1E6B3A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700">2</div>
+    <div style="flex-grow: 1; font-size: 17px; font-weight: 700">Class / type</div>
+    <div style="display: flex; align-items: center; gap: 6px; padding: 3px 10px; border: 2px solid #1E6B3A; border-radius: 6px; background: #E7F3EA; color: #1E6B3A; font-size: 15px; font-weight: 700"><span aria-hidden="true">&#10003;</span>Match</div>
+  </div>
+  <!-- Row 3 -->
+  <div style="height: 44px; flex-shrink: 0; box-sizing: border-box; padding: 0 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #DDD9CF; background: #FFFFFF">
+    <div style="width: 26px; height: 26px; box-sizing: border-box; border: 2px solid #1E6B3A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700">3</div>
+    <div style="flex-grow: 1; font-size: 17px; font-weight: 700">Alcohol content</div>
+    <div style="display: flex; align-items: center; gap: 6px; padding: 3px 10px; border: 2px solid #1E6B3A; border-radius: 6px; background: #E7F3EA; color: #1E6B3A; font-size: 15px; font-weight: 700"><span aria-hidden="true">&#10003;</span>Match</div>
+  </div>
+
+  <!-- Row 4 expanded 170 (focused) -->
+  <div style="height: 170px; flex-shrink: 0; box-sizing: border-box; padding: 0 20px; border-left: 6px solid #A11D1D; border-bottom: 1px solid #DDD9CF; background: #FCE8E8">
+    <div style="height: 44px; display: flex; align-items: center; gap: 10px">
+      <div style="width: 26px; height: 26px; box-sizing: border-box; border: 3px solid #A11D1D; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; margin-left: -6px">4</div>
+      <div style="flex-grow: 1; font-size: 17px; font-weight: 700">Net contents</div>
+      <div style="display: flex; align-items: center; gap: 6px; padding: 3px 10px; border: 3px solid #A11D1D; border-radius: 6px; background: #FFFFFF; color: #A11D1D; font-size: 15px; font-weight: 700"><span aria-hidden="true">&#10005;</span>Mismatch</div>
+    </div>
+    <div style="display: flex; gap: 12px">
+      <div style="flex: 1; padding: 8px 12px; background: #FFFFFF; border: 1px solid #DDD9CF; border-radius: 6px">
+        <div style="font-size: 13px; color: #5B6470">Application says</div>
+        <div style="font-size: 22px; font-weight: 700">700 mL</div>
+      </div>
+      <div style="flex: 1; padding: 8px 12px; background: #FFFFFF; border: 3px solid #A11D1D; border-radius: 6px">
+        <div style="font-size: 13px; color: #5B6470">Label says</div>
+        <div style="font-size: 22px; font-weight: 700">750 mL</div>
+      </div>
+    </div>
+    <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px; font-size: 14px; color: #3A4250">
+      <span style="width: 20px; height: 20px; flex-shrink: 0; border: 2px solid #1F3A5F; border-radius: 50%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #1F3A5F" aria-hidden="true">i</span>
+      <span>Net contents must match the application exactly.</span>
+    </div>
+  </div>
+
+  <!-- Row 5 -->
+  <div style="height: 44px; flex-shrink: 0; box-sizing: border-box; padding: 0 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #DDD9CF; background: #FFFFFF">
+    <div style="width: 26px; height: 26px; box-sizing: border-box; border: 2px dashed #7A4F00; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700">5</div>
+    <div style="flex-grow: 1; font-size: 17px; font-weight: 700">Bottler name and address</div>
+    <div style="display: flex; align-items: center; gap: 6px; padding: 3px 10px; border: 2px dashed #7A4F00; border-radius: 6px; background: #FFF3D1; color: #7A4F00; font-size: 15px; font-weight: 700"><span aria-hidden="true">?</span>Check</div>
+  </div>
+  <!-- Row 6 -->
+  <div style="height: 44px; flex-shrink: 0; box-sizing: border-box; padding: 0 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #DDD9CF; background: #FFFFFF">
+    <div style="width: 26px; height: 26px; box-sizing: border-box; border: 1px solid #5B6470; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #5B6470">6</div>
+    <div style="flex-grow: 1; font-size: 17px; font-weight: 700">Country of origin</div>
+    <div style="display: flex; align-items: center; gap: 6px; padding: 3px 10px; border: 1px solid #5B6470; border-radius: 6px; background: #EEF0F2; color: #3A4250; font-size: 15px; font-weight: 700"><span aria-hidden="true">&#8211;</span>Not required</div>
+  </div>
+  <!-- Row 7 -->
+  <div style="height: 44px; flex-shrink: 0; box-sizing: border-box; padding: 0 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #DDD9CF; background: #FFFFFF">
+    <div style="width: 26px; height: 26px; box-sizing: border-box; border: 2px dashed #7A4F00; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700">7</div>
+    <div style="flex-grow: 1; font-size: 17px; font-weight: 700">Government warning</div>
+    <div style="display: flex; align-items: center; gap: 6px; padding: 3px 10px; border: 2px dashed #7A4F00; border-radius: 6px; background: #FFF3D1; color: #7A4F00; font-size: 15px; font-weight: 700"><span aria-hidden="true">?</span>Check bold</div>
+  </div>
+
+  <!-- Hint bar 36 -->
+  <div style="height: 36px; flex-shrink: 0; box-sizing: border-box; padding: 0 20px; display: flex; align-items: center; gap: 8px; background: #E9EDF3; font-size: 14px; color: #1F3A5F">
+    <span style="flex-grow: 1">Tab or &#8593; &#8595; next field. Enter confirms.</span>
+    <button aria-label="What do the colors and symbols mean?" style="width: 24px; height: 24px; padding: 0; border: 2px solid #1F3A5F; border-radius: 50%; background: #FFFFFF; color: #1F3A5F; font-size: 13px; font-weight: 700">i</button>
+  </div>
+
+  <!-- Decision buttons 66 -->
+  <div style="height: 66px; flex-shrink: 0; box-sizing: border-box; padding: 9px 20px; display: flex; gap: 12px; background: #FFFFFF">
+    <button style="flex: 1; height: 48px; border: 2px solid #1E6B3A; border-radius: 8px; background: #FFFFFF; color: #1E6B3A; font-size: 17px; font-weight: 700">Label verified</button>
+    <button style="flex: 1; height: 48px; border: 2px solid #A11D1D; border-radius: 8px; background: #A11D1D; color: #FFFFFF; font-size: 17px; font-weight: 700">Issues found</button>
+  </div>
+
+  <!-- Connector for the focused field only: row 4 to its box on the label -->
+  <svg width="440" height="900" viewBox="0 0 440 900" aria-hidden="true" style="position: absolute; left: 0; top: 0; pointer-events: none">
+    <path d="M 420 518 H 432 V 219 H 394" fill="none" stroke="#A11D1D" stroke-width="2.5" stroke-dasharray="2 6" stroke-linecap="round"/>
+    <circle cx="394" cy="219" r="3.5" fill="#A11D1D"/>
+  </svg>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

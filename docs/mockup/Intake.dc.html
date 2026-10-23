@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Intake, compact mode</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Libre+Baskerville:wght@400;700&display=swap">
+<style>
+body{margin:0}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 440px; height: 640px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F5F1; color: #1B1F24; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; overflow: hidden">
+
+  <!-- Header 56 -->
+  <div style="height: 56px; flex-shrink: 0; box-sizing: border-box; padding: 0 20px; display: flex; align-items: center; gap: 10px; background: #1F3A5F; color: #FFFFFF">
+    <div style="flex-grow: 1; font-size: 19px; font-weight: 700">Label check</div>
+    <div style="display: flex; border: 2px solid #FFFFFF; border-radius: 8px; overflow: hidden">
+      <button aria-label="Smaller text" style="width: 40px; height: 32px; border: 0; background: transparent; color: #FFFFFF; font-size: 15px; font-weight: 700">A&#8722;</button>
+      <button aria-label="Larger text" style="width: 40px; height: 32px; border: 0; border-left: 2px solid #FFFFFF; background: transparent; color: #FFFFFF; font-size: 19px; font-weight: 700">A+</button>
+    </div>
+    <button style="height: 36px; padding: 0 12px; border: 2px solid #FFFFFF; border-radius: 8px; background: transparent; color: #FFFFFF; font-size: 15px; font-weight: 700">Next label</button>
+  </div>
+
+  <!-- Step 1: image, 140 -->
+  <div style="height: 140px; flex-shrink: 0; box-sizing: border-box; padding: 14px 20px; background: #FFFFFF; border-bottom: 1px solid #DDD9CF">
+    <div style="display: flex; align-items: center; gap: 10px; height: 30px">
+      <div style="width: 26px; height: 26px; border-radius: 50%; background: #1F3A5F; color: #FFFFFF; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center">1</div>
+      <div style="flex-grow: 1; font-size: 18px; font-weight: 700">Label image</div>
+      <div style="display: flex; align-items: center; gap: 6px; padding: 3px 10px; border: 2px solid #1E6B3A; border-radius: 6px; background: #E7F3EA; color: #1E6B3A; font-size: 15px; font-weight: 700"><span aria-hidden="true">&#10003;</span>Read in 1.6 s</div>
+    </div>
+    <div style="display: flex; gap: 14px; margin-top: 8px; align-items: center">
+      <div style="width: 124px; height: 78px; flex-shrink: 0; box-sizing: border-box; background: #F2E9D3; border: 2px solid #3A2A1A; font-family: 'Libre Baskerville', Georgia, serif; color: #2A1D12; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; text-align: center">
+        <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px">OLD TOM DISTILLERY</div>
+        <div style="font-size: 5.5px; font-style: italic">Kentucky Straight Bourbon Whiskey</div>
+        <div style="font-size: 5px">45% Alc./Vol. (90 Proof) &#183; 750 mL</div>
+      </div>
+      <div style="flex-grow: 1; font-size: 15px; line-height: 20px">
+        <div style="font-weight: 700">old-tom-front.png</div>
+        <div style="color: #5B6470">Pasted from the clipboard. Reading started the moment it arrived.</div>
+      </div>
+      <button style="height: 36px; padding: 0 12px; border: 2px solid #1F3A5F; border-radius: 8px; background: #FFFFFF; color: #1F3A5F; font-size: 15px; font-weight: 700">Replace</button>
+    </div>
+  </div>
+
+  <!-- Step 2: application text, 354 -->
+  <div style="height: 354px; flex-shrink: 0; box-sizing: border-box; padding: 14px 20px; border-bottom: 1px solid #DDD9CF">
+    <div style="display: flex; align-items: center; gap: 10px; height: 30px">
+      <div style="width: 26px; height: 26px; border-radius: 50%; background: #1F3A5F; color: #FFFFFF; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center">2</div>
+      <div style="flex-grow: 1; font-size: 18px; font-weight: 700">Application text</div>
+      <div style="font-size: 14px; color: #5B6470">Copy all, paste here</div>
+    </div>
+    <div style="margin-top: 8px; height: 64px; box-sizing: border-box; padding: 6px 10px; overflow: hidden; background: #FFFFFF; border: 2px solid #1F3A5F; border-radius: 6px; font-size: 13px; line-height: 16px; color: #3A4250">
+      Brand Name: Old Tom Distillery<br>Class/Type: Kentucky Straight Bourbon Whiskey<br>Alcohol Content: 45% Alc./Vol. (90 Proof)<br>Net Contents: 700 mL<br>Applicant: Old Tom Distillery, 120 Main St., Bardstown, KY<br>Permit No.: DSP-KY-1234
+    </div>
+    <div style="margin-top: 10px; height: 26px; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700">
+      <span style="color: #7A4F00">Found 5 of 6 fields.</span>
+      <span style="font-weight: 400; color: #5B6470">2 extra lines ignored.</span>
+    </div>
+    <div style="display: flex; flex-direction: column; border-top: 1px solid #DDD9CF">
+      <div style="height: 26px; display: flex; align-items: center; gap: 8px; font-size: 15px; border-bottom: 1px solid #EEECE5"><span style="width: 18px; color: #1E6B3A; font-weight: 700" aria-hidden="true">&#10003;</span><span style="width: 150px; font-weight: 700">Brand name</span><span style="flex-grow: 1">Old Tom Distillery</span><span style="color: #1F3A5F; text-decoration: underline">Edit</span></div>
+      <div style="height: 26px; display: flex; align-items: center; gap: 8px; font-size: 15px; border-bottom: 1px solid #EEECE5"><span style="width: 18px; color: #1E6B3A; font-weight: 700" aria-hidden="true">&#10003;</span><span style="width: 150px; font-weight: 700">Class / type</span><span style="flex-grow: 1">Kentucky Straight Bourbon Whiskey</span><span style="color: #1F3A5F; text-decoration: underline">Edit</span></div>
+      <div style="height: 26px; display: flex; align-items: center; gap: 8px; font-size: 15px; border-bottom: 1px solid #EEECE5"><span style="width: 18px; color: #1E6B3A; font-weight: 700" aria-hidden="true">&#10003;</span><span style="width: 150px; font-weight: 700">Alcohol content</span><span style="flex-grow: 1">45% Alc./Vol. (90 Proof)</span><span style="color: #1F3A5F; text-decoration: underline">Edit</span></div>
+      <div style="height: 26px; display: flex; align-items: center; gap: 8px; font-size: 15px; border-bottom: 1px solid #EEECE5"><span style="width: 18px; color: #1E6B3A; font-weight: 700" aria-hidden="true">&#10003;</span><span style="width: 150px; font-weight: 700">Net contents</span><span style="flex-grow: 1">700 mL</span><span style="color: #1F3A5F; text-decoration: underline">Edit</span></div>
+      <div style="height: 26px; display: flex; align-items: center; gap: 8px; font-size: 15px; border-bottom: 1px solid #EEECE5"><span style="width: 18px; color: #1E6B3A; font-weight: 700" aria-hidden="true">&#10003;</span><span style="width: 150px; font-weight: 700">Bottler</span><span style="flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Old Tom Distillery, 120 Main St., Bardstown, KY</span><span style="color: #1F3A5F; text-decoration: underline">Edit</span></div>
+      <div style="height: 40px; margin-top: 2px; padding: 0 8px; margin-left: -8px; margin-right: -8px; display: flex; align-items: center; gap: 8px; font-size: 15px; background: #FFF3D1; border: 2px dashed #7A4F00; border-radius: 6px"><span style="width: 18px; color: #7A4F00; font-weight: 700" aria-hidden="true">?</span><span style="font-weight: 700">Country of origin</span><span style="flex-grow: 1; color: #7A4F00">Not found.</span>
+        <button style="height: 28px; padding: 0 10px; border: 2px solid #1F3A5F; border-radius: 6px; background: #FFFFFF; color: #1F3A5F; font-size: 14px; font-weight: 700">Domestic</button>
+        <button style="height: 28px; padding: 0 10px; border: 2px solid #1F3A5F; border-radius: 6px; background: #FFFFFF; color: #1F3A5F; font-size: 14px; font-weight: 700">Imported</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Start 90 -->
+  <div style="height: 90px; flex-shrink: 0; box-sizing: border-box; padding: 10px 20px; background: #FFFFFF">
+    <button style="width: 100%; height: 52px; border: 0; border-radius: 10px; background: #1F3A5F; color: #FFFFFF; font-size: 20px; font-weight: 700">Start review</button>
+    <div style="margin-top: 6px; text-align: center; font-size: 14px; color: #5B6470">The review opens at the size you last used.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":440,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
