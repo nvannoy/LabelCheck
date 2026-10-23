@@ -3,6 +3,7 @@ import { TIERS, tierSummary } from './status.js'
 import LabelImage from './LabelImage.jsx'
 import FieldRow from './FieldRow.jsx'
 import { DecisionBar, NotesPanel, ByEyePanel } from './Decision.jsx'
+import { isEditable } from './paste.js'
 import ReadTable from './ReadTable.jsx'
 
 const FIELD_NAMES = { abv: 'alcohol content', netContents: 'net contents', brand: 'brand name', classType: 'class and type' }
@@ -50,11 +51,28 @@ export default function Review({ image, read, application, result, fields, mode,
     setFocusId(next)
     rowRefs.current[next]?.focus()
   }
-  const onKeyDown = (id) => (e) => {
-    if (e.key === 'ArrowDown') { e.preventDefault(); move(id, 1) }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); move(id, -1) }
-    else if (e.key === 'Enter') { e.preventDefault(); setSeen((s) => ({ ...s, [id]: true })); move(id, 1) }
-  }
+  // The arrow keys and Enter work anywhere on the page, with nothing clicked first.
+  // They are left alone while typing in a box (the notes) and when a modifier is held.
+  // Enter on any other button still presses that button.
+  const focusRef = useRef(focusId)
+  focusRef.current = focusId
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || isEditable(e.target)) return
+      if (e.key === 'ArrowDown') { e.preventDefault(); move(focusRef.current, 1) }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); move(focusRef.current, -1) }
+      else if (e.key === 'Enter') {
+        const idle = e.target === document.body || e.target === document.documentElement
+        if (!idle && !e.target.closest?.('.row-head')) return
+        e.preventDefault()
+        const id = focusRef.current
+        setSeen((s) => ({ ...s, [id]: true }))
+        move(id, 1)
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }) // runs every render so move() always sees the current fields
 
   // Dotted connector from the focused (or previewed) row to its box on the label.
   const shownId = previewId ?? focusId
@@ -120,7 +138,7 @@ export default function Review({ image, read, application, result, fields, mode,
               <div role="listitem" key={f.id}>
                 <FieldRow field={f} number={i + 1} focused={focusId === f.id} preview={previewId === f.id} seen={seen[f.id]}
                   application={application} rowRef={(el) => { rowRefs.current[f.id] = el }}
-                  onFocus={setFocusId} onPreview={setPreviewId} onKeyDown={onKeyDown(f.id)} />
+                  onFocus={setFocusId} onPreview={setPreviewId} />
               </div>
             ))}
           </div>
@@ -159,8 +177,8 @@ function Hint({ legend, setLegend, full }) {
   return (
     <div className={`hint${full ? ' bottom' : ''}`}>
       <span>{full
-        ? 'Tab or \u2191 \u2193 moves to the next field. Enter marks it reviewed. Hover over a box on the label to preview that field.'
-        : 'Tab or \u2191 \u2193 next field. Enter marks it reviewed.'}</span>
+        ? '\u2191 \u2193 or Tab moves to the next field, with no click needed. Enter marks it reviewed. Hover over a box on the label to preview that field.'
+        : '\u2191 \u2193 or Tab: next field. Enter marks it reviewed.'}</span>
       <button type="button" className="iconbtn" aria-label="What do the colors and symbols mean?" aria-expanded={legend} onClick={() => setLegend((v) => !v)}>i</button>
     </div>
   )

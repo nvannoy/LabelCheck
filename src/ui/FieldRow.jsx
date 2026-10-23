@@ -32,7 +32,7 @@ function WarningBody({ field }) {
   )
 }
 
-export default function FieldRow({ field, number, focused, preview, seen, application, rowRef, onFocus, onPreview, onKeyDown }) {
+export default function FieldRow({ field, number, focused, preview, seen, application, rowRef, onFocus, onPreview }) {
   const { display } = field
   const differs = field.status === 'mismatch'
   return (
@@ -40,7 +40,7 @@ export default function FieldRow({ field, number, focused, preview, seen, applic
       onMouseEnter={() => onPreview(field.id)} onMouseLeave={() => onPreview(null)}>
       <button type="button" className="row-head" ref={rowRef} aria-expanded={focused}
         aria-label={`${number}. ${field.label}: ${display.text}${seen ? ', reviewed' : ''}`}
-        onFocus={() => onFocus(field.id)} onClick={() => onFocus(field.id)} onKeyDown={onKeyDown}>
+        onFocus={() => onFocus(field.id)} onClick={() => onFocus(field.id)}>
         <span className={`badge ${display.kind}`} aria-hidden="true">{number}</span>
         <span className="name" aria-hidden="true">{field.label}</span>
         {seen && <span className="seen" aria-hidden="true">Reviewed</span>}
