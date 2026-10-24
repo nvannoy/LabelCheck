@@ -124,13 +124,11 @@ The clean-label count fell from 7 of 11 to 5 of 11 when the test labels were red
 
 ### Results per platform
 
-The generator and the evaluation are meant to give the same result on every system. The GitHub Actions workflow (`.github/workflows/verify.yml`) runs `npm ci` and `npm run verify` on all three. Only macOS has been run by hand; Windows and Linux numbers come from the workflow and are not filled in until it has run.
+Tested by the developer on macOS only. The GitHub Actions workflow (`.github/workflows/verify.yml`) is set up to run the same checks on Windows and Linux, but those runs have not been reviewed and no Windows timings were taken. The 5 second target on an ordinary Windows office PC is therefore untested.
 
 | Platform | Tests | Known-bad Ready | Clean labels Ready | Field results as expected |
 | --- | --- | --- | --- | --- |
-| macOS (local, Node 25) | 219 pass | 0 of 22 | 5 of 11 | 215 of 231 (93%) |
-| Windows (CI) | not yet run | | | |
-| Linux (CI) | not yet run | | | |
+| macOS (local, Node 25) | 229 pass | 0 of 22 | 5 of 11 | 215 of 231 (93%) |
 
 Machine for timings: Intel Core i7-1068NG7 (4 cores, 8 threads), 32 GB RAM, macOS. An ordinary office PC may be slower.
 
