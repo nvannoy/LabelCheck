@@ -250,7 +250,7 @@ export default function App() {
     <>
     <div className={`app${review ? ' fixed' : ''}${mode === 'full' && review ? ' fullmode' : ''}`} inert={tour ? true : undefined}>
       <div className={`frame ${mode === 'full' && review ? 'full' : 'compact'}`}>
-        <Header textSize={textSize} stacked={Boolean(review) && mode !== 'full'} middle={mode === 'full' && review && <TierChip result={review.result} checking={checking} />}>
+        <Header textSize={textSize} stacked={!(review && mode === 'full')} middle={mode === 'full' && review && <TierChip result={review.result} checking={checking} />}>
           {review && mode === 'full' && <button type="button" className="btn-onblue" aria-expanded={helpOpen} aria-controls="help-pop" onClick={() => setHelpOpen((v) => !v)}>Help</button>}
           {review && (mode === 'full'
             ? <button type="button" className="btn-onblue solid" onClick={leaveFull}>Compact view</button>
