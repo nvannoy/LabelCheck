@@ -28,7 +28,7 @@ AI reads, code judges, the agent decides.
 
 ## Scope
 
-In: seven fields (brand name, class/type, alcohol content, net contents, bottler name and address, country of origin for imports, government warning), one label image per application, distilled spirits rules, single-label flow, compact and full review modes, drafted notes with a Copy button.
+In: seven fields (brand name, class/type, alcohol content, net contents, bottler name and address, country of origin for imports, government warning), one label image per application, the seven common elements for beer, wine and spirits (type-specific rules are out of scope), single-label flow, compact and full review modes, drafted notes with a Copy button.
 
 Out for now: COLA integration, batch processing (deferred stretch goal), multiple images per application, beer and wine rules, any LLM, skewed or glare-affected images (documented limitation).
 
