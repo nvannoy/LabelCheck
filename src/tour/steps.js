@@ -4,7 +4,7 @@
 export const TOUR_STEPS = [
   {
     id: 'welcome', screen: 'intake', target: null, sample: false,
-    title: 'Welcome to Label check',
+    title: 'Welcome to LabelCheck',
     text: 'A short tour with a made-up sample label. It shows how to check a label against its application, and what the app will and will not do for you. Nothing here is saved or sent anywhere.',
   },
   {

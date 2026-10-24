@@ -6,7 +6,7 @@ Every case quotes the requirement, lists the steps and says what a pass looks li
 
 ## How to run
 
-- **App:** the live site, https://labelcheck-grtwrx.netlify.app/. Write down the version shown next to "Label check".
+- **App:** the live site, https://labelcheck-grtwrx.netlify.app/. Write down the version shown next to "LabelCheck".
 - **Time:** about 90 minutes, on desktop Chrome or Edge, with the files below.
 - **Files:** clone the repository. The three real samples are in `tests/samples/`. Application text for every label is in `tests/applications/<id>.txt`. The generated images (c, d and q series) are not on GitHub: draw them on a Mac with `node scripts/make-test-labels.js`, which writes `generated/labels/`. `npm run evaluate` does this for you on a Mac.
 - **The tour opens first.** A guided tour opens every time the app opens. Press Esc or Skip tour before a run. Pasting a label or text also closes it.

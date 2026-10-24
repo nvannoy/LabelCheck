@@ -2,7 +2,7 @@ export default function Header({ textSize, middle, stacked, children }) {
   return (
     <header className={stacked ? 'header stacked' : 'header'}>
       <div className="title">
-        Label check<span className="version">v{__APP_VERSION__}</span>
+        LabelCheck<span className="version">v{__APP_VERSION__}</span>
       </div>
       {middle}
       <div className="spacer" />
