@@ -138,7 +138,7 @@ Machine for timings: Intel Core i7-1068NG7 (4 cores, 8 threads), 32 GB RAM, macO
 
 - The app is for desktop and laptop users with a mouse and keyboard. Touch screens are not a target.
 - One label image per application. Two labels side by side in one image work only when there is a blank vertical gap between them.
-- Distilled spirits rules (27 CFR Part 5 and Part 16). Beer and wine rules are not covered. The two TTB spirits samples and one malt beverage image are real government examples kept in `tests/samples/` as the one exception to using generated labels only.
+- The spirits example from the brief is the primary case (27 CFR Part 5 and Part 16). The seven common elements also run on beer and wine labels, but beer and wine rules are not applied. The two TTB spirits samples and one malt beverage image are real government examples kept in `tests/samples/` as the one exception to using generated labels only.
 - The app is standalone, with no COLA integration. The agent copies the label image and the application text from the COLA record.
 - The application text is pasted as labeled lines (see above).
 - The seven fields come from the brief.
@@ -149,7 +149,8 @@ Machine for timings: Intel Core i7-1068NG7 (4 cores, 8 threads), 32 GB RAM, macO
 
 - **Batch upload is not built.** It was a stretch goal in the brief. It needs a queue, per-label results and a summary screen, and the prototype keeps to one label at a time so that every result stays a human decision.
 - **One image per application.** Several images per application are not supported. Two labels side by side in one image work only when there is a blank vertical gap between them.
-- **Distilled spirits only.** Beer and wine rules are not covered.
+- **Seven common elements, not type-specific rules.** The app checks the elements common to beer, wine and distilled spirits. Rules that apply to one beverage type are not covered: wine sulfite and appellation statements, the optional alcohol statement on beer, and proof and same-field-of-view rules for spirits. The brief's example label is a distilled spirit, so spirits is the primary case.
+- **Designed labels with decorative or gold-on-banner lettering** often have the brand misread, so the brand lands on Check with "confirm by eye". The app errs toward review, never toward approval.
 - **Skew and glare are not corrected.** Images should be straight and evenly lit.
 - **The app errs toward review.** 6 of 11 clean labels went to Needs review. Each had a reason: a brand printed in a decorative or all-capitals font that OCR reads with low confidence, a bottler printed in a decorative font, or capital letters and punctuation differing in the warning. The result is safe, but an agent will see extra reviews.
 - The browser reads slightly slower and less accurately than Node. For example, the TTB ABC sample is read with the brand matching in the browser but flagged in Node. The cause is not yet explained.
