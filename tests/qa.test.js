@@ -229,7 +229,7 @@ describe('M7, B7, B8 prototype statement and documentation', () => {
     expect(readme).toMatch(/Batch upload is not built/)
     expect(readme).toMatch(/Skew and glare/)
     expect(readme).toMatch(/One image per application/)
-    expect(readme).toMatch(/Beer and wine/)
+    expect(readme).toMatch(/Seven common elements, not type-specific rules/)
     expect(readme).toMatch(/Minimum type size/)
   })
   it('keeps browser code out of the engine', () => {
